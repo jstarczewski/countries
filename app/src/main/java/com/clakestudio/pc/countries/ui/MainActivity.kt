@@ -1,7 +1,8 @@
-package com.clakestudio.pc.countries
+package com.clakestudio.pc.countries.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.clakestudio.pc.countries.R
 
 class MainActivity : AppCompatActivity() {
 
