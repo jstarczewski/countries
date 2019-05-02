@@ -10,10 +10,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.clakestudio.pc.countries.R
 import com.clakestudio.pc.countries.databinding.DetailsFragmentBinding
+import com.clakestudio.pc.countries.di.Injectable
 import javax.inject.Inject
 
 
-class DetailsFragment : Fragment() {
+class DetailsFragment : Fragment(), Injectable {
 
 
     @Inject
@@ -27,13 +28,13 @@ class DetailsFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.details_fragment, container, false)
+        binding = DetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(DetailsViewModel::class.java)
         // TODO: Use the ViewModel
     }
 

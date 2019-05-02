@@ -14,4 +14,6 @@ abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
     abstract fun contributeDetailsFragment(): DetailsFragment
 
+    
+
 }
