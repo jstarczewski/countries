@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.clakestudio.pc.countries.R
+import com.clakestudio.pc.countries.adapters.CountryAdapter
 import com.clakestudio.pc.countries.databinding.DetailsFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
+import kotlinx.android.synthetic.main.details_fragment.*
 import javax.inject.Inject
 
 
