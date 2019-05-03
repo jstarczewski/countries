@@ -16,10 +16,13 @@ import kotlinx.android.synthetic.main.details_fragment.*
 import javax.inject.Inject
 import com.ahmadrosid.svgloader.SvgLoader
 import com.clakestudio.pc.countries.R
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
 
 
-class DetailsFragment : Fragment(), Injectable {
-
+class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -40,8 +43,9 @@ class DetailsFragment : Fragment(), Injectable {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
         setUpRecyclerView()
-
         setFlag()
+        map_view_country.onCreate(savedInstanceState)
+        map_view_country.getMapAsync(this)
         // TODO: Use the ViewModel
     }
 
@@ -51,12 +55,6 @@ class DetailsFragment : Fragment(), Injectable {
             layoutManager = LinearLayoutManager(this@DetailsFragment.context)
             adapter = DetailAdapter(arrayListOf(Pair("Area", "12312312"), Pair("Density", "12/km")))
         }
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        setFlag()
     }
 
 
@@ -68,6 +66,52 @@ class DetailsFragment : Fragment(), Injectable {
             .setPlaceHolder(R.mipmap.ic_launcher, R.mipmap.ic_launcher)
             .load("https://restcountries.eu/data/col.svg", image_view_flag)
 
+    }
+
+    override fun onMapReady(p0: GoogleMap?) {
+        p0?.moveCamera(
+            CameraUpdateFactory
+                .newLatLng(LatLng(4.0, -72.0))
+        )
+        p0?.moveCamera(
+            CameraUpdateFactory.zoomTo(5f)
+        )
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        map_view_country.onResume()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        map_view_country.onStart()
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        map_view_country.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        map_view_country.onStop()
+    }
+
+    override fun onDestroyView() {
+        map_view_country.onDestroy()
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        map_view_country.onLowMemory()
     }
 
     fun navController() = findNavController()
