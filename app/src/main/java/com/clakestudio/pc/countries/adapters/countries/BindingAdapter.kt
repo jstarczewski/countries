@@ -1,4 +1,4 @@
-package com.clakestudio.pc.countries.adapters
+package com.clakestudio.pc.countries.adapters.countries
 
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView

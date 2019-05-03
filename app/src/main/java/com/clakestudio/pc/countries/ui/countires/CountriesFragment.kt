@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.clakestudio.pc.countries.R
-import com.clakestudio.pc.countries.adapters.CountryAdapter
+import com.clakestudio.pc.countries.adapters.countries.CountryAdapter
 import com.clakestudio.pc.countries.databinding.CountriesFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
 import kotlinx.android.synthetic.main.countries_fragment.*
@@ -42,15 +42,11 @@ class CountriesFragment : Fragment(), Injectable {
         setUpRecyclerView()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
-    fun setUpRecyclerView() {
+    private fun setUpRecyclerView() {
         recycler_view_countries.apply{
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@CountriesFragment.context)
-            adapter = CountryAdapter(arrayListOf("Poland", "Germany", "Russia")) {navController().navigate(R.id.action_countriesFragment_to_detailsFragment)}
+            adapter = CountryAdapter(arrayListOf("Poland", "Germany", "Russia")) { navController().navigate(R.id.action_countriesFragment_to_detailsFragment) }
         }
 
     }
