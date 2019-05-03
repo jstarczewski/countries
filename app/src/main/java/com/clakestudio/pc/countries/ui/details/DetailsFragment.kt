@@ -9,12 +9,13 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.clakestudio.pc.countries.adapters.details.DetailAdapter
 import com.clakestudio.pc.countries.databinding.DetailsFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
 import kotlinx.android.synthetic.main.details_fragment.*
 import javax.inject.Inject
+import com.ahmadrosid.svgloader.SvgLoader
+import com.clakestudio.pc.countries.R
 
 
 class DetailsFragment : Fragment(), Injectable {
@@ -28,8 +29,8 @@ class DetailsFragment : Fragment(), Injectable {
     private lateinit var viewModel: DetailsViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         binding = DetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -39,6 +40,7 @@ class DetailsFragment : Fragment(), Injectable {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
         setUpRecyclerView()
+
         setFlag()
         // TODO: Use the ViewModel
     }
@@ -52,10 +54,19 @@ class DetailsFragment : Fragment(), Injectable {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        setFlag()
+    }
+
+
     fun setFlag() {
 
         text_view_name.text = "Colombia"
-        Glide.with(this).load("https://restcountries.eu/data/col.svg").into(image_view_flag)
+        SvgLoader.pluck()
+            .with(activity)
+            .setPlaceHolder(R.mipmap.ic_launcher, R.mipmap.ic_launcher)
+            .load("https://restcountries.eu/data/col.svg", image_view_flag)
 
     }
 
@@ -64,5 +75,6 @@ class DetailsFragment : Fragment(), Injectable {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
     }
+
 
 }
