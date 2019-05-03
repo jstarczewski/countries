@@ -109,5 +109,6 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
 
     implementation 'com.github.ar-android:AndroidSvgLoader:1.0.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
 
 }
