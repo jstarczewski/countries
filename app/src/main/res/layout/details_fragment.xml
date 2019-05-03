@@ -86,7 +86,8 @@
                 app:layout_constraintEnd_toEndOf="@id/guideline_end"
                 app:layout_constraintStart_toEndOf="@id/text_view_name"
                 app:layout_constraintTop_toTopOf="@id/text_view_name"
-                tools:src="@mipmap/ic_launcher_round" />
+                tools:src="@mipmap/ic_launcher_round"
+                android:contentDescription="Flag" />
 
             <TextView
                 android:id="@+id/text_view_details"
@@ -105,11 +106,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                tools:listitem="@layout/detail"
                 app:layout_constraintEnd_toEndOf="@id/guideline_end"
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
                 app:layout_constraintTop_toBottomOf="@id/text_view_details">
-
-
             </androidx.recyclerview.widget.RecyclerView>
 
 
