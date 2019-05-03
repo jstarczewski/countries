@@ -108,5 +108,7 @@ dependencies {
 
     androidTestImplementation "androidx.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
 
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
 }

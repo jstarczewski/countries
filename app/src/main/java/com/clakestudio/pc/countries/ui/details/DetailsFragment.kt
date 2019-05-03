@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.clakestudio.pc.countries.adapters.details.DetailAdapter
 import com.clakestudio.pc.countries.databinding.DetailsFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
@@ -38,6 +39,7 @@ class DetailsFragment : Fragment(), Injectable {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
         setUpRecyclerView()
+        setFlag()
         // TODO: Use the ViewModel
     }
 
@@ -47,6 +49,13 @@ class DetailsFragment : Fragment(), Injectable {
             layoutManager = LinearLayoutManager(this@DetailsFragment.context)
             adapter = DetailAdapter(arrayListOf(Pair("Area", "12312312"), Pair("Density", "12/km")))
         }
+
+    }
+
+    fun setFlag() {
+
+        text_view_name.text = "Colombia"
+        Glide.with(this).load("https://restcountries.eu/data/col.svg").into(image_view_flag)
 
     }
 

@@ -29,4 +29,12 @@ class DetailAdapter(
             binding.textViewDetailValue.text = value
         }
     }
+
+    private fun setDetails(details: ArrayList<Pair<String, String>>) {
+        this.details.clear()
+        this.details.addAll(details)
+        notifyDataSetChanged()
+    }
+
+    fun replaceData(details: ArrayList<Pair<String, String>>) = setDetails(details)
 }
