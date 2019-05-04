@@ -7,13 +7,13 @@ data class Country(
     @field:SerializedName("name")
     val name: String,
     @field:SerializedName("topLevelDomain")
-    val topLevelDomain: String,
+    val topLevelDomain: List<String>,
     @field:SerializedName("alpha2Code")
     val alpha2Code: String,
     @field:SerializedName("alpha3Code")
     val alpha3Code: String,
     @field:SerializedName("callingCodes")
-    val callingCodes: String,
+    val callingCodes: List<String>,
     @field:SerializedName("capital")
     val capital: String,
     @field:SerializedName("altSpellings")
@@ -33,9 +33,9 @@ data class Country(
     @field:SerializedName("gini")
     val gini: String,
     @field:SerializedName("timezones")
-    val timezones: String,
+    val timezones: List<String>,
     @field:SerializedName("borders")
-    val borders: String,
+    val borders: List<String>,
     @field:SerializedName("nativeName")
     val nativeName: String,
     @field:SerializedName("numericCode")
@@ -45,7 +45,7 @@ data class Country(
     @field:SerializedName("languages")
     val languages: List<Language>,
     @field:SerializedName("translations")
-    val translations: List<Pair<String, String>>,
+    val translations: Map<String, String>,
     @field:SerializedName("flag")
     val flag: String,
     @field:SerializedName("regionalBlocks")
@@ -86,5 +86,6 @@ data class Country(
         @field:SerializedName("otherNames")
         val otherNames: List<String>
     )
+
 }
 

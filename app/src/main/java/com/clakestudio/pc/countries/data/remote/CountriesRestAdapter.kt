@@ -21,7 +21,7 @@ class CountriesRestAdapter @Inject constructor(retrofit: Retrofit) {
         fun getAllCountries(): Single<Response<List<Country>>>
 
         @GET(URLManager.name)
-        fun getCountryByName(name: String)
+        fun getCountryByName(name: String) : Single<Response<Country>>
 
 
     }

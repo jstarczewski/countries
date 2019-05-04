@@ -40,6 +40,7 @@ class CountriesFragment : Fragment(), Injectable {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java)
         // TODO: Use the ViewModel
         setUpRecyclerView()
+        viewModel.init()
     }
 
     private fun setUpRecyclerView() {
