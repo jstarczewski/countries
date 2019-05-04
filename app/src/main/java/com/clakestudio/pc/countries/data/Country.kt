@@ -48,8 +48,8 @@ data class Country(
     val translations: Map<String, String>,
     @field:SerializedName("flag")
     val flag: String,
-    @field:SerializedName("regionalBlocks")
-    val regionalBlocks: List<RegionalBlock>,
+    @field:SerializedName("regionalBlocs")
+    val regionalBlocs: List<RegionalBlocs>,
     @field:SerializedName("cioc")
     val cioc: String
 
@@ -62,10 +62,13 @@ data class Country(
         val name: String,
         @field:SerializedName("symbol")
         val symbol: String
-    )
+    ) {
+        override fun toString(): String {
+            return "Code : $code \nName : $name \nSymbol : $symbol\n"
+        }
+    }
 
     data class Language(
-
         @field:SerializedName("iso639_1")
         val iso639_1: String,
         @field:SerializedName("iso639_2")
@@ -74,9 +77,13 @@ data class Country(
         val name: String,
         @field:SerializedName("nativeName")
         val nativeName: String
-    )
+    ) {
+        override fun toString(): String {
+            return "iso639_1 code : $iso639_1 \niso639_2 code : $iso639_2 \nName : $name \nNative name : $nativeName\n"
+        }
+    }
 
-    data class RegionalBlock(
+    data class RegionalBlocs(
         @field:SerializedName("acronym")
         val acronym: String,
         @field:SerializedName("name")
@@ -85,7 +92,11 @@ data class Country(
         val otherAcronyms: List<String>,
         @field:SerializedName("otherNames")
         val otherNames: List<String>
-    )
+    ) {
+        override fun toString(): String {
+            return "Name : $name \nAcronym :  $acronym \nOther Acronyms: ${otherAcronyms.joinToString()} \nOther names: ${otherNames.joinToString()}\n"
+        }
+    }
 
 }
 

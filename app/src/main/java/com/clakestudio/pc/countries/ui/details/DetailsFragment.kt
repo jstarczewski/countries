@@ -39,12 +39,14 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
-        setFlag()
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java).apply {
+            getDataByName()
+        }
+        binding.viewmodel = viewModel
         map_view_country.onCreate(savedInstanceState)
         map_view_country.getMapAsync(this)
         setUpRecyclerView()
-        viewModel.getDataByName()
+    //    setFlag()
         // TODO: Use the ViewModel
     }
 
@@ -52,7 +54,7 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
         recycler_view_details.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@DetailsFragment.context)
-            adapter = DetailAdapter(arrayListOf(Pair("Area", "12312312"), Pair("Density", "12/km")))
+            adapter = DetailAdapter()
         }
     }
 
@@ -67,19 +69,21 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
     }
 
     fun setFlag() {
-
-        text_view_name.text = "Colombia"
         SvgLoader.pluck()
             .with(activity)
             .setPlaceHolder(R.mipmap.ic_launcher, R.mipmap.ic_launcher)
-            .load("https://restcountries.eu/data/col.svg", image_view_flag)
+            .load(viewModel.countryFlagUrl.get(), image_view_flag)
 
     }
 
     override fun onMapReady(p0: GoogleMap?) {
+
+        val lat = viewModel.latlng.get(0).toDouble()
+        val lng = viewModel.latlng.get(1).toDouble()
+
         p0?.moveCamera(
             CameraUpdateFactory
-                .newLatLng(LatLng(4.0, -72.0))
+                .newLatLng(LatLng(lat, lng))
         )
         p0?.moveCamera(
             CameraUpdateFactory.zoomTo(5f)
