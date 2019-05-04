@@ -1,23 +1,36 @@
 package com.clakestudio.pc.countries.ui.countires
 
-import android.util.Log
+import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class CountriesViewModel @Inject constructor(private val countriesRemoteDataSource: CountriesRemoteDataSource) : ViewModel() {
-    // TODO: Implement the ViewModel
 
+    val countries: ObservableArrayList<String> = ObservableArrayList()
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    fun init() {
-        countriesRemoteDataSource.getAllCountries()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Log.e("List", it.toString())
-            }
+    fun init() = compositeDisposable.add(
+            countriesRemoteDataSource.getAllCountries()
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        it.forEach {
+                            countries.add(it.name)
+                        }
+                    }
+    )
+
+    override fun onCleared() {
+        compositeDisposable.clear()
+        super.onCleared()
     }
 
+    fun filter(name: String) {
+        if (name.isNotEmpty())
+            countries.filter { it == name }
+    }
 }

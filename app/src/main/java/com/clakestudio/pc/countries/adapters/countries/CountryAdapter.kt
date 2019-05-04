@@ -2,13 +2,14 @@ package com.clakestudio.pc.countries.adapters.countries
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingComponent
 import androidx.recyclerview.widget.RecyclerView
 
 class CountryAdapter(
-    private val countries: ArrayList<String>,
-    private val onCountryClickedCallback: (Unit) -> (Unit)
+        private val onCountryClickedCallback: (Unit) -> (Unit)
 ) : RecyclerView.Adapter<CountryAdapter.CountryViewHolder>() {
 
+    private var countries: ArrayList<String> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -24,7 +25,7 @@ class CountryAdapter(
     }
 
     class CountryViewHolder(private val binding: com.clakestudio.pc.countries.databinding.CountryBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+            RecyclerView.ViewHolder(binding.root) {
 
         fun bind(text: String) {
             binding.textViewName.text = text
@@ -33,10 +34,11 @@ class CountryAdapter(
     }
 
     private fun setCountries(countries: ArrayList<String>) {
-        this.countries.clear()
-        this.countries.addAll(countries)
+        this.countries = countries
         notifyDataSetChanged()
     }
 
-    fun replaceData(countries: ArrayList<String>) = setCountries(countries)
+    fun replaceData(countries: ArrayList<String>) {
+        setCountries(countries)
+    }
 }

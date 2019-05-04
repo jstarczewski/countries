@@ -4,6 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.clakestudio.pc.countries.ui.countires.CountriesFragment">
 
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="com.clakestudio.pc.countries.ui.countires.CountriesViewModel"/>
+
+    </data>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -11,7 +21,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_start"
@@ -60,12 +70,12 @@
                         app:title="@string/app_name" />
 
 
-                        <androidx.appcompat.widget.SearchView
-                            android:id="@+id/search_view_country"
-                            android:layout_width="match_parent"
-                            android:background="#FFFFFF"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp" />
+                    <androidx.appcompat.widget.SearchView
+                        android:id="@+id/search_view_country"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:background="#FFFFFF" />
 
 
                 </LinearLayout>
@@ -74,12 +84,13 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_countries"
-                app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:listitem="@layout/country"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:countries="@{viewmodel.countries}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
+                tools:listitem="@layout/country">
 
 
             </androidx.recyclerview.widget.RecyclerView>
