@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.adapters.TextViewBindingAdapter
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,9 +17,7 @@ import com.clakestudio.pc.countries.di.Injectable
 import javax.inject.Inject
 
 
-class CountriesFragment : Fragment(), Injectable, TextViewBindingAdapter.OnTextChanged {
-
-
+class CountriesFragment : Fragment(), Injectable {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -31,6 +29,19 @@ class CountriesFragment : Fragment(), Injectable, TextViewBindingAdapter.OnTextC
     ): View? {
         binding = CountriesFragmentBinding.inflate(inflater, container, false)
         setUpRecyclerView()
+        binding.searchViewCountry.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                binding.viewmodel?.filter(query!!)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                binding.viewmodel?.filter(newText!!)
+                return true
+            }
+
+        })
         return binding.root
     }
 
@@ -50,9 +61,7 @@ class CountriesFragment : Fragment(), Injectable, TextViewBindingAdapter.OnTextC
 
     }
 
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        binding.viewmodel?.filter(s.toString())
-    }
+
 
     fun navController() = findNavController()
 

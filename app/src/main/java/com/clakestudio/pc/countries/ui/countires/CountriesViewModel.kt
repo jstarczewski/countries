@@ -11,6 +11,7 @@ import javax.inject.Inject
 class CountriesViewModel @Inject constructor(private val countriesRemoteDataSource: CountriesRemoteDataSource) : ViewModel() {
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
+    private val _countries = ArrayList<String>()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     fun init() = compositeDisposable.add(
@@ -19,7 +20,8 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         it.forEach {
-                            countries.add(it.name)
+                            _countries.add(it.name)
+                            addAll()
                         }
                     }
     )
@@ -29,8 +31,15 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
         super.onCleared()
     }
 
-    fun filter(name: String) {
-        if (name.isNotEmpty())
-            countries.filter { it == name }
+    fun filter(name: String) = if (name.isNotEmpty()) addOnlyThoseContainingPattern(name) else addAll()
+
+    fun addAll() {
+        countries.clear()
+        countries.addAll(_countries)
+    }
+
+    fun addOnlyThoseContainingPattern(pattern: String) {
+        countries.clear()
+        countries.addAll(_countries.filter { it.contains(pattern) })
     }
 }
