@@ -2,9 +2,11 @@ package com.clakestudio.pc.countries.ui.countires
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,9 +23,10 @@ class CountriesFragment : Fragment(), Injectable {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var binding: CountriesFragmentBinding
 
+
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         binding = CountriesFragmentBinding.inflate(inflater, container, false)
         setUpRecyclerView()
@@ -40,16 +43,29 @@ class CountriesFragment : Fragment(), Injectable {
         super.onViewCreated(view, savedInstanceState)
         binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
             init()
+            destinationAlpha.observe(viewLifecycleOwner, Observer {
+                navigate(it)
+            })
         }
+
+
     }
 
     private fun setUpRecyclerView() {
         binding.recyclerViewCountries.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@CountriesFragment.context)
-            adapter = CountryAdapter { navController().navigate(R.id.action_countriesFragment_to_detailsFragment) }
+            adapter =
+                CountryAdapter { binding.viewmodel?.exposeNavigationDestinationCode(it) }
         }
 
+    }
+
+    fun navigate(destination: String) {
+        Log.e("Name", destination)
+        val action = CountriesFragmentDirections.actionCountriesFragmentToDetailsFragment()
+        action.alpha = destination
+        findNavController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

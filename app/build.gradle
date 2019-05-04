@@ -1,10 +1,9 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-allopen'
+apply plugin: "androidx.navigation.safeargs"
 
 allOpen {
     // allows mocking for classes w/o directly opening them for release builds
@@ -77,11 +76,11 @@ dependencies {
     kapt 'com.android.databinding:compiler:3.0.1'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     //Navigation
+
     implementation "android.arch.navigation:navigation-fragment-ktx:$rootProject.navigationVersion"
     implementation "android.arch.navigation:navigation-ui-ktx:$rootProject.navigationVersion"
     implementation "com.google.android.gms:play-services-location:16.0.0"
     testImplementation 'android.arch.core:core-testing:1.1.1'
-
 
 
     // Retrofit

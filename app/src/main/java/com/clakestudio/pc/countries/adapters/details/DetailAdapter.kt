@@ -6,8 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.clakestudio.pc.countries.databinding.DetailBinding
 
 class DetailAdapter(
-        private val details: ArrayList<Pair<String, String>>
 ) : RecyclerView.Adapter<DetailAdapter.DetailViewHolder>() {
+
+    private val details: ArrayList<Pair<String, String?>> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -19,7 +20,7 @@ class DetailAdapter(
 
 
     override fun onBindViewHolder(holder: DetailViewHolder, position: Int) {
-        holder.bind(details[position].first, details[position].second)
+        holder.bind(details[position].first, details[position].second!!)
     }
 
     class DetailViewHolder(private val binding: DetailBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -30,11 +31,15 @@ class DetailAdapter(
         }
     }
 
-    private fun setDetails(details: ArrayList<Pair<String, String>>) {
+    private fun setDetails(details: ArrayList<Pair<String, String?>>) {
         this.details.clear()
-        this.details.addAll(details)
+        details.forEach{
+            if(it.second!=null && it.second!!.isNotEmpty())
+                this.details.add(it)
+
+        }
         notifyDataSetChanged()
     }
 
-    fun replaceData(details: ArrayList<Pair<String, String>>) = setDetails(details)
+    fun replaceData(details: ArrayList<Pair<String, String?>>) = setDetails(details)
 }

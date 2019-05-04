@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    app:startDestination="@id/countriesFragment">
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/main"
+            app:startDestination="@id/countriesFragment">
 
     <fragment
-        android:id="@+id/countriesFragment"
-        android:name="com.clakestudio.pc.countries.ui.countires.CountriesFragment"
-        android:label="countries_fragment"
-        tools:layout="@layout/countries_fragment" >
+            android:id="@+id/countriesFragment"
+            android:name="com.clakestudio.pc.countries.ui.countires.CountriesFragment"
+            android:label="countries_fragment"
+            tools:layout="@layout/countries_fragment">
         <action
-            android:id="@+id/action_countriesFragment_to_detailsFragment"
-            app:destination="@id/detailsFragment" />
+                android:id="@+id/action_countriesFragment_to_detailsFragment"
+                app:destination="@id/detailsFragment">
+            <argument
+                    android:name="alpha"
+                    android:defaultValue="col"
+                    app:argType="string"/>
+        </action>
     </fragment>
     <fragment
-        android:id="@+id/detailsFragment"
-        android:name="com.clakestudio.pc.countries.ui.details.DetailsFragment"
-        android:label="DetailsFragment" />
+            android:id="@+id/detailsFragment"
+            android:name="com.clakestudio.pc.countries.ui.details.DetailsFragment"
+            android:label="DetailsFragment">
+        <argument
+                android:name="alpha"
+                android:defaultValue="col"
+                app:argType="string"/>
+    </fragment>
 </navigation>
