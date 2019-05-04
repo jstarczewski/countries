@@ -40,10 +40,11 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
-        setUpRecyclerView()
         setFlag()
         map_view_country.onCreate(savedInstanceState)
         map_view_country.getMapAsync(this)
+        setUpRecyclerView()
+        viewModel.getDataByName()
         // TODO: Use the ViewModel
     }
 
