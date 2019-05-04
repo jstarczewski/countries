@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,8 +31,8 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
     private lateinit var viewModel: DetailsViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         binding = DetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -41,12 +42,18 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java).apply {
             getDataByName()
+            countryFlagUrl.observe(viewLifecycleOwner, Observer {
+                setFlag(it)
+            })
+            latlng.observe(viewLifecycleOwner, Observer {
+                map_view_country.visibility = View.VISIBLE
+            })
         }
         binding.viewmodel = viewModel
         map_view_country.onCreate(savedInstanceState)
         map_view_country.getMapAsync(this)
         setUpRecyclerView()
-    //    setFlag()
+        //    setFlag()
         // TODO: Use the ViewModel
     }
 
@@ -68,26 +75,27 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    fun setFlag() {
+    fun setFlag(url: String) {
         SvgLoader.pluck()
-            .with(activity)
-            .setPlaceHolder(R.mipmap.ic_launcher, R.mipmap.ic_launcher)
-            .load(viewModel.countryFlagUrl.get(), image_view_flag)
+                .with(activity)
+                .setPlaceHolder(R.mipmap.ic_launcher, R.mipmap.ic_launcher)
+                .load(url, image_view_flag)
 
     }
 
     override fun onMapReady(p0: GoogleMap?) {
-
-        val lat = viewModel.latlng.get(0).toDouble()
-        val lng = viewModel.latlng.get(1).toDouble()
-
         p0?.moveCamera(
-            CameraUpdateFactory
-                .newLatLng(LatLng(lat, lng))
+                CameraUpdateFactory
+                        .newLatLng(LatLng(viewModel.latlng.value!!.first, viewModel.latlng.value!!.second))
         )
         p0?.moveCamera(
-            CameraUpdateFactory.zoomTo(5f)
+                CameraUpdateFactory.zoomTo(5f)
         )
+    }
+
+    fun moveCamera(latlng: LatLng) {
+
+
     }
 
 
@@ -117,16 +125,10 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
         super.onDestroyView()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onLowMemory() {
         super.onLowMemory()
         map_view_country.onLowMemory()
     }
-
-    fun navController() = findNavController()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
