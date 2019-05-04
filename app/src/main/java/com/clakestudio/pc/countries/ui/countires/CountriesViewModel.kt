@@ -31,7 +31,7 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
         super.onCleared()
     }
 
-    fun filter(name: String) = if (name.isNotEmpty()) addOnlyThoseContainingPattern(name) else addAll()
+    fun filter(name: String) = if (name.isNotEmpty() && name.length > 2) addOnlyThoseContainingPattern(name) else addAll()
 
     fun addAll() {
         countries.clear()
@@ -40,6 +40,6 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
 
     fun addOnlyThoseContainingPattern(pattern: String) {
         countries.clear()
-        countries.addAll(_countries.filter { it.contains(pattern) })
+        countries.addAll(_countries.filter { it.toLowerCase().contains(pattern.toLowerCase()) })
     }
 }

@@ -2,10 +2,8 @@ package com.clakestudio.pc.countries.ui.countires
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -29,20 +27,13 @@ class CountriesFragment : Fragment(), Injectable {
     ): View? {
         binding = CountriesFragmentBinding.inflate(inflater, container, false)
         setUpRecyclerView()
-        binding.searchViewCountry.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
 
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                binding.viewmodel?.filter(query!!)
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                binding.viewmodel?.filter(newText!!)
-                return true
-            }
-
-        })
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,12 +47,28 @@ class CountriesFragment : Fragment(), Injectable {
         binding.recyclerViewCountries.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@CountriesFragment.context)
-            adapter = CountryAdapter{ navController().navigate(R.id.action_countriesFragment_to_detailsFragment) }
+            adapter = CountryAdapter { navController().navigate(R.id.action_countriesFragment_to_detailsFragment) }
         }
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        val searchView: SearchView = menu?.findItem(R.id.action_search)?.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                binding.viewmodel?.filter(query!!)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                binding.viewmodel?.filter(newText!!)
+                return false
+            }
+
+        })
+        super.onCreateOptionsMenu(menu, inflater)
+    }
 
     fun navController() = findNavController()
 
