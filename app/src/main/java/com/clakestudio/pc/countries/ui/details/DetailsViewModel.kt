@@ -24,7 +24,7 @@ class DetailsViewModel @Inject constructor(private val remoteDataSource: Countri
     val latlng: LiveData<Pair<Double, Double>> = _latlng
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
-    fun getDataByName() = remoteDataSource.getCountryByName("COL")
+    fun getDataByName(name : String) = remoteDataSource.getCountryByName(name)
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {

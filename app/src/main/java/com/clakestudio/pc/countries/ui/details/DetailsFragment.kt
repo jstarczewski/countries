@@ -2,6 +2,7 @@ package com.clakestudio.pc.countries.ui.details
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -28,11 +29,10 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
     private lateinit var binding: DetailsFragmentBinding
 
-    private lateinit var viewModel: DetailsViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         binding = DetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -40,8 +40,7 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java).apply {
-            getDataByName()
+        binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java).apply {
             countryFlagUrl.observe(viewLifecycleOwner, Observer {
                 setFlag(it)
             })
@@ -49,7 +48,10 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
                 map_view_country.visibility = View.VISIBLE
             })
         }
-        binding.viewmodel = viewModel
+        arguments?.let {
+            Log.e("code", DetailsFragmentArgs.fromBundle(it).alpha)
+            binding.viewmodel?.getDataByName(DetailsFragmentArgs.fromBundle(it).alpha)
+        }
         map_view_country.onCreate(savedInstanceState)
         map_view_country.getMapAsync(this)
         setUpRecyclerView()
@@ -77,19 +79,20 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
     fun setFlag(url: String) {
         SvgLoader.pluck()
-                .with(activity)
-                .setPlaceHolder(R.mipmap.ic_launcher, R.mipmap.ic_launcher)
-                .load(url, image_view_flag)
+            .with(activity)
+            .setPlaceHolder(R.mipmap.ic_launcher, R.mipmap.ic_launcher)
+            .load(url, image_view_flag)
 
     }
 
     override fun onMapReady(p0: GoogleMap?) {
+        val pair = binding.viewmodel?.latlng?.value
         p0?.moveCamera(
-                CameraUpdateFactory
-                        .newLatLng(LatLng(viewModel.latlng.value!!.first, viewModel.latlng.value!!.second))
+            CameraUpdateFactory
+                .newLatLng(LatLng(pair!!.first, pair.second))
         )
         p0?.moveCamera(
-                CameraUpdateFactory.zoomTo(5f)
+            CameraUpdateFactory.zoomTo(5f)
         )
     }
 
