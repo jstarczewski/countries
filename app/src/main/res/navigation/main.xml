@@ -8,7 +8,7 @@
     <fragment
             android:id="@+id/countriesFragment"
             android:name="com.clakestudio.pc.countries.ui.countires.CountriesFragment"
-            android:label="countries_fragment"
+            android:label="Countries"
             tools:layout="@layout/countries_fragment">
         <action
                 android:id="@+id/action_countriesFragment_to_detailsFragment"
@@ -22,7 +22,7 @@
     <fragment
             android:id="@+id/detailsFragment"
             android:name="com.clakestudio.pc.countries.ui.details.DetailsFragment"
-            android:label="DetailsFragment">
+            android:label="Details">
         <argument
                 android:name="alpha"
                 android:defaultValue="col"

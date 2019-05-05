@@ -1,5 +1,6 @@
 package com.clakestudio.pc.countries.ui.details
 
+import android.location.Geocoder
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +23,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 
+
+private const val MAP_VIEW_BUNDLE_KEY = "MAP_BUNDLE_KEY"
 
 class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
@@ -46,21 +49,15 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
                 setFlag(it)
             })
             latlng.observe(viewLifecycleOwner, Observer {
-                map_view_country.visibility = View.VISIBLE
+
             })
         }
         arguments?.let {
-            Log.e("code", DetailsFragmentArgs.fromBundle(it).alpha)
             binding.viewmodel?.getDataByName(DetailsFragmentArgs.fromBundle(it).alpha)
         }
-        map_view_country.onCreate(savedInstanceState)
-        map_view_country.getMapAsync(this)
         setUpRecyclerView()
-        //    setFlag()
-        // TODO: Use the ViewModel
+        setUpGoogleMaps(savedInstanceState)
     }
-
-
 
     private fun setUpRecyclerView() {
         recycler_view_details.apply {
@@ -68,6 +65,27 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
             layoutManager = LinearLayoutManager(this@DetailsFragment.context)
             adapter = DetailAdapter()
         }
+    }
+
+    fun setUpGoogleMaps(savedInstanceState: Bundle?) {
+        val mapViewBundle: Bundle? = savedInstanceState?.getBundle(MAP_VIEW_BUNDLE_KEY)
+        map_view_country.onCreate(mapViewBundle)
+        map_view_country.getMapAsync(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        /**
+         * Not sure whether this is needed as pointed out in tutorial, because we are using ViewModel
+         * and Map data changes every time we change country, bo I will leave it this way, because
+         * that is just a bundle to save state and even if it is useless it does not harm the code
+         * */
+
+        val mapViewBundle: Bundle? = outState.getBundle(MAP_VIEW_BUNDLE_KEY) ?: Bundle()
+        outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle)
+        map_view_country.onSaveInstanceState(mapViewBundle)
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,22 +106,14 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
     }
 
+
     override fun onMapReady(p0: GoogleMap?) {
         val pair = binding.viewmodel?.latlng?.value
-        p0?.moveCamera(
-            CameraUpdateFactory
-                .newLatLng(LatLng(pair!!.first, pair.second))
-        )
-        p0?.moveCamera(
-            CameraUpdateFactory.zoomTo(5f)
-        )
+        if (pair != null) {
+            p0?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(pair.first, pair.second)))
+            p0?.moveCamera(CameraUpdateFactory.zoomTo(5f))
+        }
     }
-
-    fun moveCamera(latlng: LatLng) {
-
-
-    }
-
 
     override fun onResume() {
         super.onResume()
