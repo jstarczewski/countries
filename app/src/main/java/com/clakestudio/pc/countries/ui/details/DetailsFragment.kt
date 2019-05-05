@@ -1,16 +1,13 @@
 package com.clakestudio.pc.countries.ui.details
 
-import android.location.Geocoder
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.clakestudio.pc.countries.adapters.details.DetailAdapter
 import com.clakestudio.pc.countries.databinding.DetailsFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
@@ -26,17 +23,17 @@ import com.google.android.gms.maps.model.LatLng
 
 private const val MAP_VIEW_BUNDLE_KEY = "MAP_BUNDLE_KEY"
 
-class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
+class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefreshLayout.OnRefreshListener {
+
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var binding: DetailsFragmentBinding
 
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         binding = DetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -49,13 +46,19 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
                 setFlag(it)
             })
             latlng.observe(viewLifecycleOwner, Observer {
-
+                map_view_country.getMapAsync(this@DetailsFragment)
+            })
+            error.observe(viewLifecycleOwner, Observer {
+                text_view_name.text = it
+                showWidgets(it.isNotEmpty())
+            })
+            loading.observe(viewLifecycleOwner, Observer {
+                swipe_refresh_layout.isRefreshing = it
             })
         }
-        arguments?.let {
-            binding.viewmodel?.getDataByName(DetailsFragmentArgs.fromBundle(it).alpha)
-        }
+        initFromBundle()
         setUpRecyclerView()
+        swipe_refresh_layout.setOnRefreshListener(this)
         setUpGoogleMaps(savedInstanceState)
     }
 
@@ -65,6 +68,10 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
             layoutManager = LinearLayoutManager(this@DetailsFragment.context)
             adapter = DetailAdapter()
         }
+    }
+
+    private fun initFromBundle() = arguments?.let {
+        binding.viewmodel?.load(DetailsFragmentArgs.fromBundle(it).alpha)
     }
 
     fun setUpGoogleMaps(savedInstanceState: Bundle?) {
@@ -100,9 +107,9 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
     fun setFlag(url: String) {
         SvgLoader.pluck()
-            .with(activity)
-            .setPlaceHolder(R.mipmap.ic_launcher, R.mipmap.ic_launcher)
-            .load(url, image_view_flag)
+                .with(activity)
+                .setPlaceHolder(R.drawable.ic_file_download_black_24dp, R.drawable.ic_error_outline_black_24dp)
+                .load(url, image_view_flag)
 
     }
 
@@ -113,6 +120,12 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
             p0?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(pair.first!!, pair.second!!)))
             p0?.moveCamera(CameraUpdateFactory.zoomTo(5f))
         }
+    }
+
+    private fun showWidgets(isError: Boolean) {
+        recycler_view_details.visibility = if (isError) View.GONE else View.VISIBLE
+        map_view_country.visibility = if (isError) View.GONE else View.VISIBLE
+        image_view_flag.visibility = if (isError) View.GONE else View.VISIBLE
     }
 
     override fun onResume() {
@@ -148,6 +161,10 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+    }
+
+    override fun onRefresh() {
+        initFromBundle()
     }
 
 

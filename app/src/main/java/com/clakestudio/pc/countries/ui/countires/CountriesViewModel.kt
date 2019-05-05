@@ -23,7 +23,7 @@ class CountriesViewModel @Inject constructor(private val countriesRepository: Co
     private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
     private val _error: MutableLiveData<String> = MutableLiveData()
     val error: LiveData<String> = _error
-    val _loading: MutableLiveData<Boolean> = MutableLiveData()
+    private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
     val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
@@ -62,8 +62,6 @@ class CountriesViewModel @Inject constructor(private val countriesRepository: Co
                 .subscribe {
                     when {
                         it.isHasError -> {
-                            Log.e("Error", it.errorMessage)
-                            _countries.addAll(listOf())
                             _error.value = it.errorMessage + "\n Swipe to refresh"
                             _loading.value = false
                         }
@@ -71,7 +69,6 @@ class CountriesViewModel @Inject constructor(private val countriesRepository: Co
                             _loading.value = true
                         }
                         else -> {
-                            Log.e("Succes", "success")
                             _countries.addAll(it.data!!)
                             _loading.value = false
                             _error.value = ""

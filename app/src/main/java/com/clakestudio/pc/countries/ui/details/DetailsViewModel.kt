@@ -17,8 +17,15 @@ class DetailsViewModel @Inject constructor(private val countryRepository: Countr
 
     private val compositeDisposable = CompositeDisposable()
 
+    private var alpha = String()
+
     val countryName: ObservableField<String> = ObservableField()
     val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
+
+    private val _error: MutableLiveData<String> = MutableLiveData()
+    val error: LiveData<String> = _error
+    private val _loading: MutableLiveData<Boolean> = MutableLiveData()
+    val loading: LiveData<Boolean> = _loading
 
     private val _latlng: MutableLiveData<Pair<Double?, Double?>> = MutableLiveData()
     private val _countryFlagUrl: MutableLiveData<String> = MutableLiveData()
@@ -26,34 +33,48 @@ class DetailsViewModel @Inject constructor(private val countryRepository: Countr
     val latlng: LiveData<Pair<Double?, Double?>> = _latlng
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
-    fun getDataByName(name: String) = compositeDisposable.add(
-        countryRepository.getCountryByName(name)
-            .startWith(ViewObject.loading(null))
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .materialize()
-            .map {
-                if (it.isOnError) {
+    fun load(alpha: String) {
+        if (details.isEmpty() || alpha != this.alpha) {
+            loadCountryDataByAlphaCode(alpha)
+        } else {
+            _loading.value = false
+        }
+    }
 
-                }
-                it
-            }
-            .dematerialize<ViewObject<com.clakestudio.pc.countries.data.Country>>()
-            .subscribe {
-                when {
-                    it.isHasError -> {
+    private fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
+            countryRepository.getCountryByName(alpha)
+                    .startWith(ViewObject.loading(null))
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .materialize()
+                    .map {
+                        if (it.isOnError) {
+                            _error.value = it.error?.localizedMessage + "\nSwipe to refresh"
+                            _loading.value = false
+                        }
+                        it
+                    }
+                    .filter { !it.isOnError }
+                    .dematerialize<ViewObject<com.clakestudio.pc.countries.data.Country>>()
+                    .subscribe {
+                        when {
+                            it.isHasError -> {
+                                _error.value = it.errorMessage + "\n Swipe to refresh"
+                                _loading.value = false
+                            }
+                            it.isLoading -> {
+                                _loading.value = true
+                            }
+                            else -> {
+                                details.clear()
+                                _error.value = ""
+                                _loading.value = false
+                                loadData(Country(it.data!!))
+                                this@DetailsViewModel.alpha = alpha
+                            }
+                        }
 
                     }
-                    it.isLoading -> {
-
-                    }
-                    else -> {
-                        details.clear()
-                        loadData(Country(it.data!!))
-                    }
-                }
-
-            }
     )
 
     fun loadData(country: Country) {
@@ -64,7 +85,8 @@ class DetailsViewModel @Inject constructor(private val countryRepository: Countr
     }
 
     fun latlngStringToDouble(latltnString: List<String?>) =
-        if (!latltnString.isNullOrEmpty()) Pair(latltnString[0]?.toDouble(), latltnString[1]?.toDouble()) else null
+            if (!latltnString.isNullOrEmpty()) Pair(latltnString[0]?.toDouble(), latltnString[1]?.toDouble()) else null
+
 
     override fun onCleared() {
         super.onCleared()
