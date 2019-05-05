@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class CountryAdapter(
+class CountriesAdapter(
     private val onCountryClickedCallback: (String) -> (Unit)
-) : RecyclerView.Adapter<CountryAdapter.CountryViewHolder>(), OnCountryClickListener {
+) : RecyclerView.Adapter<CountriesAdapter.CountryViewHolder>(), OnCountryClickListener {
 
     override fun onCountryClicked(position: Int) {
         onCountryClickedCallback.invoke(countries[position])

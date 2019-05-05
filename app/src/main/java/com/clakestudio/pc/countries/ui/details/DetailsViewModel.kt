@@ -5,31 +5,77 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
+import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.vo.Country
+import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class DetailsViewModel @Inject constructor(private val remoteDataSource: CountriesRemoteDataSource) : ViewModel() {
-    // TODO: Implement the ViewModel
+class DetailsViewModel @Inject constructor(private val countryRepository: CountriesRepository) : ViewModel() {
+
+    private val compositeDisposable = CompositeDisposable()
+
+    private var alpha = String()
 
     val countryName: ObservableField<String> = ObservableField()
     val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
 
-    private val _latlng: MutableLiveData<Pair<Double, Double>> = MutableLiveData()
+    private val _error: MutableLiveData<String> = MutableLiveData()
+    val error: LiveData<String> = _error
+    private val _loading: MutableLiveData<Boolean> = MutableLiveData()
+    val loading: LiveData<Boolean> = _loading
+
+    private val _latlng: MutableLiveData<Pair<Double?, Double?>> = MutableLiveData()
     private val _countryFlagUrl: MutableLiveData<String> = MutableLiveData()
 
-    val latlng: LiveData<Pair<Double, Double>> = _latlng
+    val latlng: LiveData<Pair<Double?, Double?>> = _latlng
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
-    fun getDataByName(name: String) = remoteDataSource.getCountryByName(name)
-        .subscribeOn(Schedulers.computation())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
-            details.clear()
-            loadData(Country(it))
+    fun load(alpha: String) {
+        if (details.isEmpty() || alpha != this.alpha) {
+            loadCountryDataByAlphaCode(alpha)
+        } else {
+            _loading.value = false
         }
+    }
+
+    private fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
+            countryRepository.getCountryByName(alpha)
+                    .startWith(ViewObject.loading(null))
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .materialize()
+                    .map {
+                        if (it.isOnError) {
+                            _error.value = it.error?.localizedMessage + "\nSwipe to refresh"
+                            _loading.value = false
+                        }
+                        it
+                    }
+                    .filter { !it.isOnError }
+                    .dematerialize<ViewObject<com.clakestudio.pc.countries.data.Country>>()
+                    .subscribe {
+                        when {
+                            it.isHasError -> {
+                                _error.value = it.errorMessage + "\n Swipe to refresh"
+                                _loading.value = false
+                            }
+                            it.isLoading -> {
+                                _loading.value = true
+                            }
+                            else -> {
+                                details.clear()
+                                _error.value = ""
+                                _loading.value = false
+                                loadData(Country(it.data!!))
+                                this@DetailsViewModel.alpha = alpha
+                            }
+                        }
+
+                    }
+    )
 
     fun loadData(country: Country) {
         countryName.set(country.countryName)
@@ -38,6 +84,12 @@ class DetailsViewModel @Inject constructor(private val remoteDataSource: Countri
         details.addAll(country.countryDetails)
     }
 
-    fun latlngStringToDouble(latltnString: List<String>) = Pair(latltnString[0].toDouble(), latltnString[1].toDouble())
+    fun latlngStringToDouble(latltnString: List<String?>) =
+            if (!latltnString.isNullOrEmpty()) Pair(latltnString[0]?.toDouble(), latltnString[1]?.toDouble()) else null
 
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
 }
