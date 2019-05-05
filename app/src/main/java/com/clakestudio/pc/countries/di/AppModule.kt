@@ -1,5 +1,9 @@
 package com.clakestudio.pc.countries.di
 
+import com.clakestudio.pc.countries.data.CountryDataSource
+import com.clakestudio.pc.countries.data.CountryRepository
+import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
+import com.clakestudio.pc.countries.data.remote.CountriesRestAdapter
 import com.clakestudio.pc.countries.data.remote.URLManager
 import dagger.Module
 import dagger.Provides
@@ -28,6 +32,19 @@ class AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCountryRemoteDataSource(countriesRestAdapter: CountriesRestAdapter) : CountriesRemoteDataSource {
+        return CountriesRemoteDataSource(countriesRestAdapter)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideCountryRepository(countriesRemoteDataSource: CountriesRemoteDataSource) : CountryDataSource {
+        return CountryRepository(countriesRemoteDataSource)
     }
 
 

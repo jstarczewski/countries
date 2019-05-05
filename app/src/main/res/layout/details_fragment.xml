@@ -81,7 +81,7 @@
                     android:layout_width="96dp"
                     android:layout_height="62dp"
                     android:layout_margin="8dp"
-                    android:contentDescription="Flag"
+                    android:contentDescription="@string/flag"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
                     app:layout_constraintStart_toEndOf="@id/text_view_name"
                     app:layout_constraintTop_toBottomOf="@id/map_view_country"

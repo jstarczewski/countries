@@ -3,4 +3,5 @@
     <string name="znajdz_kraj">Znajdz kraj</string>
     <string name="title_activity_maps">Map</string>
     <string name="action_search">Action Search</string>
+    <string name="flag">Flag</string>
 </resources>

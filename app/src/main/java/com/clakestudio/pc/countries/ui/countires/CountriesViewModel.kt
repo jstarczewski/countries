@@ -1,18 +1,21 @@
 package com.clakestudio.pc.countries.ui.countires
 
+import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.data.CountryDataSource
+import com.clakestudio.pc.countries.data.CountryRepository
 import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class CountriesViewModel @Inject constructor(private val countriesRemoteDataSource: CountriesRemoteDataSource) :
+class CountriesViewModel @Inject constructor(private val countryRepository: CountryDataSource) :
     ViewModel() {
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
@@ -22,7 +25,7 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
     val navigationLiveEvent : LiveData<String> = _navigationLiveEvent
 
     fun init() = compositeDisposable.add(
-        countriesRemoteDataSource.getAllCountries()
+        countryRepository.getAllCountries()
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -32,6 +35,15 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
 
     )
 
+    fun init2() {
+        compositeDisposable.add(
+            countryRepository.getAllCountries()
+                .onErrorReturn {
+                    throw it
+                }
+                .subscribe { _countries.addAll(it) }
+        )
+    }
 
     override fun onCleared() {
         compositeDisposable.clear()
