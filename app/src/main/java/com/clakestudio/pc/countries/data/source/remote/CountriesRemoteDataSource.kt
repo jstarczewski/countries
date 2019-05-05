@@ -1,5 +1,6 @@
 package com.clakestudio.pc.countries.data.source.remote
 
+import android.util.Log
 import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.data.source.CountryDataSource
 import com.clakestudio.pc.countries.vo.ViewObject
@@ -37,10 +38,15 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
     private fun handleResponse(response: Response<List<Country>>): ViewObject<List<Country>> {
         if (response.isSuccessful) {
             if (response.body()!!.isEmpty())
-                return ViewObject.error("empty", response.body())
+                return ViewObject.error("Response is empty", response.body())
             return ViewObject.succes(response.body()!!)
         } else {
-            return ViewObject.error(response.errorBody().toString(), response.body())
+            Log.e("REsponse twoja stara", response.code().toString() + "   " + response.body().toString())
+            return ViewObject.error(
+                "Error number: " +
+                        response.code().toString() + " occured \nWith body " + response.body().toString(),
+                response.body()
+            )
         }
     }
 

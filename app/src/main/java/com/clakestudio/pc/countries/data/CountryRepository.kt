@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.data
 
-import android.util.Log
 import com.clakestudio.pc.countries.data.source.CountryDataSource
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable

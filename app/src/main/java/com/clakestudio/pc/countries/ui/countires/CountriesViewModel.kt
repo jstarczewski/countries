@@ -3,6 +3,7 @@ package com.clakestudio.pc.countries.ui.countires
 import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.Country
@@ -20,20 +21,23 @@ class CountriesViewModel @Inject constructor(private val countryRepository: Coun
     private val _countries = ArrayList<Country>()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
+    private val _error: MutableLiveData<String> = MutableLiveData()
+    val error: LiveData<String> = _error
+    val _loading: MutableLiveData<Boolean> = MutableLiveData()
+    val loading: LiveData<Boolean> = _loading
     val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
-    fun init() = compositeDisposable.add(
-        countryRepository.getAllCountries()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                _countries.addAll(it.data!!)
-                addAll()
-            }
+    fun load() {
+        if (_countries.isEmpty())
+            init()
+        else {
+            _loading.value = false
+        }
+    }
 
-    )
 
-    fun init2() {
+    private fun init() {
+        _loading.value = true
         compositeDisposable.add(
             countryRepository.getAllCountries()
                 .subscribeOn(Schedulers.computation())
@@ -45,10 +49,12 @@ class CountriesViewModel @Inject constructor(private val countryRepository: Coun
                 .materialize()
                 .map {
                     if (it.isOnError) {
+                        _error.value = (it.error?.localizedMessage + "\nSwipe to refresh")
+                        _loading.value = false
                     }
                     it
                 }
-                .filter{
+                .filter {
                     !it.isOnError
                 }
                 .dematerialize<ViewObject<List<Country>>>()
@@ -57,11 +63,17 @@ class CountriesViewModel @Inject constructor(private val countryRepository: Coun
                         it.isHasError -> {
                             Log.e("Error", it.errorMessage)
                             _countries.addAll(listOf())
+                            _error.value = it.errorMessage + "\n Swipe to refresh"
+                            _loading.value = false
                         }
-                        it.isLoading -> Log.e("Loading", "Is loading")
+                        it.isLoading -> {
+                            _loading.value = true
+                        }
                         else -> {
                             Log.e("Succes", "succes")
                             _countries.addAll(it.data!!)
+                            _loading.value = false
+                            _error.value = ""
                             addAll()
                         }
                     }
