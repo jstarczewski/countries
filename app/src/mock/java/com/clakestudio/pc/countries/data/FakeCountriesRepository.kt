@@ -5,11 +5,12 @@ import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
 
-class FakeCountriesRepository() : CountriesDataSource {
+class FakeCountriesRepository(private val asError: Boolean) : CountriesDataSource {
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> {
-        val list: ViewObject<List<Country>> = ViewObject.success(listOf(CountriesDataProvider.provideColombia()))
-        return Flowable.just(list)
+        return if (!asError) Flowable.just(CountriesDataProvider.provideSampleCountriesWrapedAsSucces())
+        else
+            Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError())
     }
 
     override fun getCountryByName(name: String): Flowable<ViewObject<Country>> =

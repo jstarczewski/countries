@@ -14,8 +14,10 @@ import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 @OpenForTesting
-class CountriesViewModel @Inject constructor(private val countriesRepository: CountriesDataSource,
-                                             private val appSchedulers: SchedulersProvider) :
+class CountriesViewModel @Inject constructor(
+    private val countriesRepository: CountriesDataSource,
+    private val appSchedulers: SchedulersProvider
+) :
     ViewModel() {
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
@@ -85,8 +87,10 @@ class CountriesViewModel @Inject constructor(private val countriesRepository: Co
         super.onCleared()
     }
 
-    fun filter(name: String) =
-        if (name.isNotEmpty() && name.length > 2) addOnlyThoseContainingPattern(name) else addAll()
+    fun filter(name: String) {
+        if (name.isNotEmpty() && name.length > 2) addOnlyThoseContainingPattern(name)
+        if (name.isEmpty()) addAll()
+    }
 
     fun addAll() {
         countries.clear()
@@ -104,6 +108,6 @@ class CountriesViewModel @Inject constructor(private val countriesRepository: Co
     }
 
     fun exposeNavigationDestinationCode(destinationName: String) {
-        _navigationLiveEvent.value = _countries.find { it.name == destinationName }?.alpha3Code
+        _navigationLiveEvent.value = _countries.find { it.name == destinationName }?.alpha3Code ?: "POL"
     }
 }

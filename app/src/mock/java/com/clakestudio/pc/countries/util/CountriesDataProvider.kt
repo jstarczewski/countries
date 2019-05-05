@@ -1,12 +1,16 @@
 package com.clakestudio.pc.countries.util
 
 import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.ViewObject
 
 object CountriesDataProvider {
 
+    fun provideSampleCountriesWrapedAsSucces(): ViewObject<List<Country>> {
+        return ViewObject.success(listOf<Country>(provideColombia(), providePoland()))
+    }
 
-    fun provideSampleCountries() {
-
+    fun provideSampleCountriesWrappedAsError(): ViewObject<List<Country>> {
+        return ViewObject.error("Test error", listOf(provideColombia(), providePoland()))
     }
 
     fun provideColombia() =
@@ -82,8 +86,6 @@ object CountriesDataProvider {
 
     fun providePoland() =
         Country(
-
-
             name = "Poland",
             topLevelDomain = listOf(".pl"),
             alpha2Code = "PL",
@@ -126,8 +128,8 @@ object CountriesDataProvider {
                     iso639_1 = "pl",
                     iso639_2 = "pol",
                     name = "Polish",
-                    nativeName = "język polski",
-                    )
+                    nativeName = "język polski"
+                )
             ),
             translations = mapOf(
                 "de" to "Polen",
