@@ -79,7 +79,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
         Log.e("Name", destination)
         val action = CountriesFragmentDirections.actionCountriesFragmentToDetailsFragment()
         action.alpha = destination
-        findNavController().navigate(action)
+        navController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

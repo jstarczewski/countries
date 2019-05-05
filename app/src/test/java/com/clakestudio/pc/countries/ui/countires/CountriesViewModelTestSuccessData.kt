@@ -21,6 +21,7 @@ class CountriesViewModelTestSuccessData {
     private val patternTooShort = "po"
     private val patternCol = "umbia"
     private val alpha3PolandCode = "POL"
+    private val alpha3ColombiaCode = "COL"
 
     @Before
     fun setUp() {
@@ -80,8 +81,14 @@ class CountriesViewModelTestSuccessData {
     }
 
     @Test
+    fun exposeNavigationDestinationCodeDefault() {
+        viewModel.exposeNavigationDestinationCode("Russia")
+        assertEquals(viewModel.navigationLiveEvent.value, alpha3PolandCode)
+    }
+
+    @Test
     fun exposeNavigationDestinationCodeWrong() {
         viewModel.exposeNavigationDestinationCode("Russia")
-        assertNotEquals(viewModel.navigationLiveEvent.value, alpha3PolandCode)
+        assertNotEquals(viewModel.navigationLiveEvent.value, alpha3ColombiaCode)
     }
 }

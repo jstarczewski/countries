@@ -11,14 +11,19 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.rule.ActivityTestRule
 import com.clakestudio.pc.countries.R
 import com.clakestudio.pc.countries.SingleLiveEvent
+import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.testing.SingleFragmentActivity
+import com.clakestudio.pc.countries.util.AppSchedulersProvider
+import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.util.ViewModelUtil
+import io.reactivex.Flowable
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.*
 
 class CountriesFragmentTest {
+
 
     @Rule
     @JvmField
@@ -30,35 +35,44 @@ class CountriesFragmentTest {
     private val loading = MutableLiveData<Boolean>()
 
     private lateinit var countriesViewModel: CountriesViewModel
+    private lateinit var countriesRepository: CountriesRepository
 
     private var countries = ObservableArrayList<String>()
 
     @Before
     fun setUp() {
-        countriesViewModel = mock(CountriesViewModel::class.java)
+        countriesRepository = mock(CountriesRepository::class.java)
+        countriesViewModel = CountriesViewModel(countriesRepository, AppSchedulersProvider())
         activityRule.activity.setFragment(countriesFragment)
         countriesFragment.viewModelFactory = ViewModelUtil.createFor(countriesViewModel)
+        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrapedAsSucces()))
+
         //`when`(countriesViewModel.load()).then { doNothing() }
+
+/*
         `when`(countriesViewModel.navigationLiveEvent).thenReturn(navigateLiveEvent)
+        `when`(countriesViewModel.error).thenReturn(error)
+        `when`(countriesViewModel.loading).thenReturn(loading)
+
         val navObserver = mock(Observer::class.java) as Observer<String>
         countriesViewModel.navigationLiveEvent.observeForever(navObserver)
 
         val errorObserver = mock(Observer::class.java) as Observer<String>
         countriesViewModel.navigationLiveEvent.observeForever(errorObserver)
-        `when`(countriesViewModel.error).thenReturn(error)
 
-        `when`(countriesViewModel.loading).thenReturn(loading)
         val loadingObserver = mock(Observer::class.java) as Observer<String>
         countriesViewModel.navigationLiveEvent.observeForever(loadingObserver)
         countries.add("Angola")
         `when`(countriesViewModel.countries).thenReturn(countries)
-        navigateLiveEvent.value = "Angola"
+        navigateLiveEvent.value = "Angola"*/
     }
 
     @Test
     fun testItemInRecyclerClickedOpensOtherFragment() {
-        //Espresso.onView(withText("Angola")).perform(click())
-        //verify(countriesFragment.navController).navigate(R.id.action_countriesFragment_to_detailsFragment)
+        val action = CountriesFragmentDirections.actionCountriesFragmentToDetailsFragment()
+        action.alpha = "POL"
+        Espresso.onView(withText("Poland")).perform(click())
+        verify(countriesFragment.navController).navigate(action)
     }
 
     class TestCountriesFragment : CountriesFragment() {

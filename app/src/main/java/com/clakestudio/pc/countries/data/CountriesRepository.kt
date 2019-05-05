@@ -1,11 +1,13 @@
 package com.clakestudio.pc.countries.data
 
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
+import com.clakestudio.pc.countries.testing.OpenForTesting
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+@OpenForTesting
 class CountriesRepository @Inject constructor(private val countriesRemoteDataSource: CountriesDataSource) :
     CountriesDataSource {
 
