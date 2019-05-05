@@ -1,21 +1,16 @@
 package com.clakestudio.pc.countries.di
 
-import android.app.Application
-import com.clakestudio.pc.countries.data.source.CountryDataSource
-import com.clakestudio.pc.countries.data.CountryRepository
+import com.clakestudio.pc.countries.data.source.CountriesDataSource
+import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.data.source.remote.CountriesRemoteDataSource
 import com.clakestudio.pc.countries.data.source.remote.CountriesRestAdapter
 import com.clakestudio.pc.countries.data.source.remote.URLManager
 import dagger.Module
 import dagger.Provides
-import okhttp3.Cache
-import okhttp3.CacheControl
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -67,8 +62,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideCountryRepository(countriesRemoteDataSource: CountriesRemoteDataSource) : CountryDataSource {
-        return CountryRepository(countriesRemoteDataSource)
+    fun provideCountryRepository(countriesRemoteDataSource: CountriesRemoteDataSource) : CountriesDataSource {
+        return CountriesRepository(countriesRemoteDataSource)
     }
 
 

@@ -5,7 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.clakestudio.pc.countries.data.CountryRepository
+import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,7 +13,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class DetailsViewModel @Inject constructor(private val countryRepository: CountryRepository) : ViewModel() {
+class DetailsViewModel @Inject constructor(private val countryRepository: CountriesRepository) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -28,6 +28,7 @@ class DetailsViewModel @Inject constructor(private val countryRepository: Countr
 
     fun getDataByName(name: String) = compositeDisposable.add(
         countryRepository.getCountryByName(name)
+            .startWith(ViewObject.loading(null))
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .materialize()
@@ -55,7 +56,7 @@ class DetailsViewModel @Inject constructor(private val countryRepository: Countr
             }
     )
 
-    fun loadData(country: com.clakestudio.pc.countries.vo.Country) {
+    fun loadData(country: Country) {
         countryName.set(country.countryName)
         _countryFlagUrl.value = country.countryFlagUrl
         _latlng.value = latlngStringToDouble(country.latlng)

@@ -6,7 +6,7 @@ import io.reactivex.Flowable
 import retrofit2.http.Path
 
 
-interface CountryDataSource {
+interface CountriesDataSource {
 
     fun getAllCountries(): Flowable<ViewObject<List<Country>>>
 

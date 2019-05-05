@@ -7,14 +7,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.Country
-import com.clakestudio.pc.countries.data.source.CountryDataSource
+import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class CountriesViewModel @Inject constructor(private val countryRepository: CountryDataSource) :
+class CountriesViewModel @Inject constructor(private val countriesRepository: CountriesDataSource) :
     ViewModel() {
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
@@ -39,7 +39,8 @@ class CountriesViewModel @Inject constructor(private val countryRepository: Coun
     private fun init() {
         _loading.value = true
         compositeDisposable.add(
-            countryRepository.getAllCountries()
+            countriesRepository.getAllCountries()
+                .startWith(ViewObject.loading(null))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 //     .onErrorReturn {
@@ -70,7 +71,7 @@ class CountriesViewModel @Inject constructor(private val countryRepository: Coun
                             _loading.value = true
                         }
                         else -> {
-                            Log.e("Succes", "succes")
+                            Log.e("Succes", "success")
                             _countries.addAll(it.data!!)
                             _loading.value = false
                             _error.value = ""

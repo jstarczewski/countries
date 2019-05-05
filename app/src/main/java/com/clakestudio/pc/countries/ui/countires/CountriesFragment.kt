@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.clakestudio.pc.countries.R
-import com.clakestudio.pc.countries.adapters.countries.CountryAdapter
+import com.clakestudio.pc.countries.adapters.countries.CountriesAdapter
 import com.clakestudio.pc.countries.databinding.CountriesFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
 import kotlinx.android.synthetic.main.countries_fragment.*
@@ -67,7 +67,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@CountriesFragment.context)
             adapter =
-                CountryAdapter { binding.viewmodel?.exposeNavigationDestinationCode(it) }
+                CountriesAdapter { binding.viewmodel?.exposeNavigationDestinationCode(it) }
         }
 
     }

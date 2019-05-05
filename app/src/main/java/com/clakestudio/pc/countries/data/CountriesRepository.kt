@@ -1,13 +1,13 @@
 package com.clakestudio.pc.countries.data
 
-import com.clakestudio.pc.countries.data.source.CountryDataSource
+import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class CountryRepository @Inject constructor(private val countriesRemoteDataSource: CountryDataSource) :
-    CountryDataSource {
+class CountriesRepository @Inject constructor(private val countriesRemoteDataSource: CountriesDataSource) :
+    CountriesDataSource {
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> {
         return countriesRemoteDataSource.getAllCountries()
