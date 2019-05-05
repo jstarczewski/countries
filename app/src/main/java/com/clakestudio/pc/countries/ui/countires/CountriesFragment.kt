@@ -43,7 +43,7 @@ class CountriesFragment : Fragment(), Injectable {
         super.onViewCreated(view, savedInstanceState)
         binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
             init()
-            destinationAlpha.observe(viewLifecycleOwner, Observer {
+            navigateLiveEvent.observe(viewLifecycleOwner, Observer {
                 navigate(it)
             })
         }

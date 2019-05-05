@@ -4,6 +4,7 @@ import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
+import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,7 +20,7 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private val _destinationAlpha: MutableLiveData<String> = MutableLiveData()
-    val destinationAlpha: LiveData<String> = _destinationAlpha
+    val navigateLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
 
     fun init() = compositeDisposable.add(
         countriesRemoteDataSource.getAllCountries()
@@ -57,6 +58,6 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
     }
 
     fun exposeNavigationDestinationCode(destinationName: String) {
-        _destinationAlpha.value = _countries.find { it.name == destinationName }?.alpha3Code
+        navigateLiveEvent.value = _countries.find { it.name == destinationName }?.alpha3Code
     }
 }
