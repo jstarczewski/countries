@@ -109,8 +109,8 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
 
     override fun onMapReady(p0: GoogleMap?) {
         val pair = binding.viewmodel?.latlng?.value
-        if (pair != null) {
-            p0?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(pair.first, pair.second)))
+        if (pair?.first != null && pair.second != null) {
+            p0?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(pair.first!!, pair.second!!)))
             p0?.moveCamera(CameraUpdateFactory.zoomTo(5f))
         }
     }

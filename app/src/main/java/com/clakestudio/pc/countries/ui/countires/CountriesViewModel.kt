@@ -1,37 +1,86 @@
 package com.clakestudio.pc.countries.ui.countires
 
+import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.Country
-import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
+import com.clakestudio.pc.countries.data.source.CountriesDataSource
+import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class CountriesViewModel @Inject constructor(private val countriesRemoteDataSource: CountriesRemoteDataSource) :
+class CountriesViewModel @Inject constructor(private val countriesRepository: CountriesDataSource) :
     ViewModel() {
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
     private val _countries = ArrayList<Country>()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
-    val navigationLiveEvent : LiveData<String> = _navigationLiveEvent
+    private val _error: MutableLiveData<String> = MutableLiveData()
+    val error: LiveData<String> = _error
+    val _loading: MutableLiveData<Boolean> = MutableLiveData()
+    val loading: LiveData<Boolean> = _loading
+    val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
-    fun init() = compositeDisposable.add(
-        countriesRemoteDataSource.getAllCountries()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                _countries.addAll(it)
-                addAll()
-            }
+    fun load() {
+        if (_countries.isEmpty())
+            init()
+        else {
+            _loading.value = false
+        }
+    }
 
-    )
 
+    private fun init() {
+        _loading.value = true
+        compositeDisposable.add(
+            countriesRepository.getAllCountries()
+                .startWith(ViewObject.loading(null))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                //     .onErrorReturn {
+                //        it.localizedMessage
+                //       ViewObject(false, true, listOf(), "Network error")
+                //    }
+                .materialize()
+                .map {
+                    if (it.isOnError) {
+                        _error.value = (it.error?.localizedMessage + "\nSwipe to refresh")
+                        _loading.value = false
+                    }
+                    it
+                }
+                .filter {
+                    !it.isOnError
+                }
+                .dematerialize<ViewObject<List<Country>>>()
+                .subscribe {
+                    when {
+                        it.isHasError -> {
+                            Log.e("Error", it.errorMessage)
+                            _countries.addAll(listOf())
+                            _error.value = it.errorMessage + "\n Swipe to refresh"
+                            _loading.value = false
+                        }
+                        it.isLoading -> {
+                            _loading.value = true
+                        }
+                        else -> {
+                            Log.e("Succes", "success")
+                            _countries.addAll(it.data!!)
+                            _loading.value = false
+                            _error.value = ""
+                            addAll()
+                        }
+                    }
+                }
+        )
+    }
 
     override fun onCleared() {
         compositeDisposable.clear()

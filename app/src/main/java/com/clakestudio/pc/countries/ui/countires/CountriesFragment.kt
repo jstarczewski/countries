@@ -10,14 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.clakestudio.pc.countries.R
-import com.clakestudio.pc.countries.adapters.countries.CountryAdapter
+import com.clakestudio.pc.countries.adapters.countries.CountriesAdapter
 import com.clakestudio.pc.countries.databinding.CountriesFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
+import kotlinx.android.synthetic.main.countries_fragment.*
 import javax.inject.Inject
 
 
-class CountriesFragment : Fragment(), Injectable {
+class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshListener {
+
+    override fun onRefresh() {
+        binding.viewmodel?.load()
+    }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -41,12 +47,18 @@ class CountriesFragment : Fragment(), Injectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
-            init()
+            load()
             navigationLiveEvent.observe(viewLifecycleOwner, Observer {
                 navigate(it)
             })
+            error.observe(viewLifecycleOwner, Observer {
+                text_view_error.text = it
+            })
+            loading.observe(viewLifecycleOwner, Observer {
+               swipe_refresh_layout.isRefreshing = it
+            })
         }
-
+        swipe_refresh_layout.setOnRefreshListener(this)
 
     }
 
@@ -55,7 +67,7 @@ class CountriesFragment : Fragment(), Injectable {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@CountriesFragment.context)
             adapter =
-                CountryAdapter { binding.viewmodel?.exposeNavigationDestinationCode(it) }
+                CountriesAdapter { binding.viewmodel?.exposeNavigationDestinationCode(it) }
         }
 
     }

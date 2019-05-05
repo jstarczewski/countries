@@ -5,31 +5,56 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
+import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.vo.Country
+import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class DetailsViewModel @Inject constructor(private val remoteDataSource: CountriesRemoteDataSource) : ViewModel() {
-    // TODO: Implement the ViewModel
+class DetailsViewModel @Inject constructor(private val countryRepository: CountriesRepository) : ViewModel() {
+
+    private val compositeDisposable = CompositeDisposable()
 
     val countryName: ObservableField<String> = ObservableField()
     val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
 
-    private val _latlng: MutableLiveData<Pair<Double, Double>> = MutableLiveData()
+    private val _latlng: MutableLiveData<Pair<Double?, Double?>> = MutableLiveData()
     private val _countryFlagUrl: MutableLiveData<String> = MutableLiveData()
 
-    val latlng: LiveData<Pair<Double, Double>> = _latlng
+    val latlng: LiveData<Pair<Double?, Double?>> = _latlng
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
-    fun getDataByName(name: String) = remoteDataSource.getCountryByName(name)
-        .subscribeOn(Schedulers.computation())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
-            details.clear()
-            loadData(Country(it))
-        }
+    fun getDataByName(name: String) = compositeDisposable.add(
+        countryRepository.getCountryByName(name)
+            .startWith(ViewObject.loading(null))
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .materialize()
+            .map {
+                if (it.isOnError) {
+
+                }
+                it
+            }
+            .dematerialize<ViewObject<com.clakestudio.pc.countries.data.Country>>()
+            .subscribe {
+                when {
+                    it.isHasError -> {
+
+                    }
+                    it.isLoading -> {
+
+                    }
+                    else -> {
+                        details.clear()
+                        loadData(Country(it.data!!))
+                    }
+                }
+
+            }
+    )
 
     fun loadData(country: Country) {
         countryName.set(country.countryName)
@@ -38,6 +63,11 @@ class DetailsViewModel @Inject constructor(private val remoteDataSource: Countri
         details.addAll(country.countryDetails)
     }
 
-    fun latlngStringToDouble(latltnString: List<String>) = Pair(latltnString[0].toDouble(), latltnString[1].toDouble())
+    fun latlngStringToDouble(latltnString: List<String?>) =
+        if (!latltnString.isNullOrEmpty()) Pair(latltnString[0]?.toDouble(), latltnString[1]?.toDouble()) else null
 
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
 }

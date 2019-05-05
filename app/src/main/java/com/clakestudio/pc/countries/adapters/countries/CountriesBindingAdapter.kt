@@ -3,12 +3,12 @@ package com.clakestudio.pc.countries.adapters.countries
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-object CountryBindingAdapter {
+object CountriesBindingAdapter {
 
     @JvmStatic
     @BindingAdapter("app:countries")
     fun setCountries(recyclerView: RecyclerView, countries: ArrayList<String>) {
-        with(recyclerView.adapter as CountryAdapter) {
+        with(recyclerView.adapter as CountriesAdapter) {
             replaceData(countries)
         }
     }

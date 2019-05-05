@@ -1,6 +1,10 @@
 package com.clakestudio.pc.countries.di
 
-import com.clakestudio.pc.countries.data.remote.URLManager
+import com.clakestudio.pc.countries.data.source.CountriesDataSource
+import com.clakestudio.pc.countries.data.CountriesRepository
+import com.clakestudio.pc.countries.data.source.remote.CountriesRemoteDataSource
+import com.clakestudio.pc.countries.data.source.remote.CountriesRestAdapter
+import com.clakestudio.pc.countries.data.source.remote.URLManager
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -15,11 +19,30 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
+    fun provideRetrofit(/*application: Application*/): Retrofit {
+/*
+        val cacheSize = 10 * 1024 * 1024 // 10 MB
+        val httpCacheDirectory = File(application.cacheDir, "http-cache")
+        val cache = Cache(httpCacheDirectory, cacheSize.toLong())
+
+        val networkCacheInterceptor = Interceptor { chain ->
+            val response = chain.proceed(chain.request())
+
+            var cacheControl = CacheControl.Builder()
+                .maxAge(1, TimeUnit.MINUTES)
+                .build()
+
+            response.newBuilder()
+                .header("Cache-Control", cacheControl.toString())
+                .build()
+        }*/
+
         val okHttpClient = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
+     //       .addNetworkInterceptor(networkCacheInterceptor)
+       //     .cache(cache)
             .retryOnConnectionFailure(true)
             .build()
         return Retrofit.Builder()
@@ -28,6 +51,19 @@ class AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCountryRemoteDataSource(countriesRestAdapter: CountriesRestAdapter) : CountriesRemoteDataSource {
+        return CountriesRemoteDataSource(countriesRestAdapter)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideCountryRepository(countriesRemoteDataSource: CountriesRemoteDataSource) : CountriesDataSource {
+        return CountriesRepository(countriesRemoteDataSource)
     }
 
 
