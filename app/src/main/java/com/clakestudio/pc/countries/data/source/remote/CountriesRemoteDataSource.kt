@@ -1,11 +1,9 @@
 package com.clakestudio.pc.countries.data.source.remote
 
-import android.util.Log
 import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.data.source.CountryDataSource
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
-import io.reactivex.Single
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -14,9 +12,8 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
         countriesRestAdapter.getAllCountries()
-            .flatMapPublisher { response ->
-                return@flatMapPublisher Flowable.just(handleResponse(response))
-
+            .flatMapPublisher {
+                Flowable.just(handleResponse(it))
             }
     /*
     countriesRestAdapter.getAllCountries()
@@ -28,20 +25,17 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
 */
 
 
-    override fun getCountryByName(name: String): Flowable<Country> =
-        countriesRestAdapter.getCountryByName(name).flatMapPublisher { response ->
-            if (response.isSuccessful) return@flatMapPublisher Flowable.just(response.body())
-            else return@flatMapPublisher Flowable.just(null)
-
+    override fun getCountryByName(name: String): Flowable<ViewObject<Country>> =
+        countriesRestAdapter.getCountryByName(name).flatMapPublisher {
+            Flowable.just(handleResponse(it))
         }
 
-    private fun handleResponse(response: Response<List<Country>>): ViewObject<List<Country>> {
+    private fun <T> handleResponse(response: Response<T>): ViewObject<T> {
         if (response.isSuccessful) {
-            if (response.body()!!.isEmpty())
+            if (response.body() == null || response.code() == 204)
                 return ViewObject.error("Response is empty", response.body())
             return ViewObject.succes(response.body()!!)
         } else {
-            Log.e("REsponse twoja stara", response.code().toString() + "   " + response.body().toString())
             return ViewObject.error(
                 "Error number: " +
                         response.code().toString() + " occured \nWith body " + response.body().toString(),
