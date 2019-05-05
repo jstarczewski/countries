@@ -1,4 +1,4 @@
-package com.clakestudio.pc.countries.vo
+package com.clakestudio.pc.countries.ui.details
 
 import com.clakestudio.pc.countries.data.Country as RemoteCountry
 

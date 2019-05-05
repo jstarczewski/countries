@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.clakestudio.pc.countries.data.CountriesRepository
-import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

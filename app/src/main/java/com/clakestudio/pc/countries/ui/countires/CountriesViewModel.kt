@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.ui.countires
 
-import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,12 +7,14 @@ import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
+import com.clakestudio.pc.countries.testing.OpenForTesting
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+@OpenForTesting
 class CountriesViewModel @Inject constructor(private val countriesRepository: CountriesDataSource) :
     ViewModel() {
 
