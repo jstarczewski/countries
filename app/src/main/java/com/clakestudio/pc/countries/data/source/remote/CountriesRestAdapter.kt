@@ -1,4 +1,4 @@
-package com.clakestudio.pc.countries.data.remote
+package com.clakestudio.pc.countries.data.source.remote
 
 import com.clakestudio.pc.countries.data.Country
 import io.reactivex.Single

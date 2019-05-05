@@ -1,10 +1,10 @@
 package com.clakestudio.pc.countries.di
 
-import com.clakestudio.pc.countries.data.CountryDataSource
+import com.clakestudio.pc.countries.data.source.CountryDataSource
 import com.clakestudio.pc.countries.data.CountryRepository
-import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
-import com.clakestudio.pc.countries.data.remote.CountriesRestAdapter
-import com.clakestudio.pc.countries.data.remote.URLManager
+import com.clakestudio.pc.countries.data.source.remote.CountriesRemoteDataSource
+import com.clakestudio.pc.countries.data.source.remote.CountriesRestAdapter
+import com.clakestudio.pc.countries.data.source.remote.URLManager
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -21,10 +21,10 @@ class AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(true)
+            .connectTimeout(10, TimeUnit.MILLISECONDS)
+            .writeTimeout(1, TimeUnit.SECONDS)
+            .readTimeout(1, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(false)
             .build()
         return Retrofit.Builder()
             .client(okHttpClient)

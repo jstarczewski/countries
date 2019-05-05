@@ -5,7 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
+import com.clakestudio.pc.countries.data.source.remote.CountriesRemoteDataSource
 import com.clakestudio.pc.countries.vo.Country
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

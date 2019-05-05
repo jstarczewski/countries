@@ -1,4 +1,4 @@
-package com.clakestudio.pc.countries.data.remote
+package com.clakestudio.pc.countries.data.source.remote
 
 object URLManager {
 
