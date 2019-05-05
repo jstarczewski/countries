@@ -41,7 +41,7 @@ class CountriesFragment : Fragment(), Injectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
-            init()
+            init2()
             navigationLiveEvent.observe(viewLifecycleOwner, Observer {
                 navigate(it)
             })

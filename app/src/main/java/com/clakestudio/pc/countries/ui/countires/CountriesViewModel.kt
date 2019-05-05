@@ -3,13 +3,11 @@ package com.clakestudio.pc.countries.ui.countires
 import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.Country
-import com.clakestudio.pc.countries.data.CountryDataSource
-import com.clakestudio.pc.countries.data.CountryRepository
-import com.clakestudio.pc.countries.data.remote.CountriesRemoteDataSource
+import com.clakestudio.pc.countries.data.source.CountryDataSource
+import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -22,14 +20,14 @@ class CountriesViewModel @Inject constructor(private val countryRepository: Coun
     private val _countries = ArrayList<Country>()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
-    val navigationLiveEvent : LiveData<String> = _navigationLiveEvent
+    val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
     fun init() = compositeDisposable.add(
         countryRepository.getAllCountries()
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                _countries.addAll(it)
+                _countries.addAll(it.data!!)
                 addAll()
             }
 
@@ -38,10 +36,36 @@ class CountriesViewModel @Inject constructor(private val countryRepository: Coun
     fun init2() {
         compositeDisposable.add(
             countryRepository.getAllCountries()
-                .onErrorReturn {
-                    throw it
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                //     .onErrorReturn {
+                //        it.localizedMessage
+                //       ViewObject(false, true, listOf(), "Network error")
+                //    }
+                .materialize()
+                .map {
+                    if (it.isOnError) {
+                    }
+                    it
                 }
-                .subscribe { _countries.addAll(it) }
+                .filter{
+                    !it.isOnError
+                }
+                .dematerialize<ViewObject<List<Country>>>()
+                .subscribe {
+                    when {
+                        it.isHasError -> {
+                            Log.e("Error", it.errorMessage)
+                            _countries.addAll(listOf())
+                        }
+                        it.isLoading -> Log.e("Loading", "Is loading")
+                        else -> {
+                            Log.e("Succes", "succes")
+                            _countries.addAll(it.data!!)
+                            addAll()
+                        }
+                    }
+                }
         )
     }
 
