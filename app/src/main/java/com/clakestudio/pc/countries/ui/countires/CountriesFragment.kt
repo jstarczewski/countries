@@ -30,7 +30,6 @@ class CountriesFragment : Fragment(), Injectable {
     ): View? {
         binding = CountriesFragmentBinding.inflate(inflater, container, false)
         setUpRecyclerView()
-
         return binding.root
     }
 
@@ -43,7 +42,7 @@ class CountriesFragment : Fragment(), Injectable {
         super.onViewCreated(view, savedInstanceState)
         binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
             init()
-            navigateLiveEvent.observe(viewLifecycleOwner, Observer {
+            navigationLiveEvent.observe(viewLifecycleOwner, Observer {
                 navigate(it)
             })
         }

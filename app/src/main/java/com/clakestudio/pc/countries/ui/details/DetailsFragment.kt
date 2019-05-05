@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -58,6 +59,8 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback {
         //    setFlag()
         // TODO: Use the ViewModel
     }
+
+
 
     private fun setUpRecyclerView() {
         recycler_view_details.apply {

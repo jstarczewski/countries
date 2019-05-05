@@ -28,6 +28,7 @@ class DetailsViewModel @Inject constructor(private val remoteDataSource: Countri
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                details.clear()
                 loadData(Country(it))
             }
 

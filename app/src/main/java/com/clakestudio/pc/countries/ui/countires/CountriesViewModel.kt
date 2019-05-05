@@ -18,9 +18,8 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
     val countries: ObservableArrayList<String> = ObservableArrayList()
     private val _countries = ArrayList<Country>()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-
-    private val _destinationAlpha: MutableLiveData<String> = MutableLiveData()
-    val navigateLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
+    private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
+    val navigationLiveEvent : LiveData<String> = _navigationLiveEvent
 
     fun init() = compositeDisposable.add(
         countriesRemoteDataSource.getAllCountries()
@@ -58,6 +57,6 @@ class CountriesViewModel @Inject constructor(private val countriesRemoteDataSour
     }
 
     fun exposeNavigationDestinationCode(destinationName: String) {
-        navigateLiveEvent.value = _countries.find { it.name == destinationName }?.alpha3Code
+        _navigationLiveEvent.value = _countries.find { it.name == destinationName }?.alpha3Code
     }
 }
