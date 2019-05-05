@@ -8,14 +8,14 @@ import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.testing.OpenForTesting
+import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 @OpenForTesting
-class CountriesViewModel @Inject constructor(private val countriesRepository: CountriesDataSource) :
+class CountriesViewModel @Inject constructor(private val countriesRepository: CountriesDataSource,
+                                             private val appSchedulers: SchedulersProvider) :
     ViewModel() {
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
@@ -42,8 +42,8 @@ class CountriesViewModel @Inject constructor(private val countriesRepository: Co
         compositeDisposable.add(
             countriesRepository.getAllCountries()
                 .startWith(ViewObject.loading(null))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(appSchedulers.ioScheduler())
+                .observeOn(appSchedulers.uiScheduler())
                 //     .onErrorReturn {
                 //        it.localizedMessage
                 //       ViewObject(false, true, listOf(), "Network error")

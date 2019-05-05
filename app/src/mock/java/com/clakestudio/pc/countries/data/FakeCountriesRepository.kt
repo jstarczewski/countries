@@ -8,10 +8,12 @@ import io.reactivex.Flowable
 class FakeCountriesRepository() : CountriesDataSource {
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val list: ViewObject<List<Country>> = ViewObject.success(listOf(CountriesDataProvider.provideColombia()))
+        return Flowable.just(list)
     }
 
-    override fun getCountryByName(name: String): Flowable<ViewObject<Country>> = Flowable.just(ViewObject.success(CountriesDataProvider.provideColombia()))
+    override fun getCountryByName(name: String): Flowable<ViewObject<Country>> =
+        Flowable.just(ViewObject.success(CountriesDataProvider.provideColombia()))
 
 
 }
