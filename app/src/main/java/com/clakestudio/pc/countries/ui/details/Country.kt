@@ -4,6 +4,7 @@ import com.clakestudio.pc.countries.data.Country as RemoteCountry
 
 data class Country(val country: RemoteCountry,
                    val countryName: String = country.name,
+                   val alpha3Code : String = country.alpha3Code,
                    val countryFlagUrl: String = country.flag,
                    val latlng: List<String> = country.latlng,
                    val countryDetails: ArrayList<Pair<String, String?>> = ArrayList()

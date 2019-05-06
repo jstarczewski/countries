@@ -14,7 +14,7 @@ class CountriesRepository @Inject constructor(private val countriesRemoteDataSou
     CountriesDataSource {
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> {
-        return countriesRemoteDataSource.getAllCountries()
+        return countriesRemoteDataSource.getAllCountries().toFlowable()
         // .debounce(400, TimeUnit.MILLISECONDS)
     }
 
