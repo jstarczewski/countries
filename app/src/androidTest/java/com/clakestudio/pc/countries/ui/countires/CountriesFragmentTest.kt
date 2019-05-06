@@ -3,12 +3,9 @@ package com.clakestudio.pc.countries.ui.countires
 import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_DEL
-import androidx.databinding.ObservableArrayList
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
 import com.clakestudio.pc.countries.data.CountriesRepository
@@ -24,8 +21,6 @@ import org.junit.Test
 import org.mockito.Mockito.*
 import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import com.clakestudio.pc.countries.R
 

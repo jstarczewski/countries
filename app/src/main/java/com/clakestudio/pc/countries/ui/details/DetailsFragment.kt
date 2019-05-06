@@ -6,6 +6,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.clakestudio.pc.countries.adapters.details.DetailAdapter
@@ -15,6 +16,7 @@ import kotlinx.android.synthetic.main.details_fragment.*
 import javax.inject.Inject
 import com.ahmadrosid.svgloader.SvgLoader
 import com.clakestudio.pc.countries.R
+import com.clakestudio.pc.countries.testing.OpenForTesting
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,6 +25,7 @@ import com.google.android.gms.maps.model.LatLng
 
 private const val MAP_VIEW_BUNDLE_KEY = "MAP_BUNDLE_KEY"
 
+@OpenForTesting
 class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefreshLayout.OnRefreshListener {
 
 
@@ -166,6 +169,8 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
     override fun onRefresh() {
         initFromBundle()
     }
+
+    fun navController() = findNavController()
 
 
 }
