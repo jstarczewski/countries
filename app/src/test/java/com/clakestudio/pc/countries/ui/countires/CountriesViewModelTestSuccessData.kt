@@ -2,7 +2,6 @@ package com.clakestudio.pc.countries.ui.countires
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.clakestudio.pc.countries.data.FakeCountriesRepository
-import com.clakestudio.pc.countries.util.TestSchedulersProvider
 import org.junit.Before
 import org.junit.Test
 
@@ -11,7 +10,7 @@ import org.junit.Rule
 
 class CountriesViewModelTestSuccessData {
 
-    private val viewModel = CountriesViewModel(FakeCountriesRepository(false),TestSchedulersProvider)
+    private val viewModel = CountriesViewModel(FakeCountriesRepository(false),TestSchedulersProcider())
 
     @get:Rule
     val rule = InstantTaskExecutorRule()

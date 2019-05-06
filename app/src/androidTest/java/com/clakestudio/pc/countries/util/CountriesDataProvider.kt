@@ -13,6 +13,10 @@ object CountriesDataProvider {
         return ViewObject.error("Test error", listOf(provideColombia(), providePoland()))
     }
 
+    fun provideColombiaJSON(): String {
+        return colombia
+    }
+
     fun provideColombia() =
         Country(
             "Colombia",
@@ -154,9 +158,8 @@ object CountriesDataProvider {
             ),
             cioc = "POL"
         )
-}
 
-const val colombia = """
+    private const val colombia = """
 [{
     "name": "Colombia",
     "topLevelDomain": [".co"],
@@ -211,3 +214,4 @@ const val colombia = """
     "cioc": "COL"
 }]
 """
+}

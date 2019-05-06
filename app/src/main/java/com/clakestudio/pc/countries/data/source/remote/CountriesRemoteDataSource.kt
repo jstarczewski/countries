@@ -32,8 +32,7 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
             Flowable.just(handleResponse(it))
         }
 
-    @VisibleForTesting
-    fun <T> handleResponse(response: Response<T>): ViewObject<T> {
+    private fun <T> handleResponse(response: Response<T>): ViewObject<T> {
         Log.e("Response", response.code().toString())
         if (response.isSuccessful) {
             if (response.body() == null || response.code() == 204)

@@ -2,8 +2,10 @@ package com.clakestudio.pc.countries.util
 
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Singleton
 
-object TestSchedulersProvider : SchedulersProvider {
+@Singleton
+class TestSchedulersProvider() : SchedulersProvider {
 
     override fun uiScheduler(): Scheduler = Schedulers.trampoline()
 

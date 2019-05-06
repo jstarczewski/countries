@@ -13,6 +13,10 @@ object CountriesDataProvider {
         return ViewObject.error("Test error", listOf(provideColombia(), providePoland()))
     }
 
+    fun provideColombiaJSON(): String {
+        return colombia
+    }
+
     fun provideColombia() =
         Country(
             "Colombia",
