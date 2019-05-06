@@ -1,7 +1,13 @@
 package com.clakestudio.pc.countries.di
 
+import android.app.Application
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.data.CountriesRepository
+import com.clakestudio.pc.countries.data.source.local.CountriesDatabase
+import com.clakestudio.pc.countries.data.source.local.CountriesLocalDataSource
+import com.clakestudio.pc.countries.data.source.local.CountryDao
 import com.clakestudio.pc.countries.data.source.remote.CountriesRemoteDataSource
 import com.clakestudio.pc.countries.data.source.remote.CountriesRestAdapter
 import com.clakestudio.pc.countries.data.source.remote.URLManager
@@ -43,8 +49,8 @@ class AppModule {
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
-     //       .addNetworkInterceptor(networkCacheInterceptor)
-       //     .cache(cache)
+            //       .addNetworkInterceptor(networkCacheInterceptor)
+            //     .cache(cache)
             .retryOnConnectionFailure(true)
             .build()
         return Retrofit.Builder()
@@ -55,25 +61,46 @@ class AppModule {
             .build()
     }
 
+    @Provides
+    @Singleton
+    fun provideCountriesDatabase(app: Application): CountriesDatabase {
+        return Room.databaseBuilder(app, CountriesDatabase::class.java, "countries.db")
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCountriesDao(countriesDatabase: CountriesDatabase): CountryDao {
+        return countriesDatabase.countryDao()
+    }
 
 
     @Provides
     @Singleton
-    fun provideAppSchedulers() : SchedulersProvider {
+    fun provideAppSchedulers(): SchedulersProvider {
         return AppSchedulersProvider()
     }
 
     @Provides
     @Singleton
-    fun provideCountryRemoteDataSource(countriesRestAdapter: CountriesRestAdapter) : CountriesRemoteDataSource {
+    fun provideCountryRemoteDataSource(countriesRestAdapter: CountriesRestAdapter): CountriesRemoteDataSource {
         return CountriesRemoteDataSource(countriesRestAdapter)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCountriesLocalDataSource(countriesDao: CountryDao): CountriesLocalDataSource {
+        return CountriesLocalDataSource(countriesDao)
     }
 
 
     @Provides
     @Singleton
-    fun provideCountryRepository(countriesRemoteDataSource: CountriesRemoteDataSource) : CountriesDataSource {
-        return CountriesRepository(countriesRemoteDataSource)
+    fun provideCountryRepository(
+        countriesRemoteDataSource: CountriesRemoteDataSource,
+        countriesLocalDataSource: CountriesLocalDataSource
+    ): CountriesDataSource {
+        return CountriesRepository(countriesRemoteDataSource, countriesLocalDataSource)
     }
 
 

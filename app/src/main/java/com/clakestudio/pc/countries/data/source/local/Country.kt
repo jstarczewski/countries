@@ -9,6 +9,6 @@ data class Country(
     val alpha3Code : String,
     val countryName: String,
     val countryFlagUrl : String,
-    val latlng: String,
-    val details : String
+    val latlng: List<String>,
+    val details : List<Pair<String, String?>>
 )
