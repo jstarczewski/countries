@@ -13,8 +13,10 @@ class FakeCountriesRepository(private val asError: Boolean) : CountriesDataSourc
             Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError())
     }
 
-    override fun getCountryByName(name: String): Flowable<ViewObject<Country>> =
-        Flowable.just(ViewObject.success(CountriesDataProvider.provideColombia()))
+    override fun getCountryByName(alpha: String): Flowable<ViewObject<Country>> =
+        if ("Colombia".toLowerCase().contains(alpha.toLowerCase()))
+            Flowable.just(ViewObject.success(CountriesDataProvider.provideColombia()))
+        else Flowable.just(ViewObject.success(CountriesDataProvider.providePoland()))
 
 
 }

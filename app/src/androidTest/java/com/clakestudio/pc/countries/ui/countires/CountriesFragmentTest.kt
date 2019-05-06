@@ -24,6 +24,8 @@ import org.junit.Test
 import org.mockito.Mockito.*
 import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import com.clakestudio.pc.countries.R
 
@@ -88,6 +90,28 @@ class CountriesFragmentTest {
                 R.id.text_view_name
             )
         ).check(matches(withText("Colombia")))
+    }
+
+
+    @Test
+    fun textViewWithErrorMessageIsVisibleWhenDataLoadedContainsErrors() {
+        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError()))
+        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error\n Swipe to refresh")))
+    }
+
+    @Test
+    fun textViewErrorMessageDisappearsAndDataIsShowedAfterSwipeRefresh() {
+        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError()))
+        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error\n Swipe to refresh")))
+        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrapedAsSucces()))
+        Espresso.onView(withId(R.id.recycler_view_countries)).perform(swipeDown())
+        Espresso.onView(
+            recyclerViewCountriesMatcher().atPositionOnView(
+                0,
+                R.id.text_view_name
+            )
+        ).check(matches(withText("Colombia")))
+
     }
 
     class TestCountriesFragment : CountriesFragment() {
