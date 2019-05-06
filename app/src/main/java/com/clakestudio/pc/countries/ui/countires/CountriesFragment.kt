@@ -58,7 +58,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
                 text_view_error.text = it
             })
             loading.observe(viewLifecycleOwner, Observer {
-               swipe_refresh_layout.isRefreshing = it
+                swipe_refresh_layout.isRefreshing = it
             })
         }
         swipe_refresh_layout.setOnRefreshListener(this)

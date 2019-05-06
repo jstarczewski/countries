@@ -1,16 +1,16 @@
 package com.clakestudio.pc.countries.ui.countires
 
+import android.util.Log
+import android.view.KeyEvent
+import android.view.KeyEvent.KEYCODE_DEL
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
-import com.clakestudio.pc.countries.R
-import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.testing.SingleFragmentActivity
 import com.clakestudio.pc.countries.util.AppSchedulersProvider
@@ -22,6 +22,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.*
+import android.widget.EditText
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.*
+import com.clakestudio.pc.countries.R
+
 
 class CountriesFragmentTest {
 
@@ -54,16 +59,44 @@ class CountriesFragmentTest {
 
     @Test
     fun testItemsWereFilteredAndPolandWasNotVisible() {
-        Espresso.onView(RecyclerViewMatcher(R.id.recycler_view_countries).atPositionOnView(0, R.id.text_view_name)).check(matches(withText("Colombia")))
+        onView(withId(R.id.action_search)).perform(click())
+        onView(isAssignableFrom(EditText::class.java)).perform(typeText("Pol"), pressKey(KeyEvent.KEYCODE_ENTER))
+        Espresso.onView(
+            recyclerViewCountriesMatcher().atPositionOnView(
+                0,
+                R.id.text_view_name
+            )
+        ).check(matches(withText("Poland")))
     }
 
     @Test
     fun testItemsWereFilteredThenFilteredBackAndPolandIsAgainDisplayed() {
+        onView(withId(R.id.action_search)).perform(click())
+        onView(isAssignableFrom(EditText::class.java)).perform(typeText("Pol"), pressKey(KeyEvent.KEYCODE_ENTER))
+        Espresso.onView(
+            recyclerViewCountriesMatcher().atPositionOnView(
+                0,
+                R.id.text_view_name
+            )
+        ).check(matches(withText("Poland")))
+        onView(isAssignableFrom(EditText::class.java)).perform(pressKey(KEYCODE_DEL))
+            .perform(pressKey(KEYCODE_DEL))
+            .perform(pressKey(KEYCODE_DEL))
+        Espresso.onView(
+            recyclerViewCountriesMatcher().atPositionOnView(
+                0,
+                R.id.text_view_name
+            )
+        ).check(matches(withText("Colombia")))
     }
 
     class TestCountriesFragment : CountriesFragment() {
         val navController = mock<NavController>(NavController::class.java)
         override fun navController() = navController
+    }
+
+    private fun recyclerViewCountriesMatcher(): RecyclerViewMatcher {
+        return RecyclerViewMatcher(R.id.recycler_view_countries)
     }
 
 }
