@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.data.source.local
 
-import com.clakestudio.pc.countries.ui.details.Country
 import javax.inject.Inject
 
 class CountriesLocalDataSource @Inject constructor(private val countriesDao: CountryDao) {

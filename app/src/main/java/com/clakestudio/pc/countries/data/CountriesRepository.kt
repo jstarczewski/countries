@@ -24,10 +24,27 @@ class CountriesRepository @Inject constructor(
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
         Flowable.concatArrayEager(
-            getAllUsersFromRemoteDataSource(),
-            getAllUsersFromLocalDataSource()
+            getAllUsersFromLocalDataSource(),
+            getAllUsersFromRemoteDataSource()
+                .materialize()
+                .map { notification ->
+                    if (notification.isOnError)
+                        ViewObject.error(notification.error!!.localizedMessage, null)
+                    notification
+
+                    /*
+                    if (it.isOnError) {
+                       // _error.value = (it.error?.localizedMessage + "\nSwipe to refresh")
+                       // _loading.value = false
+                    }
+                    it*/
+                }
+                .filter {
+                    !it.isOnError
+                }
+                .dematerialize<ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>>>()
+                .debounce(400, TimeUnit.MILLISECONDS)
         )
-            .debounce(400, TimeUnit.MILLISECONDS)
 
 
     private fun getAllUsersFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
@@ -35,16 +52,29 @@ class CountriesRepository @Inject constructor(
             .toFlowable()
             .doOnNext { countries ->
                 countries.data?.forEach {
-                    countriesLocalDataSource.saveCountry(it)
+                    countriesLocalDataSource.saveCountry(
+                        com.clakestudio.pc.countries.data.source.local.Country(
+                            it.alpha3Code,
+                            it.countryName,
+                            it.countryFlagUrl,
+                            it.latlng.joinToString(separator = ","),
+                            it.countryDetails
+                        )
+                    )
                 }
             }
 
     private fun getAllUsersFromLocalDataSource(): Flowable<ViewObject<List<Country>>> =
         countriesLocalDataSource.getAllCountries()
             .map { countries ->
-                ViewObject.success(countries.map {
-                    Country(it.countryName, it.countryFlagUrl, it.alpha3Code, it.latlng, it.details)
-                })
+                if (countries.isNotEmpty()) {
+                    ViewObject.success(countries.map {
+                        Country(it.countryName, it.countryFlagUrl, it.alpha3Code, it.latlng.split(","), it.details)
+                    })
+                }
+                else {
+                    ViewObject.error("Country is empty", null)
+                }
             }
             .toFlowable()
 

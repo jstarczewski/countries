@@ -93,6 +93,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxJavaVersion"
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
     implementation "androidx.room:room-rxjava2:$rootProject.roomVersion"
+    kapt "android.arch.persistence.room:compiler:1.0.0"
 
 
     implementation 'com.google.android.gms:play-services-base:16.1.0'
