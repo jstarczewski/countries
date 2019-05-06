@@ -21,7 +21,7 @@ class CountriesViewModel @Inject constructor(
     ViewModel() {
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
-    private val _countries = ArrayList<Country>()
+    private val _countries = MutableLiveData<List<com.clakestudio.pc.countries.ui.details.Country>>()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
     private val _error: MutableLiveData<String> = MutableLiveData()
@@ -31,7 +31,7 @@ class CountriesViewModel @Inject constructor(
     val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
     fun load() {
-        if (_countries.isEmpty())
+        if (_countries.value.isNullOrEmpty())
             init()
         else {
             _loading.value = false
@@ -50,19 +50,7 @@ class CountriesViewModel @Inject constructor(
                 //        it.localizedMessage
                 //       ViewObject(false, true, listOf(), "Network error")
                 //    }
-                .materialize()
-                .map {
-                    if (it.isOnError) {
-                        _error.value = (it.error?.localizedMessage + "\nSwipe to refresh")
-                        _loading.value = false
-                    }
-                    it
-                }
-                .filter {
-                    !it.isOnError
-                }
-                .dematerialize<ViewObject<List<Country>>>()
-                .subscribe {
+               .subscribe ({
                     when {
                         it.isHasError -> {
                             _error.value = it.errorMessage + "\n Swipe to refresh"
@@ -72,13 +60,15 @@ class CountriesViewModel @Inject constructor(
                             _loading.value = true
                         }
                         else -> {
-                            _countries.addAll(it.data!!)
+                            _countries.value = it.data?.sortedBy { it.countryName }
                             _loading.value = false
                             _error.value = ""
                             addAll()
                         }
                     }
-                }
+                }, {
+
+               })
         )
     }
 
@@ -94,20 +84,20 @@ class CountriesViewModel @Inject constructor(
 
     fun addAll() {
         countries.clear()
-        _countries.forEach {
-            countries.add(it.name)
+        _countries.value?.forEach {
+            countries.add(it.countryName)
         }
     }
 
     fun addOnlyThoseContainingPattern(pattern: String) {
         countries.clear()
-        _countries.forEach {
-            if (it.name.toLowerCase().contains(pattern.toLowerCase()))
-                countries.add(it.name)
+        _countries.value?.forEach {
+            if (it.countryName.toLowerCase().contains(pattern.toLowerCase()))
+                countries.add(it.countryName)
         }
     }
 
     fun exposeNavigationDestinationCode(destinationName: String) {
-        _navigationLiveEvent.value = _countries.find { it.name == destinationName }?.alpha3Code ?: "POL"
+        _navigationLiveEvent.value = _countries.value?.find { it.countryName == destinationName }?.alpha3Code ?: "POL"
     }
 }

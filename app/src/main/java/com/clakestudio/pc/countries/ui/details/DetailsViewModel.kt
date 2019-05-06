@@ -11,8 +11,9 @@ import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class DetailsViewModel @Inject constructor(private val countryRepository: CountriesDataSource,
-                                           private val appSchedulersProvider: SchedulersProvider
+class DetailsViewModel @Inject constructor(
+    private val countryRepository: CountriesDataSource,
+    private val appSchedulersProvider: SchedulersProvider
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
@@ -42,39 +43,29 @@ class DetailsViewModel @Inject constructor(private val countryRepository: Countr
     }
 
     private fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
-            countryRepository.getCountryByName(alpha)
-                    .startWith(ViewObject.loading(null))
-                    .subscribeOn(appSchedulersProvider.ioScheduler())
-                    .observeOn(appSchedulersProvider.uiScheduler())
-                    .materialize()
-                    .map {
-                        if (it.isOnError) {
-                            _error.value = it.error?.localizedMessage + "\nSwipe to refresh"
-                            _loading.value = false
-                        }
-                        it
+        countryRepository.getCountryByAlpha(alpha)
+            .startWith(ViewObject.loading(null))
+            .subscribeOn(appSchedulersProvider.ioScheduler())
+            .observeOn(appSchedulersProvider.uiScheduler())
+            .subscribe {
+                when {
+                    it.isHasError -> {
+                        _error.value = it.errorMessage + "\n Swipe to refresh"
+                        _loading.value = false
                     }
-                    .filter { !it.isOnError }
-                    .dematerialize<ViewObject<com.clakestudio.pc.countries.data.Country>>()
-                    .subscribe {
-                        when {
-                            it.isHasError -> {
-                                _error.value = it.errorMessage + "\n Swipe to refresh"
-                                _loading.value = false
-                            }
-                            it.isLoading -> {
-                                _loading.value = true
-                            }
-                            else -> {
-                                details.clear()
-                                _error.value = ""
-                                _loading.value = false
-                                loadData(Country(it.data!!))
-                                this@DetailsViewModel.alpha = alpha
-                            }
-                        }
+                    it.isLoading -> {
+                        _loading.value = true
+                    }
+                    else -> {
+                        details.clear()
+                        _error.value = ""
+                        _loading.value = false
+                        loadData(it.data!!)
+                        this@DetailsViewModel.alpha = alpha
+                    }
+                }
 
-                    }
+            }
     )
 
     fun loadData(country: Country) {
@@ -85,7 +76,7 @@ class DetailsViewModel @Inject constructor(private val countryRepository: Countr
     }
 
     fun latlngStringToDouble(latltnString: List<String?>) =
-            if (!latltnString.isNullOrEmpty()) Pair(latltnString[0]?.toDouble(), latltnString[1]?.toDouble()) else null
+        if (!latltnString.isNullOrEmpty()) Pair(latltnString[0]?.toDouble(), latltnString[1]?.toDouble()) else null
 
 
     override fun onCleared() {
