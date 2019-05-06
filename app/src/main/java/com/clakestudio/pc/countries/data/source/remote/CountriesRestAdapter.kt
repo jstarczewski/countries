@@ -22,14 +22,13 @@ class CountriesRestAdapter @Inject constructor(retrofit: Retrofit) {
         fun getAllCountries(): Single<Response<List<Country>>>
 
         @GET(URLManager.name)
-        fun getCountryByName(@Path("alpha") name: String): Single<Response<Country>>
-
+        fun getCountryByAlpha(@Path("alpha") alpha: String): Single<Response<Country>>
 
     }
 
     fun getAllCountries() = countriesService.getAllCountries()
 
-    fun getCountryByName(name: String) = countriesService.getCountryByName(name)
+    fun getCountryByAlpha(alpha: String) = countriesService.getCountryByAlpha(alpha)
 
 
 }

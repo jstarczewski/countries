@@ -50,7 +50,7 @@ class CountriesViewModel @Inject constructor(
                 //        it.localizedMessage
                 //       ViewObject(false, true, listOf(), "Network error")
                 //    }
-               .subscribe {
+               .subscribe ({
                     when {
                         it.isHasError -> {
                             _error.value = it.errorMessage + "\n Swipe to refresh"
@@ -66,7 +66,9 @@ class CountriesViewModel @Inject constructor(
                             addAll()
                         }
                     }
-                }
+                }, {
+
+               })
         )
     }
 

@@ -18,26 +18,33 @@ class CountriesRepository @Inject constructor(
 ) :
     CountriesDataSource {
 
-    override fun getCountryByName(alpha: String): Flowable<ViewObject<Country>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
+    override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
         Flowable.concatArrayEager(
-            getAllUsersFromLocalDataSource(),
-            getAllUsersFromRemoteDataSource()
+            getCountryByAlphaFromLocalDataSource(alpha),
+            getCountryByAlphaFromRemoteDataSource(alpha)
                 .materialize()
                 .map { notification ->
                     if (notification.isOnError)
                         ViewObject.error(notification.error!!.localizedMessage, null)
                     notification
+                }
+                .filter {
+                    !it.isOnError
+                }
+                .dematerialize<ViewObject<Country>>()
+                .debounce(400, TimeUnit.MILLISECONDS)
+        )
 
-                    /*
-                    if (it.isOnError) {
-                       // _error.value = (it.error?.localizedMessage + "\nSwipe to refresh")
-                       // _loading.value = false
-                    }
-                    it*/
+
+    override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
+        Flowable.concatArrayEager(
+            getAllCountriesFromLocalDataSource(),
+            getAllCountriesFromRemoteDataSource()
+                .materialize()
+                .map { notification ->
+                    if (notification.isOnError)
+                        ViewObject.error(notification.error!!.localizedMessage, null)
+                    notification
                 }
                 .filter {
                     !it.isOnError
@@ -47,7 +54,35 @@ class CountriesRepository @Inject constructor(
         )
 
 
-    private fun getAllUsersFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
+    private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<Country>> =
+        countriesLocalDataSource.getCountryByAlpha(alpha)
+            .map { country ->
+                if (country.alpha3Code.isNotEmpty() && country.alpha3Code != "null") {
+                    ViewObject.success(
+                        Country(
+                            country.countryName,
+                            country.countryFlagUrl,
+                            country.alpha3Code,
+                            country.latlng.split(","),
+                            country.details
+                        )
+                    )
+                } else {
+                    ViewObject.error("Cannot fetch data from network, no cache is available", null)
+                }
+            }.toFlowable()
+
+    private fun getCountryByAlphaFromRemoteDataSource(alpha: String): Flowable<ViewObject<Country>> =
+        countriesRemoteDataSource.getCountryByAlpha(alpha)
+            .map { viewObject ->
+                if (!viewObject.isHasError) {
+                    ViewObject.success(Country(viewObject.data!!))
+                } else {
+                    ViewObject.error(viewObject.errorMessage!!, null)
+                }
+            }.toFlowable()
+
+    fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
         getCountriesFromRemoteDataSourceAndMap()
             .toFlowable()
             .doOnNext { countries ->
@@ -64,34 +99,18 @@ class CountriesRepository @Inject constructor(
                 }
             }
 
-    private fun getAllUsersFromLocalDataSource(): Flowable<ViewObject<List<Country>>> =
+    private fun getAllCountriesFromLocalDataSource(): Flowable<ViewObject<List<Country>>> =
         countriesLocalDataSource.getAllCountries()
             .map { countries ->
                 if (countries.isNotEmpty()) {
                     ViewObject.success(countries.map {
                         Country(it.countryName, it.countryFlagUrl, it.alpha3Code, it.latlng.split(","), it.details)
                     })
-                }
-                else {
+                } else {
                     ViewObject.error("Country is empty", null)
                 }
             }
             .toFlowable()
-
-
-    /* if (!viewObject.isHasError) {
-         //ViewObject.success(
-             viewObject.data?.map {
-                 com.clakestudio.pc.countries.ui.details.Country(it)
-         }
-         )
-     }*/
-
-
-    //   fun mergeAllCountries() = Flowable.concatArrayEager(
-    //      testGetAllCountries().toFlowable(),
-    // testGetAllCountriesTwo().toFlowable()
-    //   ).debounce(400, TimeUnit.MILLISECONDS)
 
 
     private fun getCountriesFromRemoteDataSourceAndMap(): Single<ViewObject<List<Country>>> =
@@ -104,32 +123,8 @@ class CountriesRepository @Inject constructor(
                 } else {
                     ViewObject.error(viewObject.errorMessage!!, null)
                 }
-                /* if (!viewObject.isHasError) {
-                     //ViewObject.success(
-                         viewObject.data?.map {
-                             com.clakestudio.pc.countries.ui.details.Country(it)
-                     }
-                     )
-                 }*/
+
             }
 
-    fun testGetAllCountries(): Single<ViewObject<List<Country>>> =
-        countriesRemoteDataSource.getAllCountries()
-            .map { viewObject ->
-                if (!viewObject.isHasError) {
-                    ViewObject.success(viewObject.data!!.map {
-                        Country(it)
-                    })
-                } else {
-                    ViewObject.error(viewObject.errorMessage!!, null)
-                }
-                /* if (!viewObject.isHasError) {
-                     //ViewObject.success(
-                         viewObject.data?.map {
-                             com.clakestudio.pc.countries.ui.details.Country(it)
-                     }
-                     )
-                 }*/
-            }
 
 }
