@@ -5,15 +5,15 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.clakestudio.pc.countries.data.CountriesRepository
-import com.clakestudio.pc.countries.vo.Country
+import com.clakestudio.pc.countries.data.source.CountriesDataSource
+import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class DetailsViewModel @Inject constructor(private val countryRepository: CountriesRepository) : ViewModel() {
+class DetailsViewModel @Inject constructor(private val countryRepository: CountriesDataSource,
+                                           private val appSchedulersProvider: SchedulersProvider
+) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -44,8 +44,8 @@ class DetailsViewModel @Inject constructor(private val countryRepository: Countr
     private fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
             countryRepository.getCountryByName(alpha)
                     .startWith(ViewObject.loading(null))
-                    .subscribeOn(Schedulers.computation())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(appSchedulersProvider.ioScheduler())
+                    .observeOn(appSchedulersProvider.uiScheduler())
                     .materialize()
                     .map {
                         if (it.isOnError) {

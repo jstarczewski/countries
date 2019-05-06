@@ -1,6 +1,6 @@
 
 
-package com.clakestudio.pc.countries.util
+package com.clakestudio.pc.countries.testing
 
 /**
  * This annotation allows us to open some classes for mocking purposes while they are final in

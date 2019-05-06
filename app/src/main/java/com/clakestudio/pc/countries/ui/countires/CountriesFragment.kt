@@ -15,10 +15,12 @@ import com.clakestudio.pc.countries.R
 import com.clakestudio.pc.countries.adapters.countries.CountriesAdapter
 import com.clakestudio.pc.countries.databinding.CountriesFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
+import com.clakestudio.pc.countries.testing.OpenForTesting
 import kotlinx.android.synthetic.main.countries_fragment.*
 import javax.inject.Inject
 
 
+@OpenForTesting
 class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshListener {
 
     override fun onRefresh() {
@@ -27,7 +29,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var binding: CountriesFragmentBinding
+    private lateinit var binding: com.clakestudio.pc.countries.databinding.CountriesFragmentBinding
 
 
     override fun onCreateView(
@@ -51,11 +53,12 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
             navigationLiveEvent.observe(viewLifecycleOwner, Observer {
                 navigate(it)
             })
+
             error.observe(viewLifecycleOwner, Observer {
                 text_view_error.text = it
             })
             loading.observe(viewLifecycleOwner, Observer {
-               swipe_refresh_layout.isRefreshing = it
+                swipe_refresh_layout.isRefreshing = it
             })
         }
         swipe_refresh_layout.setOnRefreshListener(this)
@@ -76,7 +79,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
         Log.e("Name", destination)
         val action = CountriesFragmentDirections.actionCountriesFragmentToDetailsFragment()
         action.alpha = destination
-        findNavController().navigate(action)
+        navController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

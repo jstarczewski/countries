@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.ui.countires
 
-import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,13 +7,17 @@ import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
+import com.clakestudio.pc.countries.testing.OpenForTesting
+import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class CountriesViewModel @Inject constructor(private val countriesRepository: CountriesDataSource) :
+@OpenForTesting
+class CountriesViewModel @Inject constructor(
+    private val countriesRepository: CountriesDataSource,
+    private val appSchedulers: SchedulersProvider
+) :
     ViewModel() {
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
@@ -41,8 +44,8 @@ class CountriesViewModel @Inject constructor(private val countriesRepository: Co
         compositeDisposable.add(
             countriesRepository.getAllCountries()
                 .startWith(ViewObject.loading(null))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(appSchedulers.ioScheduler())
+                .observeOn(appSchedulers.uiScheduler())
                 //     .onErrorReturn {
                 //        it.localizedMessage
                 //       ViewObject(false, true, listOf(), "Network error")
@@ -84,8 +87,10 @@ class CountriesViewModel @Inject constructor(private val countriesRepository: Co
         super.onCleared()
     }
 
-    fun filter(name: String) =
-        if (name.isNotEmpty() && name.length > 2) addOnlyThoseContainingPattern(name) else addAll()
+    fun filter(name: String) {
+        if (name.length > 2) addOnlyThoseContainingPattern(name)
+        if (name.isEmpty()) addAll()
+    }
 
     fun addAll() {
         countries.clear()
@@ -103,6 +108,6 @@ class CountriesViewModel @Inject constructor(private val countriesRepository: Co
     }
 
     fun exposeNavigationDestinationCode(destinationName: String) {
-        _navigationLiveEvent.value = _countries.find { it.name == destinationName }?.alpha3Code
+        _navigationLiveEvent.value = _countries.find { it.name == destinationName }?.alpha3Code ?: "POL"
     }
 }

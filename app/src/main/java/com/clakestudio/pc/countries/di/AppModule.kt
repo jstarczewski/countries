@@ -5,6 +5,8 @@ import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.data.source.remote.CountriesRemoteDataSource
 import com.clakestudio.pc.countries.data.source.remote.CountriesRestAdapter
 import com.clakestudio.pc.countries.data.source.remote.URLManager
+import com.clakestudio.pc.countries.util.AppSchedulersProvider
+import com.clakestudio.pc.countries.util.SchedulersProvider
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -51,6 +53,12 @@ class AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppSchedulers() : SchedulersProvider {
+        return AppSchedulersProvider()
     }
 
     @Provides
