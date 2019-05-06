@@ -5,19 +5,21 @@ import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
+import io.reactivex.Single
 import retrofit2.Response
 import javax.inject.Inject
 
-class CountriesRemoteDataSource @Inject constructor(private val countriesRestAdapter: CountriesRestAdapter) :
-    CountriesDataSource {
+class CountriesRemoteDataSource @Inject constructor(private val countriesRestAdapter: CountriesRestAdapter)  {
 
-    override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
+     fun getAllCountries(): Single<ViewObject<List<Country>>> =
         countriesRestAdapter.getAllCountries()
+            .map { data -> handleResponse(data) }
+                /*
             .flatMapPublisher {
                 Flowable.just(handleResponse(it))
-            }
+            }*/
 
-    override fun getCountryByName(alpha: String): Flowable<ViewObject<Country>> =
+     fun getCountryByName(alpha: String): Flowable<ViewObject<Country>> =
         countriesRestAdapter.getCountryByName(alpha).flatMapPublisher {
             Flowable.just(handleResponse(it))
         }
