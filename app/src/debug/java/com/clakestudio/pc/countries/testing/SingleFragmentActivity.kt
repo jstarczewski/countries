@@ -17,11 +17,13 @@
 package com.clakestudio.pc.countries.testing
 
 import android.os.Bundle
+import android.view.Menu
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.clakestudio.pc.countries.R
+import kotlinx.android.synthetic.main.single_fragment_activity.*
 
 /**
  * Used for testing fragments inside a fake activity.
@@ -29,15 +31,31 @@ import com.clakestudio.pc.countries.R
 class SingleFragmentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val content = FrameLayout(this).apply {
+        /*val content = FrameLayout(this).apply {
             layoutParams = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             id = R.id.container
-        }
-        setContentView(content)
+        }*/
+
+        setContentView(R.layout.single_fragment_activity)
+
+        setSupportActionBar(toolbar)
     }
+
+   // override fun onSupportNavigateUp(): Boolean {
+      //  return navController().navigateUp()
+    //}
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+//    override fun supportFragmentInjector() = dispatchingAndroidInjector
+
+  //  private fun navController() = findNavController(R.id.navHostFragment)
 
     fun setFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()

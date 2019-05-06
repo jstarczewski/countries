@@ -10,7 +10,7 @@ interface CountriesDataSource {
 
     fun getAllCountries(): Flowable<ViewObject<List<Country>>>
 
-    fun getCountryByName(@Path("name") name: String): Flowable<ViewObject<Country>>
+    fun getCountryByName(@Path("name") alpha: String): Flowable<ViewObject<Country>>
 
 
 }
