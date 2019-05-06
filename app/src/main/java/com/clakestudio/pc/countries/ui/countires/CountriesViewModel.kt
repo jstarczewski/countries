@@ -88,7 +88,7 @@ class CountriesViewModel @Inject constructor(
     }
 
     fun filter(name: String) {
-        if (name.isNotEmpty() && name.length > 2) addOnlyThoseContainingPattern(name)
+        if (name.length > 2) addOnlyThoseContainingPattern(name)
         if (name.isEmpty()) addAll()
     }
 

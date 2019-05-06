@@ -2,6 +2,7 @@ package com.clakestudio.pc.countries.ui.countires
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.clakestudio.pc.countries.data.FakeCountriesRepository
+import com.clakestudio.pc.countries.util.TestSchedulersProvider
 import org.junit.Before
 import org.junit.Test
 
@@ -10,7 +11,7 @@ import org.junit.Rule
 
 class CountriesViewModelTestSuccessData {
 
-    private val viewModel = CountriesViewModel(FakeCountriesRepository(false),TestSchedulersProcider())
+    private val viewModel = CountriesViewModel(FakeCountriesRepository(false), TestSchedulersProvider())
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
@@ -18,7 +19,7 @@ class CountriesViewModelTestSuccessData {
     private val patternPol = "pol"
     private val patternEmpty = "can"
     private val patternTooShort = "po"
-    private val patternCol = "umbia"
+    private val patternCol = "ombi"
     private val alpha3PolandCode = "POL"
     private val alpha3ColombiaCode = "COL"
 
@@ -30,6 +31,13 @@ class CountriesViewModelTestSuccessData {
     @Test
     fun getCountries() {
         assertEquals(viewModel.countries.size, 2)
+    }
+
+    @Test
+    fun filterInputPolandNotVisibleColombiaVisible() {
+        viewModel.filter(patternCol)
+        assertEquals(viewModel.countries.size,1)
+        assertEquals(viewModel.countries[0], "Colombia")
     }
 
     @Test

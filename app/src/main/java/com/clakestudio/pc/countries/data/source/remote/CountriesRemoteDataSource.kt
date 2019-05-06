@@ -17,15 +17,6 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
             .flatMapPublisher {
                 Flowable.just(handleResponse(it))
             }
-    /*
-    countriesRestAdapter.getAllCountries()
-        .toFlowable()
-        .materialize()
-        .map {
-            if (it.isOnErr
-        }
-*/
-
 
     override fun getCountryByName(name: String): Flowable<ViewObject<Country>> =
         countriesRestAdapter.getCountryByName(name).flatMapPublisher {

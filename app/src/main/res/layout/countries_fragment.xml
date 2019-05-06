@@ -58,7 +58,7 @@
                 android:id="@+id/recycler_view_countries"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:countries="@{viewmodel.countries}"
+                android:countries="@{viewmodel.countries}"
                 tools:listitem="@layout/country" />
 
 

@@ -11,7 +11,7 @@ import org.junit.Rule
 
 class CountriesViewModelTestErrorData {
 
-    private val viewModel = CountriesViewModel(FakeCountriesRepository(true), TestSchedulersProvider)
+    private val viewModel = CountriesViewModel(FakeCountriesRepository(true), TestSchedulersProvider())
 
     @get:Rule
     val rule = InstantTaskExecutorRule()

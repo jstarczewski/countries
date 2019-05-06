@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 object CountriesBindingAdapter {
 
     @JvmStatic
-    @BindingAdapter("app:countries")
+    @BindingAdapter("android:countries")
     fun setCountries(recyclerView: RecyclerView, countries: ArrayList<String>) {
         with(recyclerView.adapter as CountriesAdapter) {
             replaceData(countries)

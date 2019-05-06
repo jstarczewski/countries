@@ -2,6 +2,7 @@ package com.clakestudio.pc.countries.data.source.remote
 
 import com.clakestudio.pc.countries.data.Country
 import io.reactivex.Single
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.GET
@@ -18,10 +19,10 @@ class FakeCountriesRestAdapter(retrofit: Retrofit) {
     interface CountriesService {
 
         @GET(URLManager.all)
-        fun getAllCountries(): Response<List<Country>>
+        fun getAllCountries(): Call<Response<List<Country>>>
 
         @GET(URLManager.name)
-        fun getCountryByName(@Path("alpha") name: String): Response<Country>
+        fun getCountryByName(@Path("alpha") name: String): Call<Response<Country>>
 
 
     }
