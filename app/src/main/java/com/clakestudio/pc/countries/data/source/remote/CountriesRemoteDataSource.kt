@@ -1,9 +1,7 @@
 package com.clakestudio.pc.countries.data.source.remote
 
 import android.util.Log
-import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.vo.ViewObject
-import io.reactivex.Flowable
 import io.reactivex.Single
 import retrofit2.Response
 import javax.inject.Inject
@@ -25,7 +23,7 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
         if (response.isSuccessful) {
             if (response.body() == null || response.code() == 204)
                 return ViewObject.error("Response is empty", response.body())
-            return ViewObject.success(response.body()!!)
+            return ViewObject.success(response.body()!!, true)
         } else {
             return ViewObject.error(
                 "Error number: " +

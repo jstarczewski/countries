@@ -3,11 +3,14 @@ package com.clakestudio.pc.countries.data
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.data.source.local.CountriesLocalDataSource
 import com.clakestudio.pc.countries.data.source.remote.CountriesRemoteDataSource
+import com.clakestudio.pc.countries.data.source.remote.RemoteDataUnavailableException
 import com.clakestudio.pc.countries.testing.OpenForTesting
 import com.clakestudio.pc.countries.ui.details.Country
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
+import io.reactivex.Notification
 import io.reactivex.Single
+import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -15,29 +18,20 @@ import javax.inject.Inject
 class CountriesRepository @Inject constructor(
     private val countriesRemoteDataSource: CountriesRemoteDataSource,
     private val countriesLocalDataSource: CountriesLocalDataSource
-) :
-    CountriesDataSource {
-
-    override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
-        Flowable.concatArrayEager(
-            getCountryByAlphaFromLocalDataSource(alpha),
-            getCountryByAlphaFromRemoteDataSource(alpha)
-                .materialize()
-                .map { notification ->
-                    if (notification.isOnError)
-                        ViewObject.error(notification.error!!.localizedMessage, null)
-                    notification
-                }
-                .filter {
-                    !it.isOnError
-                }
-                .dematerialize<ViewObject<Country>>()
-                .debounce(400, TimeUnit.MILLISECONDS)
-        )
-
+) : CountriesDataSource {
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
-        Flowable.concatArrayEager(
+        getAllCountriesFromRemoteDataSource()
+            .map {
+                if (it.isHasError)
+                    throw RemoteDataUnavailableException(it.errorMessage ?: "Data fetch error")
+                it
+            }.onErrorResumeNext(getAllCountriesFromLocalDataSource())
+
+
+    /*
+    override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
+        Flowable.concatArrayEagerDelayError(
             getAllCountriesFromLocalDataSource(),
             getAllCountriesFromRemoteDataSource()
                 .materialize()
@@ -46,45 +40,18 @@ class CountriesRepository @Inject constructor(
                         ViewObject.error(notification.error!!.localizedMessage, null)
                     notification
                 }
-                .filter {
+               /* .filter {
                     !it.isOnError
-                }
-                .dematerialize<ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>>>()
-                .debounce(400, TimeUnit.MILLISECONDS)
+                }*/
+                .dematerialize { it }
+                .debounce(500, TimeUnit.MILLISECONDS)
         )
-
-
-    private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<Country>> =
-        countriesLocalDataSource.getCountryByAlpha(alpha)
-            .map { country ->
-                if (country.alpha3Code.isNotEmpty() && country.alpha3Code != "null") {
-                    ViewObject.success(
-                        Country(
-                            country.countryName,
-                            country.countryFlagUrl,
-                            country.alpha3Code,
-                            country.latlng.split(","),
-                            country.details
-                        )
-                    )
-                } else {
-                    ViewObject.error("Cannot fetch data from network, no cache is available", null)
-                }
-            }.toFlowable()
-
-    private fun getCountryByAlphaFromRemoteDataSource(alpha: String): Flowable<ViewObject<Country>> =
-        countriesRemoteDataSource.getCountryByAlpha(alpha)
-            .map { viewObject ->
-                if (!viewObject.isHasError) {
-                    ViewObject.success(Country(viewObject.data!!))
-                } else {
-                    ViewObject.error(viewObject.errorMessage!!, null)
-                }
-            }.toFlowable()
+        */
 
     fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
         getCountriesFromRemoteDataSourceAndMap()
             .toFlowable()
+            .startWith(ViewObject.loading(null))
             .doOnNext { countries ->
                 countries.data?.forEach {
                     countriesLocalDataSource.saveCountry(
@@ -104,13 +71,72 @@ class CountriesRepository @Inject constructor(
             .map { countries ->
                 if (countries.isNotEmpty()) {
                     ViewObject.success(countries.map {
-                        Country(it.countryName, it.countryFlagUrl, it.alpha3Code, it.latlng.split(","), it.details)
-                    })
+                        Country(it.countryName, it.alpha3Code, it.countryFlagUrl, it.latlng.split(","), it.details)
+                    }, false)
                 } else {
-                    ViewObject.error("Country is empty", null)
+                    ViewObject.error(
+                        "Cannot fetch data from network, no cache is available, check your connection and swipe to refresh",
+                        null
+                    )
                 }
-            }
-            .toFlowable()
+            }.toFlowable().startWith(ViewObject.loading(null))
+
+    override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
+        getCountryByAlphaFromRemoteDataSource(alpha).map {
+            if (it.isHasError)
+                throw RemoteDataUnavailableException(it.errorMessage ?: "Error occured")
+            it
+        }.onErrorResumeNext(getCountryByAlphaFromLocalDataSource(alpha))
+
+    /*
+    override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
+        Flowable.concatArrayEager(
+            getCountryByAlphaFromLocalDataSource(alpha),
+            getCountryByAlphaFromRemoteDataSource(alpha)
+                .materialize()
+                .map { notification ->
+                    if (notification.isOnError)
+                        ViewObject.error(notification.error!!.localizedMessage, null)
+                    notification
+                }
+                .filter {
+                    !it.isOnError
+                }
+                .dematerialize { it }
+                .debounce(5, TimeUnit.SECONDS)
+        )
+*/
+    private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<Country>> =
+        countriesLocalDataSource.getCountryByAlpha(alpha)
+            .map { country ->
+                if (country.alpha3Code.isNotEmpty() && country.alpha3Code != "null") {
+                    ViewObject.success(
+                        Country(
+                            country.countryName,
+                            country.alpha3Code,
+                            country.countryFlagUrl,
+                            country.latlng.split(","),
+                            country.details
+                        ),
+                        false
+                    )
+                } else {
+                    ViewObject.error("Cannot fetch data from network, no cache is available", null)
+                }
+            }.toFlowable()
+
+    private fun getCountryByAlphaFromRemoteDataSource(alpha: String): Flowable<ViewObject<Country>> =
+        countriesRemoteDataSource.getCountryByAlpha(alpha)
+            .map { viewObject ->
+                if (!viewObject.isHasError) {
+                    ViewObject.success(
+                        Country(viewObject.data!!),
+                        true
+                    )
+                } else {
+                    ViewObject.error(viewObject.errorMessage!!, null)
+                }
+            }.toFlowable()
 
 
     private fun getCountriesFromRemoteDataSourceAndMap(): Single<ViewObject<List<Country>>> =
@@ -119,7 +145,7 @@ class CountriesRepository @Inject constructor(
                 if (!viewObject.isHasError) {
                     ViewObject.success(viewObject.data!!.map {
                         Country(it)
-                    })
+                    }, true)
                 } else {
                     ViewObject.error(viewObject.errorMessage!!, null)
                 }

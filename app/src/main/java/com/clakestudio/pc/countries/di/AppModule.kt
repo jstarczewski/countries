@@ -27,30 +27,11 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(/*application: Application*/): Retrofit {
-/*
-        val cacheSize = 10 * 1024 * 1024 // 10 MB
-        val httpCacheDirectory = File(application.cacheDir, "http-cache")
-        val cache = Cache(httpCacheDirectory, cacheSize.toLong())
-
-        val networkCacheInterceptor = Interceptor { chain ->
-            val response = chain.proceed(chain.request())
-
-            var cacheControl = CacheControl.Builder()
-                .maxAge(1, TimeUnit.MINUTES)
-                .build()
-
-            response.newBuilder()
-                .header("Cache-Control", cacheControl.toString())
-                .build()
-        }*/
-
+    fun provideRetrofit(): Retrofit {
         val okHttpClient = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
-            //       .addNetworkInterceptor(networkCacheInterceptor)
-            //     .cache(cache)
             .retryOnConnectionFailure(true)
             .build()
         return Retrofit.Builder()

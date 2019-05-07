@@ -1,6 +1,6 @@
 package com.clakestudio.pc.countries.util
 
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.data.source.remote.Country
 import com.clakestudio.pc.countries.vo.ViewObject
 
 object CountriesDataProvider {

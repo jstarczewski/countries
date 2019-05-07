@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.data.source.remote
 
-import com.clakestudio.pc.countries.data.Country
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.Retrofit
