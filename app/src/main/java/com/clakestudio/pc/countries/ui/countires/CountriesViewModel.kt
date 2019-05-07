@@ -1,6 +1,7 @@
 package com.clakestudio.pc.countries.ui.countires
 
 import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
@@ -17,16 +18,14 @@ import javax.inject.Inject
 class CountriesViewModel @Inject constructor(
     private val countriesRepository: CountriesDataSource,
     private val appSchedulers: SchedulersProvider
-) :
-    ViewModel() {
+) : ViewModel() {
 
     val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    val countries: ObservableArrayList<String> = ObservableArrayList()
     private val _countries = MutableLiveData<List<Country>>()
 
-    private val _error: MutableLiveData<String> = MutableLiveData()
-    val error: LiveData<String> = _error
+    val countries: ObservableArrayList<String> = ObservableArrayList()
+    val error: ObservableField<String> = ObservableField()
 
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
@@ -35,8 +34,7 @@ class CountriesViewModel @Inject constructor(
     val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
     private val _message: MutableLiveData<String> = MutableLiveData()
-    val message : LiveData<String> = _message
-
+    val message: LiveData<String> = _message
 
     fun load() {
         if (_countries.value.isNullOrEmpty()) {
@@ -54,10 +52,10 @@ class CountriesViewModel @Inject constructor(
                 .startWith(ViewObject.loading(null))
                 .subscribeOn(appSchedulers.ioScheduler())
                 .observeOn(appSchedulers.uiScheduler())
-                .subscribe ({
+                .subscribe({
                     when {
                         it.isHasError -> {
-                            _error.value = it.errorMessage
+                            error.set(it.errorMessage)
                             _loading.value = false
                         }
                         it.isLoading -> {
@@ -68,12 +66,12 @@ class CountriesViewModel @Inject constructor(
                                 _message.value = "Data is loaded from cache"
                             _countries.value = it.data?.sortedBy { it.countryName }
                             _loading.value = false
-                            _error.value = ""
+                            error.set("")
                             addAll()
                         }
                     }
                 }, {
-                    _error.value = "Fatal error occurred, please try again later"
+                    error.set("Fatal error occurred, please try again later")
                 })
         )
     }
