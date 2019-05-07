@@ -90,13 +90,13 @@ class CountriesFragmentTest {
     @Test
     fun textViewWithErrorMessageIsVisibleWhenDataLoadedContainsErrors() {
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError()))
-        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error\n Swipe to refresh")))
+        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error")))
     }
 
     @Test
     fun textViewErrorMessageDisappearsAndDataIsShowedAfterSwipeRefresh() {
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError()))
-        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error\n Swipe to refresh")))
+        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error")))
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsSuccess()))
         Espresso.onView(withId(R.id.recycler_view_countries)).perform(swipeDown())
         Espresso.onView(
