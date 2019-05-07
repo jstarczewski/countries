@@ -52,7 +52,7 @@ class CountriesRepository @Inject constructor(
         getCountriesFromRemoteDataSourceAndMap()
             .toFlowable()
             .startWith(ViewObject.loading(null))
-            .doOnNext { countries ->
+           .doOnNext { countries ->
                 countries.data?.forEach {
                     countriesLocalDataSource.saveCountry(
                         com.clakestudio.pc.countries.data.source.local.Country(

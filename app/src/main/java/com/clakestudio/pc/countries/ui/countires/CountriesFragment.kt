@@ -27,6 +27,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var binding: CountriesFragmentBinding
+    private lateinit var viewModel: CountriesViewModel
 
 
     override fun onCreateView(
@@ -45,14 +46,12 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
+            binding.viewmodel = this
             load()
+
             navigationLiveEvent.observe(viewLifecycleOwner, Observer {
                 navigate(it)
-            })
-
-            error.observe(viewLifecycleOwner, Observer {
-                text_view_error.text = it
             })
             loading.observe(viewLifecycleOwner, Observer {
                 swipe_refresh_layout.isRefreshing = it
@@ -62,7 +61,6 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
             })
         }
         swipe_refresh_layout.setOnRefreshListener(this)
-
     }
 
     private fun setUpRecyclerView() {
@@ -70,7 +68,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@CountriesFragment.context)
             adapter =
-                CountriesAdapter { binding.viewmodel?.exposeNavigationDestinationCode(it) }
+                CountriesAdapter { viewModel.exposeNavigationDestinationCode(it) }
         }
 
     }
@@ -87,20 +85,20 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        binding.viewmodel?.filter(query!!)
+        viewModel.filter(query!!)
         return false
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        binding.viewmodel?.filter(newText!!)
+        viewModel.filter(newText!!)
         return false
     }
 
     override fun onRefresh() {
-        binding.viewmodel?.load()
+        viewModel.load()
     }
 
-    private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+    private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
 
     fun navController() = findNavController()
 

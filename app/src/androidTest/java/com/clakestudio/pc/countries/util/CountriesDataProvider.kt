@@ -5,12 +5,16 @@ import com.clakestudio.pc.countries.vo.ViewObject
 
 object CountriesDataProvider {
 
-    fun provideSampleCountriesWrapedAsSucces(): ViewObject<List<Country>> {
-        return ViewObject.success(listOf<Country>(provideColombia(), providePoland()))
+    fun provideSampleCountriesWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.success(listOf(provideColombia(), providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        }, true)
     }
 
-    fun provideSampleCountriesWrappedAsError(): ViewObject<List<Country>> {
-        return ViewObject.error("Test error", listOf(provideColombia(), providePoland()))
+    fun provideSampleCountriesWrappedAsError(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.error("Test error", listOf(provideColombia(), providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        })
     }
 
     fun provideColombiaJSON(): String {

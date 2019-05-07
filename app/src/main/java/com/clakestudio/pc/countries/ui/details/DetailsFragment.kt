@@ -33,6 +33,8 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    private lateinit var viewModel: DetailsViewModel
+
     private lateinit var binding: DetailsFragmentBinding
 
     override fun onCreateView(
@@ -52,10 +54,11 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
             latlng.observe(viewLifecycleOwner, Observer {
                 map_view_country.getMapAsync(this@DetailsFragment)
             })
+            /*
             error.observe(viewLifecycleOwner, Observer {
                 text_view_name.text = it
                 showWidgets(it.isNotEmpty())
-            })
+            })*/
             loading.observe(viewLifecycleOwner, Observer {
                 swipe_refresh_layout.isRefreshing = it
             })
@@ -128,11 +131,12 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
         }
     }
 
+    /*
     private fun showWidgets(isError: Boolean) {
         recycler_view_details.visibility = if (isError) View.GONE else View.VISIBLE
         map_view_country.visibility = if (isError) View.GONE else View.VISIBLE
         image_view_flag.visibility = if (isError) View.GONE else View.VISIBLE
-    }
+    }*/
 
     override fun onResume() {
         super.onResume()
@@ -173,7 +177,7 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
         binding.viewmodel?.refresh()
     }
 
-    private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+    private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
 
     fun navController() = findNavController()
 
