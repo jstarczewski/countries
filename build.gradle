@@ -42,8 +42,8 @@ ext {
     androidxTestRunnerVersion = '1.1.0'
 
     roomVersion = '2.0.0-beta01'
-    rxJavaVersion = '2.1.13'
-    rxAndroidVersion = '2.0.2'
+    rxJavaVersion = '2.2.8'
+    rxAndroidVersion = '2.1.1'
 
     retrofitVersion = '2.5.0'
 

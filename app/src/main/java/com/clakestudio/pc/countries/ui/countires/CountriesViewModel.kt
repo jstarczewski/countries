@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.ui.countires
 
-import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.testing.OpenForTesting
+import com.clakestudio.pc.countries.ui.details.Country
 import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.disposables.CompositeDisposable
@@ -20,20 +20,28 @@ class CountriesViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    val countries: ObservableArrayList<String> = ObservableArrayList()
-    private val _countries = MutableLiveData<List<com.clakestudio.pc.countries.ui.details.Country>>()
     val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
+
+    val countries: ObservableArrayList<String> = ObservableArrayList()
+    private val _countries = MutableLiveData<List<Country>>()
+
     private val _error: MutableLiveData<String> = MutableLiveData()
     val error: LiveData<String> = _error
+
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
+
+    private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
     val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
+    private val _message: MutableLiveData<String> = MutableLiveData()
+    val message : LiveData<String> = _message
+
+
     fun load() {
-        if (_countries.value.isNullOrEmpty())
+        if (_countries.value.isNullOrEmpty()) {
             init()
-        else {
+        } else {
             _loading.value = false
         }
     }
@@ -46,11 +54,7 @@ class CountriesViewModel @Inject constructor(
                 .startWith(ViewObject.loading(null))
                 .subscribeOn(appSchedulers.ioScheduler())
                 .observeOn(appSchedulers.uiScheduler())
-                //     .onErrorReturn {
-                //        it.localizedMessage
-                //       ViewObject(false, true, listOf(), "Network error")
-                //    }
-               .subscribe ({
+                .subscribe {
                     when {
                         it.isHasError -> {
                             _error.value = it.errorMessage + "\n Swipe to refresh"
@@ -60,16 +64,15 @@ class CountriesViewModel @Inject constructor(
                             _loading.value = true
                         }
                         else -> {
-                            Log.e("Data", it.data.toString())
+                            if (!it.isUpToDate!!)
+                                _message.value = "Data is loaded from cache"
                             _countries.value = it.data?.sortedBy { it.countryName }
                             _loading.value = false
                             _error.value = ""
                             addAll()
                         }
                     }
-                }, {
-
-               })
+                }
         )
     }
 
@@ -83,14 +86,14 @@ class CountriesViewModel @Inject constructor(
         if (name.isEmpty()) addAll()
     }
 
-    fun addAll() {
+    private fun addAll() {
         countries.clear()
         _countries.value?.forEach {
             countries.add(it.countryName)
         }
     }
 
-    fun addOnlyThoseContainingPattern(pattern: String) {
+    private fun addOnlyThoseContainingPattern(pattern: String) {
         countries.clear()
         _countries.value?.forEach {
             if (it.countryName.toLowerCase().contains(pattern.toLowerCase()))

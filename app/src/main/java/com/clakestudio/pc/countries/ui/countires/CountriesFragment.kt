@@ -16,6 +16,7 @@ import com.clakestudio.pc.countries.adapters.countries.CountriesAdapter
 import com.clakestudio.pc.countries.databinding.CountriesFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
 import com.clakestudio.pc.countries.testing.OpenForTesting
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.countries_fragment.*
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var binding: com.clakestudio.pc.countries.databinding.CountriesFragmentBinding
+    private lateinit var binding: CountriesFragmentBinding
 
 
     override fun onCreateView(
@@ -48,6 +49,8 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        displaySnackBack("ELO")
         binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
             load()
             navigationLiveEvent.observe(viewLifecycleOwner, Observer {
@@ -59,6 +62,9 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
             })
             loading.observe(viewLifecycleOwner, Observer {
                 swipe_refresh_layout.isRefreshing = it
+            })
+            message.observe(viewLifecycleOwner, Observer {
+                displaySnackBack(it)
             })
         }
         swipe_refresh_layout.setOnRefreshListener(this)
@@ -100,10 +106,8 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+
     fun navController() = findNavController()
 
-    override fun onStop() {
-      //  binding.viewmodel?.compositeDisposable?.clear()
-        super.onStop()
-    }
 }

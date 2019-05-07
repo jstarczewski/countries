@@ -23,7 +23,7 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
         if (response.isSuccessful) {
             if (response.body() == null || response.code() == 204)
                 return ViewObject.error("Response is empty", response.body())
-            return ViewObject.success(response.body()!!)
+            return ViewObject.success(response.body()!!, true)
         } else {
             return ViewObject.error(
                 "Error number: " +

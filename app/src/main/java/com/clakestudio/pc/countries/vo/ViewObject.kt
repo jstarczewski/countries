@@ -8,7 +8,7 @@ class ViewObject<out T>(
     val isUpToDate: Boolean?
 ) {
     companion object {
-        fun <T> success(data: T, isUpToDate: Boolean): ViewObject<T> = ViewObject(false, false, data, null, null)
+        fun <T> success(data: T, isUpToDate: Boolean): ViewObject<T> = ViewObject(false, false, data, null, isUpToDate)
         fun <T> loading(data: T?): ViewObject<T> = ViewObject(true, false, data, null, null)
         fun <T> error(errorMessage: String, data: T?): ViewObject<T> = ViewObject(false, true, data, errorMessage, null)
     }

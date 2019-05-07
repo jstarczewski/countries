@@ -1,8 +1,8 @@
 package com.clakestudio.pc.countries.ui.details
 
+import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
-import androidx.databinding.ObservableList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,8 +23,8 @@ class DetailsViewModel @Inject constructor(
 
     val countryName: ObservableField<String> = ObservableField()
 
-    private val _details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
-    val details: ObservableList<Pair<String, String?>> = _details
+    val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
+  //  val details: ObservableList<Pair<String, String?>> = _details
 
     private val _error: MutableLiveData<String> = MutableLiveData()
     val error: LiveData<String> = _error
@@ -66,6 +66,8 @@ class DetailsViewModel @Inject constructor(
                         _error.value = ""
                         _loading.value = false
                         //   exposeData(it.data!!.find { it.alpha3Code == alpha }!!)
+                        if(it.isUpToDate!!)
+                            Log.e("Is up to date", "DATA!")
                         exposeData(it.data!!)
                         this@DetailsViewModel.alpha = alpha
                     }
@@ -78,12 +80,12 @@ class DetailsViewModel @Inject constructor(
     fun exposeData(country: Country) {
         countryName.set(country.countryName)
         _countryFlagUrl.value = country.countryFlagUrl
-        _latlng.value = latlngStringToDouble(country.latlng)
+        _latlng.value = latLngStringToDouble(country.latlng)
         details.addAll(country.countryDetails)
     }
 
-    fun latlngStringToDouble(latltnString: List<String?>) =
-        if (!latltnString.isNullOrEmpty()) Pair(latltnString[0]?.toDouble(), latltnString[1]?.toDouble()) else null
+    private fun latLngStringToDouble(latLtnString: List<String?>) =
+        if (!latLtnString.isNullOrEmpty()) Pair(latLtnString[0]?.toDouble(), latLtnString[1]?.toDouble()) else null
 
 
     override fun onCleared() {
