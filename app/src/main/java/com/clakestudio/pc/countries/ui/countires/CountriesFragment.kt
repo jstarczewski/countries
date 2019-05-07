@@ -22,11 +22,7 @@ import javax.inject.Inject
 
 
 @OpenForTesting
-class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshListener {
-
-    override fun onRefresh() {
-        binding.viewmodel?.load()
-    }
+class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -49,8 +45,6 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        displaySnackBack("ELO")
         binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
             load()
             navigationLiveEvent.observe(viewLifecycleOwner, Observer {
@@ -82,28 +76,28 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
     }
 
     fun navigate(destination: String) {
-        Log.e("Name", destination)
         val action = CountriesFragmentDirections.actionCountriesFragmentToDetailsFragment()
         action.alpha = destination
         navController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        val searchView: SearchView = menu?.findItem(R.id.action_search)?.actionView as SearchView
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                binding.viewmodel?.filter(query!!)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                binding.viewmodel?.filter(newText!!)
-                return false
-            }
-
-        })
+        (menu?.findItem(R.id.action_search)?.actionView as SearchView).setOnQueryTextListener(this)
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        binding.viewmodel?.filter(query!!)
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        binding.viewmodel?.filter(newText!!)
+        return false
+    }
+
+    override fun onRefresh() {
+        binding.viewmodel?.load()
     }
 
     private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()

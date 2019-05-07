@@ -21,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
 
 
 private const val MAP_VIEW_BUNDLE_KEY = "MAP_BUNDLE_KEY"
@@ -35,8 +36,8 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
     private lateinit var binding: DetailsFragmentBinding
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         binding = DetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -57,6 +58,9 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
             })
             loading.observe(viewLifecycleOwner, Observer {
                 swipe_refresh_layout.isRefreshing = it
+            })
+            message.observe(viewLifecycleOwner, Observer {
+                displaySnackBack(it)
             })
         }
         initFromBundle()
@@ -110,12 +114,11 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
 
     fun setFlag(url: String) {
         SvgLoader.pluck()
-                .with(activity)
-                .setPlaceHolder(R.drawable.ic_file_download_black_24dp, R.drawable.ic_error_outline_black_24dp)
-                .load(url, image_view_flag)
+            .with(activity)
+            .setPlaceHolder(R.drawable.ic_file_download_black_24dp, R.drawable.ic_error_outline_black_24dp)
+            .load(url, image_view_flag)
 
     }
-
 
     override fun onMapReady(p0: GoogleMap?) {
         val pair = binding.viewmodel?.latlng?.value
@@ -167,8 +170,10 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
     }
 
     override fun onRefresh() {
-        initFromBundle()
+        binding.viewmodel?.refresh()
     }
+
+    private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
 
     fun navController() = findNavController()
 

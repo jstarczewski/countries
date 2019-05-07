@@ -74,11 +74,21 @@ class CountriesRepository @Inject constructor(
                         Country(it.countryName, it.alpha3Code, it.countryFlagUrl, it.latlng.split(","), it.details)
                     }, false)
                 } else {
-                    ViewObject.error("Cannot fetch data from network, no cache is available", null)
+                    ViewObject.error(
+                        "Cannot fetch data from network, no cache is available, check your connection and swipe to refresh",
+                        null
+                    )
                 }
-            }
-            .toFlowable().startWith(ViewObject.loading(null))
+            }.toFlowable().startWith(ViewObject.loading(null))
 
+    override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
+        getCountryByAlphaFromRemoteDataSource(alpha).map {
+            if (it.isHasError)
+                throw RemoteDataUnavailableException(it.errorMessage ?: "Error occured")
+            it
+        }.onErrorResumeNext(getCountryByAlphaFromLocalDataSource(alpha))
+
+    /*
     override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
         Flowable.concatArrayEager(
             getCountryByAlphaFromLocalDataSource(alpha),
@@ -95,7 +105,7 @@ class CountriesRepository @Inject constructor(
                 .dematerialize { it }
                 .debounce(5, TimeUnit.SECONDS)
         )
-
+*/
     private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<Country>> =
         countriesLocalDataSource.getCountryByAlpha(alpha)
             .map { country ->

@@ -54,10 +54,10 @@ class CountriesViewModel @Inject constructor(
                 .startWith(ViewObject.loading(null))
                 .subscribeOn(appSchedulers.ioScheduler())
                 .observeOn(appSchedulers.uiScheduler())
-                .subscribe {
+                .subscribe ({
                     when {
                         it.isHasError -> {
-                            _error.value = it.errorMessage + "\n Swipe to refresh"
+                            _error.value = it.errorMessage
                             _loading.value = false
                         }
                         it.isLoading -> {
@@ -72,7 +72,9 @@ class CountriesViewModel @Inject constructor(
                             addAll()
                         }
                     }
-                }
+                }, {
+                    _error.value = "Fatal error occurred, please try again later"
+                })
         )
     }
 

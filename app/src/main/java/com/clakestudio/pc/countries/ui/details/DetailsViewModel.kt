@@ -38,16 +38,23 @@ class DetailsViewModel @Inject constructor(
     private val _countryFlagUrl: MutableLiveData<String> = MutableLiveData()
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
+    private val _message: MutableLiveData<String> = MutableLiveData()
+    val message : LiveData<String> = _message
+
     fun load(alpha: String) {
         if (details.isEmpty() || alpha != this.alpha) {
             loadCountryDataByAlphaCode(alpha)
         } else {
-            _countryFlagUrl.value = _countryFlagUrl.value
+       //     _countryFlagUrl.value = _countryFlagUrl.value
             _loading.value = false
         }
     }
 
-    private fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
+    fun refresh() {
+        if(alpha.isNotEmpty()) loadCountryDataByAlphaCode(alpha)
+    }
+
+    fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
         countryRepository.getCountryByAlpha(alpha)
             .startWith(ViewObject.loading(null))
             .subscribeOn(appSchedulersProvider.ioScheduler())
@@ -66,8 +73,8 @@ class DetailsViewModel @Inject constructor(
                         _error.value = ""
                         _loading.value = false
                         //   exposeData(it.data!!.find { it.alpha3Code == alpha }!!)
-                        if(it.isUpToDate!!)
-                            Log.e("Is up to date", "DATA!")
+                        if(!it.isUpToDate!!)
+
                         exposeData(it.data!!)
                         this@DetailsViewModel.alpha = alpha
                     }
