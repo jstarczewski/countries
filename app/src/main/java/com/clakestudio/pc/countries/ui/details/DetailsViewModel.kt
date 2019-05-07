@@ -74,7 +74,7 @@ class DetailsViewModel @Inject constructor(
                         _loading.value = false
                         //   exposeData(it.data!!.find { it.alpha3Code == alpha }!!)
                         if(!it.isUpToDate!!)
-
+                            _message.value = "Data is loaded from cache"
                         exposeData(it.data!!)
                         this@DetailsViewModel.alpha = alpha
                     }
