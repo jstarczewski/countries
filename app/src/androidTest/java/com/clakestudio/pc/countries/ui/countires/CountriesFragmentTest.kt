@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.ui.countires
 
-import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_DEL
 import androidx.navigation.NavController
@@ -39,7 +38,7 @@ class CountriesFragmentTest {
     @Before
     fun setUp() {
         countriesRepository = mock(CountriesRepository::class.java)
-        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrapedAsSucces()))
+        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsSuccess()))
         countriesViewModel = CountriesViewModel(countriesRepository, AppSchedulersProvider())
         countriesFragment.viewModelFactory = ViewModelUtil.createFor(countriesViewModel)
         activityRule.activity.setFragment(countriesFragment)
@@ -91,14 +90,14 @@ class CountriesFragmentTest {
     @Test
     fun textViewWithErrorMessageIsVisibleWhenDataLoadedContainsErrors() {
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError()))
-        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error\n Swipe to refresh")))
+        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error")))
     }
 
     @Test
     fun textViewErrorMessageDisappearsAndDataIsShowedAfterSwipeRefresh() {
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError()))
-        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error\n Swipe to refresh")))
-        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrapedAsSucces()))
+        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error")))
+        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsSuccess()))
         Espresso.onView(withId(R.id.recycler_view_countries)).perform(swipeDown())
         Espresso.onView(
             recyclerViewCountriesMatcher().atPositionOnView(

@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.ui.details
 
-import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
@@ -22,12 +21,12 @@ class DetailsViewModel @Inject constructor(
     private var alpha = String()
 
     val countryName: ObservableField<String> = ObservableField()
-
     val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
-  //  val details: ObservableList<Pair<String, String?>> = _details
+    val error: ObservableField<String> = countryName
+    //  val details: ObservableList<Pair<String, String?>> = _details
 
-    private val _error: MutableLiveData<String> = MutableLiveData()
-    val error: LiveData<String> = _error
+    //private val _error: MutableLiveData<String> = MutableLiveData()
+    // val error: ObservableField<String> = ObservableField()
 
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
@@ -39,19 +38,20 @@ class DetailsViewModel @Inject constructor(
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
     private val _message: MutableLiveData<String> = MutableLiveData()
-    val message : LiveData<String> = _message
+    val message: LiveData<String> = _message
 
     fun load(alpha: String) {
         if (details.isEmpty() || alpha != this.alpha) {
             loadCountryDataByAlphaCode(alpha)
+            this.alpha = alpha
         } else {
-       //     _countryFlagUrl.value = _countryFlagUrl.value
+            //     _countryFlagUrl.value = _countryFlagUrl.value
             _loading.value = false
         }
     }
 
     fun refresh() {
-        if(alpha.isNotEmpty()) loadCountryDataByAlphaCode(alpha)
+        if (alpha.isNotEmpty()) loadCountryDataByAlphaCode(alpha)
     }
 
     fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
@@ -62,7 +62,8 @@ class DetailsViewModel @Inject constructor(
             .subscribe {
                 when {
                     it.isHasError -> {
-                        _error.value = it.errorMessage + "\n Swipe to refresh"
+                        error.set("${it.errorMessage} \n Swipe to refresh")
+                        details.clear()
                         _loading.value = false
                     }
                     it.isLoading -> {
@@ -70,11 +71,9 @@ class DetailsViewModel @Inject constructor(
                     }
                     else -> {
                         details.clear()
-                        _error.value = ""
                         _loading.value = false
-                        //   exposeData(it.data!!.find { it.alpha3Code == alpha }!!)
-                        if(!it.isUpToDate!!)
-
+                        if (!it.isUpToDate!!)
+                            _message.value = "Data is loaded from cache"
                         exposeData(it.data!!)
                         this@DetailsViewModel.alpha = alpha
                     }
