@@ -38,6 +38,7 @@ class DetailsViewModel @Inject constructor(
         if (details.isEmpty() || alpha != this.alpha) {
             loadCountryDataByAlphaCode(alpha)
         } else {
+            _countryFlagUrl.value = _countryFlagUrl.value
             _loading.value = false
         }
     }
@@ -60,6 +61,7 @@ class DetailsViewModel @Inject constructor(
                         details.clear()
                         _error.value = ""
                         _loading.value = false
+                     //   loadData(it.data!!.find { it.alpha3Code == alpha }!!)
                         loadData(it.data!!)
                         this@DetailsViewModel.alpha = alpha
                     }

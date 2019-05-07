@@ -1,5 +1,6 @@
 package com.clakestudio.pc.countries.ui.countires
 
+import android.util.Log
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,7 +23,7 @@ class CountriesViewModel @Inject constructor(
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
     private val _countries = MutableLiveData<List<com.clakestudio.pc.countries.ui.details.Country>>()
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
     private val _error: MutableLiveData<String> = MutableLiveData()
     val error: LiveData<String> = _error
@@ -60,6 +61,7 @@ class CountriesViewModel @Inject constructor(
                             _loading.value = true
                         }
                         else -> {
+                            Log.e("Data", it.data.toString())
                             _countries.value = it.data?.sortedBy { it.countryName }
                             _loading.value = false
                             _error.value = ""
