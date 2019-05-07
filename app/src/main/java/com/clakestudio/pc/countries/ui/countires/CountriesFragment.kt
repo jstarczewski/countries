@@ -102,4 +102,8 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
 
     fun navController() = findNavController()
 
+    override fun onStop() {
+      //  binding.viewmodel?.compositeDisposable?.clear()
+        super.onStop()
+    }
 }

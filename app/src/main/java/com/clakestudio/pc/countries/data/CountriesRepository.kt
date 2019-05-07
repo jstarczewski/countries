@@ -61,8 +61,8 @@ class CountriesRepository @Inject constructor(
                     ViewObject.success(
                         Country(
                             country.countryName,
-                            country.countryFlagUrl,
                             country.alpha3Code,
+                            country.countryFlagUrl,
                             country.latlng.split(","),
                             country.details
                         )
@@ -104,7 +104,7 @@ class CountriesRepository @Inject constructor(
             .map { countries ->
                 if (countries.isNotEmpty()) {
                     ViewObject.success(countries.map {
-                        Country(it.countryName, it.countryFlagUrl, it.alpha3Code, it.latlng.split(","), it.details)
+                        Country(it.countryName, it.alpha3Code, it.countryFlagUrl, it.latlng.split(","), it.details)
                     })
                 } else {
                     ViewObject.error("Country is empty", null)
