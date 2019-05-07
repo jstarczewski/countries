@@ -1,6 +1,6 @@
 package com.clakestudio.pc.countries.ui.details
 
-import com.clakestudio.pc.countries.data.Country as RemoteCountry
+import com.clakestudio.pc.countries.data.source.remote.Country as RemoteCountry
 
 data class Country(
     val countryName: String,
@@ -10,7 +10,7 @@ data class Country(
     var countryDetails: List<Pair<String, String?>>
 ) {
 
-    constructor(country: com.clakestudio.pc.countries.data.Country) : this(
+    constructor(country: RemoteCountry) : this(
         country.name,
         country.alpha3Code,
         country.flag,

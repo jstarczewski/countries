@@ -2,6 +2,7 @@ package com.clakestudio.pc.countries.ui.details
 
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
+import androidx.databinding.ObservableList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,17 +22,20 @@ class DetailsViewModel @Inject constructor(
     private var alpha = String()
 
     val countryName: ObservableField<String> = ObservableField()
-    val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
+
+    private val _details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
+    val details: ObservableList<Pair<String, String?>> = _details
 
     private val _error: MutableLiveData<String> = MutableLiveData()
     val error: LiveData<String> = _error
+
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
 
     private val _latlng: MutableLiveData<Pair<Double?, Double?>> = MutableLiveData()
-    private val _countryFlagUrl: MutableLiveData<String> = MutableLiveData()
-
     val latlng: LiveData<Pair<Double?, Double?>> = _latlng
+
+    private val _countryFlagUrl: MutableLiveData<String> = MutableLiveData()
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
     fun load(alpha: String) {
@@ -61,16 +65,17 @@ class DetailsViewModel @Inject constructor(
                         details.clear()
                         _error.value = ""
                         _loading.value = false
-                     //   loadData(it.data!!.find { it.alpha3Code == alpha }!!)
-                        loadData(it.data!!)
+                        //   exposeData(it.data!!.find { it.alpha3Code == alpha }!!)
+                        exposeData(it.data!!)
                         this@DetailsViewModel.alpha = alpha
                     }
                 }
 
             }
+
     )
 
-    fun loadData(country: Country) {
+    fun exposeData(country: Country) {
         countryName.set(country.countryName)
         _countryFlagUrl.value = country.countryFlagUrl
         _latlng.value = latlngStringToDouble(country.latlng)

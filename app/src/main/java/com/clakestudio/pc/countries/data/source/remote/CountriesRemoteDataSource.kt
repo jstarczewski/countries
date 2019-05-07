@@ -1,9 +1,7 @@
 package com.clakestudio.pc.countries.data.source.remote
 
 import android.util.Log
-import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.vo.ViewObject
-import io.reactivex.Flowable
 import io.reactivex.Single
 import retrofit2.Response
 import javax.inject.Inject
