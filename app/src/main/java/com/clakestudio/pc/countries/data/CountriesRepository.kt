@@ -23,7 +23,7 @@ class CountriesRepository @Inject constructor(
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
         countriesRemoteDataSource.getAllCountries()
-            .startWith(ViewObject.loading(null))
+           // .startWith(ViewObject.loading(null))
             .doOnNext { countries ->
                 countries.data?.forEach {
                     countriesLocalDataSource.saveCountry(it)

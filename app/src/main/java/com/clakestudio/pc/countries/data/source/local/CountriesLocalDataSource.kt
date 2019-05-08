@@ -41,7 +41,12 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                         null
                     )
                 }
-            }.toFlowable().startWith(ViewObject.loading(null))
+            }.toFlowable()
+            /*
+            THERE WE GO
+            TESTING PROBLEMS STARTS HERE
+            .startWith(ViewObject.loading(null))
+             */
 
 
     fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<com.clakestudio.pc.countries.ui.details.Country>> =
