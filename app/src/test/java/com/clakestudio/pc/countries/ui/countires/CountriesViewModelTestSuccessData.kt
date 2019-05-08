@@ -51,7 +51,7 @@ class CountriesViewModelTestSuccessData {
     fun filterInputShorterThanTwoCharacters() {
         viewModel.filter(patternPol)
         viewModel.filter(patternTooShort)
-        assertEquals(viewModel.countries.size, 1)
+        assertEquals(viewModel.countries.size, 2)
     }
 
     @Test

@@ -1,21 +1,44 @@
 package com.clakestudio.pc.countries.util
 
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.data.source.remote.Country
 import com.clakestudio.pc.countries.vo.ViewObject
 
 object CountriesDataProvider {
 
-    fun provideSampleCountriesWrapedAsSucces(): ViewObject<List<Country>> {
-        return ViewObject.success(listOf<Country>(provideColombia(), providePoland()))
+    fun provideSampleCountriesWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.success(listOf(provideColombia(), providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        }, true)
     }
 
-    fun provideSampleCountriesWrappedAsError(): ViewObject<List<Country>> {
-        return ViewObject.error("Test error", listOf(provideColombia(), providePoland()))
+    fun provideSampleCountriesWrappedAsError(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.error("Test error", listOf(provideColombia(), providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        })
     }
 
-    fun provideColombiaJSON(): String {
-        return colombia
+    fun provideOutdatedSampleCountriesWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.success(listOf(provideColombia(), providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        }, false)
     }
+
+
+    fun providePolandWrappedAsSuccess(): ViewObject<com.clakestudio.pc.countries.ui.details.Country> =
+        ViewObject.success(com.clakestudio.pc.countries.ui.details.Country(providePoland()), true)
+
+    fun provideOutdatedPolandWrappedAsSuccess(): ViewObject<com.clakestudio.pc.countries.ui.details.Country> =
+        ViewObject.success(com.clakestudio.pc.countries.ui.details.Country(providePoland()), false)
+
+    fun providePolandWrappedAsError() = ViewObject.error("Test error single country", null)
+
+    fun provideColombiaWrappedAsSuccess() = ViewObject.success(
+        com.clakestudio.pc.countries.ui.details.Country(
+            provideColombia()
+        ), true
+    )
+
+    fun provideCountries() = listOf(provideColombia(), providePoland())
 
     fun provideColombia() =
         Country(

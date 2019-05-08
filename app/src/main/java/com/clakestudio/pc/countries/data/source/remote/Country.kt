@@ -1,4 +1,4 @@
-package com.clakestudio.pc.countries.data
+package com.clakestudio.pc.countries.data.source.remote
 
 import com.google.gson.annotations.SerializedName
 

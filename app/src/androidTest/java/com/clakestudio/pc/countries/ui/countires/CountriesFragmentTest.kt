@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.ui.countires
 
-import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_DEL
 import androidx.navigation.NavController
@@ -10,7 +9,6 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
 import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.testing.SingleFragmentActivity
-import com.clakestudio.pc.countries.util.AppSchedulersProvider
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.util.RecyclerViewMatcher
 import com.clakestudio.pc.countries.util.ViewModelUtil
@@ -20,9 +18,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.*
 import android.widget.EditText
+import androidx.databinding.ObservableArrayList
+import androidx.lifecycle.MutableLiveData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import com.clakestudio.pc.countries.R
+import com.clakestudio.pc.countries.SingleLiveEvent
+import com.clakestudio.pc.countries.util.AppSchedulersProvider
 
 
 class CountriesFragmentTest {
@@ -36,11 +38,25 @@ class CountriesFragmentTest {
     private lateinit var countriesViewModel: CountriesViewModel
     private lateinit var countriesRepository: CountriesRepository
 
+    /*
+        val message = MutableLiveData<String>()
+        val loading = MutableLiveData<Boolean>()
+        val navigationEvent = SingleLiveEvent<String>()
+        val countries = ObservableArrayList<String>()
+    */
     @Before
     fun setUp() {
         countriesRepository = mock(CountriesRepository::class.java)
-        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrapedAsSucces()))
+        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsSuccess()))
         countriesViewModel = CountriesViewModel(countriesRepository, AppSchedulersProvider())
+        /*
+        countriesViewModel = mock(CountriesViewModel::class.java)
+        countries.addAll(CountriesDataProvider.provideCountries().map { it.name })
+        `when`(countriesViewModel.loading).thenReturn(loading)
+        `when`(countriesViewModel.message).thenReturn(message)
+        `when`(countriesViewModel.navigationLiveEvent).thenReturn(navigationEvent)
+        `when`(countriesViewModel.countries).thenReturn(countries)
+*/
         countriesFragment.viewModelFactory = ViewModelUtil.createFor(countriesViewModel)
         activityRule.activity.setFragment(countriesFragment)
 
@@ -91,14 +107,14 @@ class CountriesFragmentTest {
     @Test
     fun textViewWithErrorMessageIsVisibleWhenDataLoadedContainsErrors() {
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError()))
-        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error\n Swipe to refresh")))
+        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error")))
     }
 
     @Test
     fun textViewErrorMessageDisappearsAndDataIsShowedAfterSwipeRefresh() {
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsError()))
-        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error\n Swipe to refresh")))
-        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrapedAsSucces()))
+        Espresso.onView(withId(R.id.text_view_error)).check(matches(withText("Test error")))
+        `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsSuccess()))
         Espresso.onView(withId(R.id.recycler_view_countries)).perform(swipeDown())
         Espresso.onView(
             recyclerViewCountriesMatcher().atPositionOnView(

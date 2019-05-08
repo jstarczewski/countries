@@ -16,20 +16,18 @@ import com.clakestudio.pc.countries.adapters.countries.CountriesAdapter
 import com.clakestudio.pc.countries.databinding.CountriesFragmentBinding
 import com.clakestudio.pc.countries.di.Injectable
 import com.clakestudio.pc.countries.testing.OpenForTesting
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.countries_fragment.*
 import javax.inject.Inject
 
 
 @OpenForTesting
-class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshListener {
-
-    override fun onRefresh() {
-        binding.viewmodel?.load()
-    }
+class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var binding: com.clakestudio.pc.countries.databinding.CountriesFragmentBinding
+    private lateinit var binding: CountriesFragmentBinding
+    lateinit var viewModel: CountriesViewModel
 
 
     override fun onCreateView(
@@ -48,21 +46,21 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.viewmodel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
+            binding.viewmodel = this
             load()
+
             navigationLiveEvent.observe(viewLifecycleOwner, Observer {
                 navigate(it)
-            })
-
-            error.observe(viewLifecycleOwner, Observer {
-                text_view_error.text = it
             })
             loading.observe(viewLifecycleOwner, Observer {
                 swipe_refresh_layout.isRefreshing = it
             })
+            message.observe(viewLifecycleOwner, Observer {
+                displaySnackBack(it)
+            })
         }
         swipe_refresh_layout.setOnRefreshListener(this)
-
     }
 
     private fun setUpRecyclerView() {
@@ -70,40 +68,38 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@CountriesFragment.context)
             adapter =
-                CountriesAdapter { binding.viewmodel?.exposeNavigationDestinationCode(it) }
+                CountriesAdapter { viewModel.exposeNavigationDestinationCode(it) }
         }
 
     }
 
     fun navigate(destination: String) {
-        Log.e("Name", destination)
         val action = CountriesFragmentDirections.actionCountriesFragmentToDetailsFragment()
         action.alpha = destination
         navController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        val searchView: SearchView = menu?.findItem(R.id.action_search)?.actionView as SearchView
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                binding.viewmodel?.filter(query!!)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                binding.viewmodel?.filter(newText!!)
-                return false
-            }
-
-        })
+        (menu?.findItem(R.id.action_search)?.actionView as SearchView).setOnQueryTextListener(this)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        viewModel.filter(query!!)
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        viewModel.filter(newText!!)
+        return false
+    }
+
+    override fun onRefresh() {
+        viewModel.load()
+    }
+
+    private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+
     fun navController() = findNavController()
 
-    override fun onStop() {
-      //  binding.viewmodel?.compositeDisposable?.clear()
-        super.onStop()
-    }
 }

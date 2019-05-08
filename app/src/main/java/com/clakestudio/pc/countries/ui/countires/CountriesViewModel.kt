@@ -1,14 +1,14 @@
 package com.clakestudio.pc.countries.ui.countires
 
-import android.util.Log
 import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
-import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.testing.OpenForTesting
+import com.clakestudio.pc.countries.ui.details.Country
 import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.disposables.CompositeDisposable
@@ -18,59 +18,60 @@ import javax.inject.Inject
 class CountriesViewModel @Inject constructor(
     private val countriesRepository: CountriesDataSource,
     private val appSchedulers: SchedulersProvider
-) :
-    ViewModel() {
+) : ViewModel() {
+
+    val compositeDisposable: CompositeDisposable = CompositeDisposable()
+
+    private val _countries = MutableLiveData<List<Country>>()
 
     val countries: ObservableArrayList<String> = ObservableArrayList()
-    private val _countries = MutableLiveData<List<com.clakestudio.pc.countries.ui.details.Country>>()
-    val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
-    private val _error: MutableLiveData<String> = MutableLiveData()
-    val error: LiveData<String> = _error
+    val error: ObservableField<String> = ObservableField()
+
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
+
+    private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
     val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
+    private val _message: MutableLiveData<String> = MutableLiveData()
+    val message: LiveData<String> = _message
+
     fun load() {
-        if (_countries.value.isNullOrEmpty())
+        if (_countries.value.isNullOrEmpty()) {
             init()
-        else {
+        } else {
             _loading.value = false
         }
     }
 
 
     private fun init() {
-        _loading.value = true
         compositeDisposable.add(
             countriesRepository.getAllCountries()
                 .startWith(ViewObject.loading(null))
                 .subscribeOn(appSchedulers.ioScheduler())
                 .observeOn(appSchedulers.uiScheduler())
-                //     .onErrorReturn {
-                //        it.localizedMessage
-                //       ViewObject(false, true, listOf(), "Network error")
-                //    }
-               .subscribe ({
+                .subscribe({
                     when {
                         it.isHasError -> {
-                            _error.value = it.errorMessage + "\n Swipe to refresh"
+                            error.set(it.errorMessage)
                             _loading.value = false
                         }
                         it.isLoading -> {
                             _loading.value = true
                         }
                         else -> {
-                            Log.e("Data", it.data.toString())
+                            if (!it.isUpToDate!!)
+                                _message.value = "Data is loaded from cache"
                             _countries.value = it.data?.sortedBy { it.countryName }
                             _loading.value = false
-                            _error.value = ""
+                            error.set("")
                             addAll()
                         }
                     }
                 }, {
-
-               })
+                    error.set("Fatal error occurred, please try again later")
+                })
         )
     }
 
@@ -81,10 +82,10 @@ class CountriesViewModel @Inject constructor(
 
     fun filter(name: String) {
         if (name.length > 2) addOnlyThoseContainingPattern(name)
-        if (name.isEmpty()) addAll()
+        else addAll()
     }
 
-    fun addAll() {
+    private fun addAll() {
         countries.clear()
         _countries.value?.forEach {
             countries.add(it.countryName)

@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.navigation.ui.NavigationUI
 import com.clakestudio.pc.countries.R
 import kotlinx.android.synthetic.main.single_fragment_activity.*
 
@@ -42,6 +43,7 @@ class SingleFragmentActivity : AppCompatActivity() {
         setContentView(R.layout.single_fragment_activity)
 
         setSupportActionBar(toolbar)
+
     }
 
    // override fun onSupportNavigateUp(): Boolean {
