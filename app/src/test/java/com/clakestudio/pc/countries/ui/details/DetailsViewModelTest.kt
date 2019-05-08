@@ -11,6 +11,7 @@ import org.junit.Rule
 
 class DetailsViewModelTest {
 
+
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
@@ -50,19 +51,19 @@ class DetailsViewModelTest {
 
     @Test
     fun latlngStringToDoubleDoubleDoubleOutput() {
-        val out = viewModel.latlngStringToDouble(listOf("12", "12"))
+        val out = viewModel.latLngStringToDouble(listOf("12", "12"))
         assertEquals(Pair(12.0, 12.0), out)
     }
 
     @Test
     fun latlngStringToDubleDoubleNullOutput() {
-        val out = viewModel.latlngStringToDouble(listOf("12", null))
+        val out = viewModel.latLngStringToDouble(listOf("12", null))
         assertEquals(Pair(12.0, null), out)
     }
 
     @Test
     fun latlngStringToDoubleNullInputData() {
-        val out = viewModel.latlngStringToDouble(listOf())
+        val out = viewModel.latLngStringToDouble(listOf())
         assertEquals(null, out)
     }
 }

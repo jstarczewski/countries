@@ -17,6 +17,13 @@ object CountriesDataProvider {
         })
     }
 
+    fun providePolandWrappedAsSuccess(): ViewObject<com.clakestudio.pc.countries.ui.details.Country> =
+        ViewObject.success(com.clakestudio.pc.countries.ui.details.Country(providePoland()), true)
+
+    fun providePolandWrappedAsError() = ViewObject.error("Test error single country", null)
+
+    fun provideCountries() = listOf(provideColombia(), providePoland())
+
     fun provideColombiaJSON(): String {
         return colombia
     }

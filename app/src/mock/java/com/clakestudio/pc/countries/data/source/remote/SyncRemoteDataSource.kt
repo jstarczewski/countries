@@ -8,13 +8,13 @@ class SyncRemoteDataSource(private val fakeCountriesRestAdapter: FakeCountriesRe
 
     fun getAllCountries() = fakeCountriesRestAdapter.getAllCountries()
 
-    fun getCountryByName(name: String) = fakeCountriesRestAdapter.getCountryByName(name)
+    fun getCountryByAlpha(alpha: String) = fakeCountriesRestAdapter.getCountryByName(alpha)
 
     fun <T> handleResponse(response: Response<T>): ViewObject<T> {
         if (response.isSuccessful) {
             if (response.body() == null || response.code() == 204)
                 return ViewObject.error("Response is empty", response.body())
-            return ViewObject.success(response.body()!!)
+            return ViewObject.success(response.body()!!, true)
         } else {
             return ViewObject.error(
                 "Error number: " +

@@ -27,7 +27,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var binding: CountriesFragmentBinding
-    private lateinit var viewModel: CountriesViewModel
+    lateinit var viewModel: CountriesViewModel
 
 
     override fun onCreateView(

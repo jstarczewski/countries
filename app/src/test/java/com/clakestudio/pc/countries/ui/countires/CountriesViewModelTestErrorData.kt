@@ -23,7 +23,7 @@ class CountriesViewModelTestErrorData {
 
     @Test
     fun getError() {
-       assertEquals(viewModel.error.value, "Test error\n Swipe to refresh")
+       assertEquals(viewModel.error.get(), "Test error")
     }
 
 }
