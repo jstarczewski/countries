@@ -9,7 +9,6 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
 import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.testing.SingleFragmentActivity
-import com.clakestudio.pc.countries.util.AppSchedulersProvider
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.util.RecyclerViewMatcher
 import com.clakestudio.pc.countries.util.ViewModelUtil
@@ -19,9 +18,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.*
 import android.widget.EditText
+import androidx.databinding.ObservableArrayList
+import androidx.lifecycle.MutableLiveData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import com.clakestudio.pc.countries.R
+import com.clakestudio.pc.countries.SingleLiveEvent
+import com.clakestudio.pc.countries.util.AppSchedulersProvider
 
 
 class CountriesFragmentTest {
@@ -35,11 +38,25 @@ class CountriesFragmentTest {
     private lateinit var countriesViewModel: CountriesViewModel
     private lateinit var countriesRepository: CountriesRepository
 
+    /*
+        val message = MutableLiveData<String>()
+        val loading = MutableLiveData<Boolean>()
+        val navigationEvent = SingleLiveEvent<String>()
+        val countries = ObservableArrayList<String>()
+    */
     @Before
     fun setUp() {
         countriesRepository = mock(CountriesRepository::class.java)
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsSuccess()))
         countriesViewModel = CountriesViewModel(countriesRepository, AppSchedulersProvider())
+        /*
+        countriesViewModel = mock(CountriesViewModel::class.java)
+        countries.addAll(CountriesDataProvider.provideCountries().map { it.name })
+        `when`(countriesViewModel.loading).thenReturn(loading)
+        `when`(countriesViewModel.message).thenReturn(message)
+        `when`(countriesViewModel.navigationLiveEvent).thenReturn(navigationEvent)
+        `when`(countriesViewModel.countries).thenReturn(countries)
+*/
         countriesFragment.viewModelFactory = ViewModelUtil.createFor(countriesViewModel)
         activityRule.activity.setFragment(countriesFragment)
 

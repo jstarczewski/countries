@@ -17,7 +17,6 @@ class DetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-
     private var alpha = String()
 
     val countryName: ObservableField<String> = ObservableField()
@@ -75,12 +74,9 @@ class DetailsViewModel @Inject constructor(
                         if (!it.isUpToDate!!)
                             _message.value = "Data is loaded from cache"
                         exposeData(it.data!!)
-                        this@DetailsViewModel.alpha = alpha
                     }
                 }
-
             }
-
     )
 
     fun exposeData(country: Country) {
@@ -90,7 +86,7 @@ class DetailsViewModel @Inject constructor(
         details.addAll(country.countryDetails)
     }
 
-    private fun latLngStringToDouble(latLtnString: List<String?>) =
+    fun latLngStringToDouble(latLtnString: List<String?>) =
         if (!latLtnString.isNullOrEmpty()) Pair(latLtnString[0]?.toDouble(), latLtnString[1]?.toDouble()) else null
 
 

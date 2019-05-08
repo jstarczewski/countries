@@ -17,6 +17,31 @@ object CountriesDataProvider {
         })
     }
 
+    fun provideOutdatedSampleCountriesWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.success(listOf(provideColombia(), providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        }, false)
+    }
+
+
+    fun providePolandWrappedAsSuccess(): ViewObject<com.clakestudio.pc.countries.ui.details.Country> =
+        ViewObject.success(com.clakestudio.pc.countries.ui.details.Country(providePoland()), true)
+
+    fun provideOutdatedPolandWrappedAsSuccess(): ViewObject<com.clakestudio.pc.countries.ui.details.Country> =
+        ViewObject.success(com.clakestudio.pc.countries.ui.details.Country(providePoland()), false)
+
+    fun providePolandWrappedAsError() = ViewObject.error("Test error single country", null)
+
+    fun provideColombiaWrappedAsSuccess() = ViewObject.success(
+        com.clakestudio.pc.countries.ui.details.Country(
+            provideColombia()
+        ), true
+    )
+
+    fun provideColombiaWrappedAsError() = ViewObject.error("Test error single country", null)
+
+    fun provideCountries() = listOf(provideColombia(), providePoland())
+
     fun provideColombiaJSON(): String {
         return colombia
     }

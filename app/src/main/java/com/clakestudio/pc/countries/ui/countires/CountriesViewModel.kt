@@ -46,7 +46,6 @@ class CountriesViewModel @Inject constructor(
 
 
     private fun init() {
-        _loading.value = true
         compositeDisposable.add(
             countriesRepository.getAllCountries()
                 .startWith(ViewObject.loading(null))
@@ -83,7 +82,7 @@ class CountriesViewModel @Inject constructor(
 
     fun filter(name: String) {
         if (name.length > 2) addOnlyThoseContainingPattern(name)
-        if (name.isEmpty()) addAll()
+        else addAll()
     }
 
     private fun addAll() {
@@ -93,7 +92,7 @@ class CountriesViewModel @Inject constructor(
         }
     }
 
-    private fun addOnlyThoseContainingPattern(pattern: String) {
+    fun addOnlyThoseContainingPattern(pattern: String) {
         countries.clear()
         _countries.value?.forEach {
             if (it.countryName.toLowerCase().contains(pattern.toLowerCase()))
