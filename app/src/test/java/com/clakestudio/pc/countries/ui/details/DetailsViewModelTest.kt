@@ -2,20 +2,20 @@ package com.clakestudio.pc.countries.ui.details
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.clakestudio.pc.countries.data.FakeCountriesRepository
+import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.util.TestSchedulersProvider
 import org.junit.Before
 import org.junit.Test
-
 import org.junit.Assert.*
 import org.junit.Rule
 
 class DetailsViewModelTest {
 
+    private val viewModel = DetailsViewModel(FakeCountriesRepository(false), TestSchedulersProvider())
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
-    private val viewModel: DetailsViewModel = DetailsViewModel(FakeCountriesRepository(false), TestSchedulersProvider())
 
     @Before
     fun setUp() {
@@ -43,11 +43,18 @@ class DetailsViewModelTest {
         assertEquals(viewModel.countryFlagUrl.value, "https://restcountries.eu/data/pol.svg")
     }
 
+
+    @Test
+    fun exposeDataChangesLiveDataValues() {
+        viewModel.exposeData(Country(CountriesDataProvider.provideColombia()))
+    }
+
     @Test
     fun loadData() {
         viewModel.load("Colombia")
         assertEquals(viewModel.countryName.get(), "Colombia")
     }
+
 
     @Test
     fun latlngStringToDoubleDoubleDoubleOutput() {
@@ -66,4 +73,6 @@ class DetailsViewModelTest {
         val out = viewModel.latLngStringToDouble(listOf())
         assertEquals(null, out)
     }
+
+
 }

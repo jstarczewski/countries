@@ -8,6 +8,12 @@ import io.reactivex.Flowable
 
 class FakeCountriesRepository(private val asError: Boolean) : CountriesDataSource {
 
+    /**
+     * Now the fake countries repository is useless, because final CountriesRepository provides small and simple interface
+     * that can be easily mocked. This class was used when I tested viewmodels after implementing their basic functionality.
+     *
+     * */
+
     override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
         if ("Colombia".toLowerCase().contains(alpha.toLowerCase()))
             Flowable.just(ViewObject.success(Country(CountriesDataProvider.provideColombia()), true))

@@ -17,7 +17,6 @@ class DetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-
     private var alpha = String()
 
     val countryName: ObservableField<String> = ObservableField()

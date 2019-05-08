@@ -20,6 +20,7 @@ import androidx.test.espresso.action.ViewActions.swipeDown
 import com.clakestudio.pc.countries.R
 import com.clakestudio.pc.countries.data.CountriesRepository
 import com.clakestudio.pc.countries.testing.SingleFragmentActivity
+import java.util.concurrent.TimeUnit
 
 
 class DetailsFragmentTest {
@@ -70,6 +71,23 @@ class DetailsFragmentTest {
         Espresso.onView(withId(R.id.neasted_scroll_view)).perform(swipeDown())
         Espresso.onView(withId(R.id.text_view_name)).check(matches(withText("Poland")))
     }
+
+    /**
+     * Will not pass because of there is no idling resource implemented yet
+     *
+     * */
+
+
+    /*
+    @Test
+    fun testIfDataIsReloadedAfterDelayWithOnSwipeRefresh() {
+        `when`(countriesRepository.getCountryByAlpha("POL")).thenReturn(Flowable.just(CountriesDataProvider.providePolandWrappedAsError()))
+        onView(withId(R.id.text_view_name)).check(matches(withText("Test error single country \n Swipe to refresh")))
+        `when`(countriesRepository.getCountryByAlpha("POL")).thenReturn(Flowable.just(CountriesDataProvider.providePolandWrappedAsSuccess()).delay(2, TimeUnit.SECONDS))
+        Espresso.onView(withId(R.id.neasted_scroll_view)).perform(swipeDown())
+        Espresso.onView(withId(R.id.text_view_name)).check(matches(withText("Poland")))
+    }
+*/
 
 
     @Test

@@ -46,7 +46,6 @@ class CountriesViewModel @Inject constructor(
 
 
     private fun init() {
-        _loading.value = true
         compositeDisposable.add(
             countriesRepository.getAllCountries()
                 .startWith(ViewObject.loading(null))
