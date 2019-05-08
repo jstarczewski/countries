@@ -22,13 +22,30 @@ class CountriesRepository @Inject constructor(
 
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
-        getAllCountriesFromRemoteDataSource()
+        countriesRemoteDataSource.getAllCountries()
+            .startWith(ViewObject.loading(null))
+            .doOnNext { countries ->
+                countries.data?.forEach {
+                    countriesLocalDataSource.saveCountry(it)
+                }
+            }
             .map {
                 if (it.isHasError)
                     throw RemoteDataUnavailableException(it.errorMessage ?: "Data fetch error")
                 it
             }.onErrorResumeNext(countriesLocalDataSource.getAllCountries())
 
+
+    override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
+        countriesRemoteDataSource.getCountryByAlpha(alpha).map {
+            if (it.isHasError)
+                throw RemoteDataUnavailableException(it.errorMessage ?: "Error occured")
+            it
+        }.onErrorResumeNext(countriesLocalDataSource.getCountryByAlpha(alpha))
+
+    override fun saveCountry(country: Country) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     /*
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
@@ -48,16 +65,13 @@ class CountriesRepository @Inject constructor(
                 .debounce(500, TimeUnit.MILLISECONDS)
         )
         */
-    
-    override fun saveCountry(country: Country) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
+/*
     fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
         getCountriesFromRemoteDataSourceAndMap()
             .toFlowable()
             .startWith(ViewObject.loading(null))
-    /*    .doOnNext { countries ->
+       .doOnNext { countries ->
              countries.data?.forEach {
                  countriesLocalDataSource.saveCountry(
                      com.clakestudio.pc.countries.data.source.local.Country(
@@ -86,12 +100,6 @@ class CountriesRepository @Inject constructor(
                 }
             }.toFlowable().startWith(ViewObject.loading(null))*/
 
-    override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
-        getCountryByAlphaFromRemoteDataSource(alpha).map {
-            if (it.isHasError)
-                throw RemoteDataUnavailableException(it.errorMessage ?: "Error occured")
-            it
-        }.onErrorResumeNext(countriesLocalDataSource.getCountryByAlpha(alpha))
 
     /*
     override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
@@ -133,6 +141,7 @@ class CountriesRepository @Inject constructor(
 */
 
 
+    /*
     private fun getCountryByAlphaFromRemoteDataSource(alpha: String): Flowable<ViewObject<Country>> =
         countriesRemoteDataSource.getCountryByAlpha(alpha)
             .map { viewObject ->
@@ -145,8 +154,8 @@ class CountriesRepository @Inject constructor(
                     ViewObject.error(viewObject.errorMessage!!, null)
                 }
             }.toFlowable()
-
-
+*/
+/*
     private fun getCountriesFromRemoteDataSourceAndMap(): Single<ViewObject<List<Country>>> =
         countriesRemoteDataSource.getAllCountries()
             .map { viewObject ->
@@ -160,5 +169,5 @@ class CountriesRepository @Inject constructor(
 
             }
 
-
+*/
 }
