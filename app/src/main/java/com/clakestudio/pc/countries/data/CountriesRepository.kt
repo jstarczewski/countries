@@ -16,8 +16,8 @@ import javax.inject.Inject
 
 @OpenForTesting
 class CountriesRepository @Inject constructor(
-    private val countriesRemoteDataSource: CountriesRemoteDataSource,
-    private val countriesLocalDataSource: CountriesLocalDataSource
+    private val countriesRemoteDataSource: CountriesDataSource,
+    private val countriesLocalDataSource: CountriesDataSource
 ) : CountriesDataSource {
 
 

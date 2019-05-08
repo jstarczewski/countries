@@ -8,6 +8,10 @@ import io.reactivex.Flowable
 
 class FakeCountriesRepository(private val asError: Boolean) : CountriesDataSource {
 
+    override fun saveCountry(country: Country) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     /**
      * Now the fake countries repository is useless, because final CountriesRepository provides small and simple interface
      * that can be easily mocked. This class was used when I tested viewmodels after implementing their basic functionality.
