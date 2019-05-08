@@ -20,13 +20,14 @@ class CountriesRepository @Inject constructor(
     private val countriesLocalDataSource: CountriesLocalDataSource
 ) : CountriesDataSource {
 
+
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
         getAllCountriesFromRemoteDataSource()
             .map {
                 if (it.isHasError)
                     throw RemoteDataUnavailableException(it.errorMessage ?: "Data fetch error")
                 it
-            }.onErrorResumeNext(getAllCountriesFromLocalDataSource())
+            }.onErrorResumeNext(countriesLocalDataSource.getAllCountries())
 
 
     /*
@@ -47,25 +48,29 @@ class CountriesRepository @Inject constructor(
                 .debounce(500, TimeUnit.MILLISECONDS)
         )
         */
+    
+    override fun saveCountry(country: Country) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
         getCountriesFromRemoteDataSourceAndMap()
             .toFlowable()
             .startWith(ViewObject.loading(null))
-           .doOnNext { countries ->
-                countries.data?.forEach {
-                    countriesLocalDataSource.saveCountry(
-                        com.clakestudio.pc.countries.data.source.local.Country(
-                            it.alpha3Code,
-                            it.countryName,
-                            it.countryFlagUrl,
-                            it.latlng.joinToString(separator = ","),
-                            it.countryDetails
-                        )
-                    )
-                }
-            }
-
+    /*    .doOnNext { countries ->
+             countries.data?.forEach {
+                 countriesLocalDataSource.saveCountry(
+                     com.clakestudio.pc.countries.data.source.local.Country(
+                         it.alpha3Code,
+                         it.countryName,
+                         it.countryFlagUrl,
+                         it.latlng.joinToString(separator = ","),
+                         it.countryDetails
+                     )
+                 )
+             }
+         }*/
+/*
     private fun getAllCountriesFromLocalDataSource(): Flowable<ViewObject<List<Country>>> =
         countriesLocalDataSource.getAllCountries()
             .map { countries ->
@@ -79,14 +84,14 @@ class CountriesRepository @Inject constructor(
                         null
                     )
                 }
-            }.toFlowable().startWith(ViewObject.loading(null))
+            }.toFlowable().startWith(ViewObject.loading(null))*/
 
     override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
         getCountryByAlphaFromRemoteDataSource(alpha).map {
             if (it.isHasError)
                 throw RemoteDataUnavailableException(it.errorMessage ?: "Error occured")
             it
-        }.onErrorResumeNext(getCountryByAlphaFromLocalDataSource(alpha))
+        }.onErrorResumeNext(countriesLocalDataSource.getCountryByAlpha(alpha))
 
     /*
     override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
@@ -106,6 +111,7 @@ class CountriesRepository @Inject constructor(
                 .debounce(5, TimeUnit.SECONDS)
         )
 */
+    /*
     private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<Country>> =
         countriesLocalDataSource.getCountryByAlpha(alpha)
             .map { country ->
@@ -124,6 +130,8 @@ class CountriesRepository @Inject constructor(
                     ViewObject.error("Cannot fetch data from network, no cache is available", null)
                 }
             }.toFlowable()
+*/
+
 
     private fun getCountryByAlphaFromRemoteDataSource(alpha: String): Flowable<ViewObject<Country>> =
         countriesRemoteDataSource.getCountryByAlpha(alpha)
