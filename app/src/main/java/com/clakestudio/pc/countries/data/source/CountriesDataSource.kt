@@ -11,5 +11,6 @@ interface CountriesDataSource {
 
     fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>>
 
+    fun saveCountry(country: Country)
 
 }
