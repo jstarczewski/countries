@@ -38,6 +38,7 @@ object CountriesDataProvider {
         ), true
     )
 
+    fun provideCountries() = listOf(provideColombia(), providePoland())
 
     fun provideColombia() =
         Country(

@@ -22,7 +22,8 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
     fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>>> =
         getCountriesFromRemoteDataSourceAndMap()
             .toFlowable()
-            .startWith(ViewObject.loading(null))
+
+           // .startWith(ViewObject.loading(null))
 
     override fun saveCountry(country: com.clakestudio.pc.countries.ui.details.Country) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
