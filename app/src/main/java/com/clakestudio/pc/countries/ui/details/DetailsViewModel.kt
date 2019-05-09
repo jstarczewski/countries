@@ -22,10 +22,7 @@ class DetailsViewModel @Inject constructor(
     val countryName: ObservableField<String> = ObservableField()
     val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
     val error: ObservableField<String> = countryName
-    //  val details: ObservableList<Pair<String, String?>> = _details
 
-    //private val _error: MutableLiveData<String> = MutableLiveData()
-    // val error: ObservableField<String> = ObservableField()
 
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading

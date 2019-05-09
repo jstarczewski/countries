@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 object DetailsBindingAdapter {
 
     @JvmStatic
-    @BindingAdapter("app:details")
+    @BindingAdapter("android:details")
     fun setDetails(recyclerView: RecyclerView, details: ArrayList<Pair<String, String?>>) {
         with(recyclerView.adapter as DetailAdapter) {
             replaceData(details)
