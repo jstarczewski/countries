@@ -42,11 +42,11 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                     )
                 }
             }.toFlowable()
-            /*
-            THERE WE GO
-            TESTING PROBLEMS STARTS HERE
-            .startWith(ViewObject.loading(null))
-             */
+    /*
+    THERE WE GO
+    TESTING PROBLEMS STARTS HERE
+    .startWith(ViewObject.loading(null))
+     */
 
 
     fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<com.clakestudio.pc.countries.ui.details.Country>> =
@@ -65,7 +65,10 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                         false
                     )
                 } else {
-                    ViewObject.error("Cannot fetch data from network, no cache is available", null)
+                    ViewObject.error(
+                        "Cannot fetch data from network, no cache is available, check your connection and swipe to refresh",
+                        null
+                    )
                 }
             }.toFlowable()
 }
