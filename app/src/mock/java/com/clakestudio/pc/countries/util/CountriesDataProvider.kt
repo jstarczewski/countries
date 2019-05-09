@@ -17,11 +17,26 @@ object CountriesDataProvider {
         })
     }
 
+    fun provideListWithSingleCountryWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.success(listOf(providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        }, true)
+    }
+
+    fun provideListWithSingleCountryWrappedAsError(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.error("Test error", listOf(providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        })
+    }
+
     fun provideOutdatedSampleCountriesWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
         return ViewObject.success(listOf(provideColombia(), providePoland()).map {
             com.clakestudio.pc.countries.ui.details.Country(it)
         }, false)
     }
+
+    fun provideEmptyDataSetForLocalDataSourceTest() =
+        emptyList<com.clakestudio.pc.countries.data.source.local.Country>()
 
 
     fun providePolandWrappedAsSuccess(): ViewObject<com.clakestudio.pc.countries.ui.details.Country> =

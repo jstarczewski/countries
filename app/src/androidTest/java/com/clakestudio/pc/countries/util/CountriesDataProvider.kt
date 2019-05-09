@@ -23,6 +23,20 @@ object CountriesDataProvider {
         }, false)
     }
 
+    fun provideListWithSingleCountryWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.success(listOf(providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        }, true)
+    }
+
+    fun provideListWithSingleCountryWrappedAsError(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+        return ViewObject.error("Test error", listOf(providePoland()).map {
+            com.clakestudio.pc.countries.ui.details.Country(it)
+        })
+    }
+
+    fun provideEmptyDataSetForLocalDataSourceTest(): List<com.clakestudio.pc.countries.data.source.local.Country> =
+        emptyList<com.clakestudio.pc.countries.data.source.local.Country>()
 
     fun providePolandWrappedAsSuccess(): ViewObject<com.clakestudio.pc.countries.ui.details.Country> =
         ViewObject.success(com.clakestudio.pc.countries.ui.details.Country(providePoland()), true)
