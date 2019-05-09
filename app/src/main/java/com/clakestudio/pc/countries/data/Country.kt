@@ -2,7 +2,7 @@ package com.clakestudio.pc.countries.data
 
 import com.clakestudio.pc.countries.data.source.remote.ApiCountry as RemoteCountry
 
-data class Country(
+class Country(
     val countryName: String,
     val alpha3Code: String,
     val countryFlagUrl: String,
