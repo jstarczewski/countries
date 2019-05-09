@@ -24,20 +24,9 @@ object CountriesDataProvider {
         }, false)
     }
 
-    fun provideListWithSingleCountryWrappedAsSuccess(): ViewObject<List<Country>> {
-        return ViewObject.success(listOf(providePoland()).map {
-            Country(it)
-        }, true)
-    }
+    fun provideEmptyDataSetForLocalDataSourceTest() =
+        emptyList<com.clakestudio.pc.countries.data.source.local.DbCountry>()
 
-    fun provideListWithSingleCountryWrappedAsError(): ViewObject<List<Country>> {
-        return ViewObject.error("Test error", listOf(providePoland()).map {
-            Country(it)
-        })
-    }
-
-    fun provideEmptyDataSetForLocalDataSourceTest(): List<com.clakestudio.pc.countries.data.source.local.DbCountry> =
-        emptyList()
 
     fun providePolandWrappedAsSuccess(): ViewObject<Country> =
         ViewObject.success(Country(providePoland()), true)
@@ -53,13 +42,7 @@ object CountriesDataProvider {
             ), true
     )
 
-    fun provideColombiaWrappedAsError() = ViewObject.error("Test error single country", null)
-
     fun provideCountries() = listOf(provideColombia(), providePoland())
-
-    fun provideColombiaJSON(): String {
-        return colombia
-    }
 
     fun provideColombia() =
         ApiCountry(
@@ -202,8 +185,9 @@ object CountriesDataProvider {
             ),
             cioc = "POL"
         )
+}
 
-    private const val colombia = """
+const val colombia = """
 [{
     "name": "Colombia",
     "topLevelDomain": [".co"],
@@ -258,4 +242,3 @@ object CountriesDataProvider {
     "cioc": "COL"
 }]
 """
-}
