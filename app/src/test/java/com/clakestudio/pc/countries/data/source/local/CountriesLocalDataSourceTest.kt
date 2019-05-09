@@ -1,7 +1,7 @@
 package com.clakestudio.pc.countries.data.source.local
 
 import androidx.room.EmptyResultSetException
-import com.clakestudio.pc.countries.ui.details.Country
+import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Single
@@ -30,21 +30,21 @@ class CountriesLocalDataSourceTest {
     fun setUp() {
         `when`(countryDao.getAllCountries()).thenReturn(Single.just(CountriesDataProvider.provideOutdatedSampleCountriesWrappedAsSuccess()).map { conuries ->
             conuries.data?.map {
-                Country(
+                DbCountry(
                     it.alpha3Code,
                     it.countryName,
                     it.countryFlagUrl,
-                    it.latlng.joinToString(","),
+                    it.latLng.joinToString(","),
                     it.countryDetails
                 )
             }
         })
         `when`(countryDao.getCountryByAlpha3Code(alpha)).thenReturn(Single.just(CountriesDataProvider.provideOutdatedPolandWrappedAsSuccess()).map {
-            Country(
+            DbCountry(
                 it.data!!.alpha3Code,
                 it.data!!.countryName,
                 it.data!!.countryFlagUrl,
-                it.data!!.latlng.joinToString(","),
+                it.data!!.latLng.joinToString(","),
                 it.data!!.countryDetails
             )
         })
@@ -131,7 +131,7 @@ class CountriesLocalDataSourceTest {
         `when`(countryDao.getCountryByAlpha3Code(alpha))
             .thenReturn(
                 Single.just(
-                    Country(
+                    DbCountry(
                         "null",
                         "null",
                         "null",
@@ -153,7 +153,7 @@ class CountriesLocalDataSourceTest {
         `when`(countryDao.getCountryByAlpha3Code(alpha))
             .thenReturn(
                 Single.just(
-                    Country(
+                    DbCountry(
                         "null",
                         "null",
                         "null",

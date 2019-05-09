@@ -2,7 +2,6 @@ package com.clakestudio.pc.countries.data
 
 import com.clakestudio.pc.countries.data.source.local.CountriesLocalDataSource
 import com.clakestudio.pc.countries.data.source.remote.CountriesRemoteDataSource
-import com.clakestudio.pc.countries.ui.details.Country
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable

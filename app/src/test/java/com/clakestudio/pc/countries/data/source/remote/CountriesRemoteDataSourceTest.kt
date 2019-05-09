@@ -1,6 +1,6 @@
 package com.clakestudio.pc.countries.data.source.remote
 
-import com.clakestudio.pc.countries.ui.details.Country
+import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.util.FakeInterceptor
 import com.clakestudio.pc.countries.util.RetrofitWithFakeInterceptroInjection
@@ -62,7 +62,7 @@ class CountriesRemoteDataSourceTest {
     fun getCountryWhenResponseCodeIs200AssertValues() {
         val expectedTestData = CountriesDataProvider.providePolandWrappedAsSuccess()
             .data
-        //val expectedTestData = listOf(Country(CountriesDataProvider.providePoland()))
+        //val expectedTestData = listOf(DbCountry(CountriesDataProvider.providePoland()))
         fakeInterceptor.responseCode = 200
         remoteDataSource.getCountryByAlpha(alpha)
             .map { it.data }

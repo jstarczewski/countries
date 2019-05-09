@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.testing.OpenForTesting
-import com.clakestudio.pc.countries.ui.details.Country
+import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.disposables.CompositeDisposable

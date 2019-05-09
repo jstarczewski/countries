@@ -17,10 +17,10 @@ class FakeCountriesRestAdapter(retrofit: Retrofit) {
     interface CountriesService {
 
         @GET(URLManager.all)
-        fun getAllCountries(): Call<Response<List<Country>>>
+        fun getAllCountries(): Call<Response<List<ApiCountry>>>
 
         @GET(URLManager.name)
-        fun getCountryByName(@Path("alpha") name: String): Call<Response<Country>>
+        fun getCountryByName(@Path("alpha") name: String): Call<Response<ApiCountry>>
 
 
     }

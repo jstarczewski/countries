@@ -1,7 +1,6 @@
 package com.clakestudio.pc.countries.data
 
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
-import com.clakestudio.pc.countries.ui.details.Country
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
@@ -14,7 +13,7 @@ class FakeCountriesRepository(private val asError: Boolean) : CountriesDataSourc
 
     /**
      * Now the fake countries repository is useless, because final CountriesRepository provides small and simple interface
-     * that can be easily mocked. This class was used when I tested viewmodels after implementing their basic functionality.
+     * that can be easily mocked. This class was used when I tested viewmodels after implementing their basic in early stage of dev functionality.
      *
      * */
 

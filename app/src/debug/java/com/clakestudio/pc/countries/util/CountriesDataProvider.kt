@@ -1,62 +1,51 @@
 package com.clakestudio.pc.countries.util
 
-import com.clakestudio.pc.countries.data.source.remote.Country
+import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.data.source.remote.ApiCountry
 import com.clakestudio.pc.countries.vo.ViewObject
 
 object CountriesDataProvider {
 
-    fun provideSampleCountriesWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+    fun provideSampleCountriesWrappedAsSuccess(): ViewObject<List<Country>> {
         return ViewObject.success(listOf(provideColombia(), providePoland()).map {
-            com.clakestudio.pc.countries.ui.details.Country(it)
+            Country(it)
         }, true)
     }
 
-    fun provideSampleCountriesWrappedAsError(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+    fun provideSampleCountriesWrappedAsError(): ViewObject<List<Country>> {
         return ViewObject.error("Test error", listOf(provideColombia(), providePoland()).map {
-            com.clakestudio.pc.countries.ui.details.Country(it)
+            Country(it)
         })
     }
 
-    fun provideListWithSingleCountryWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
-        return ViewObject.success(listOf(providePoland()).map {
-            com.clakestudio.pc.countries.ui.details.Country(it)
-        }, true)
-    }
-
-    fun provideListWithSingleCountryWrappedAsError(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
-        return ViewObject.error("Test error", listOf(providePoland()).map {
-            com.clakestudio.pc.countries.ui.details.Country(it)
-        })
-    }
-
-    fun provideOutdatedSampleCountriesWrappedAsSuccess(): ViewObject<List<com.clakestudio.pc.countries.ui.details.Country>> {
+    fun provideOutdatedSampleCountriesWrappedAsSuccess(): ViewObject<List<Country>> {
         return ViewObject.success(listOf(provideColombia(), providePoland()).map {
-            com.clakestudio.pc.countries.ui.details.Country(it)
+            Country(it)
         }, false)
     }
 
     fun provideEmptyDataSetForLocalDataSourceTest() =
-        emptyList<com.clakestudio.pc.countries.data.source.local.Country>()
+        emptyList<com.clakestudio.pc.countries.data.source.local.DbCountry>()
 
 
-    fun providePolandWrappedAsSuccess(): ViewObject<com.clakestudio.pc.countries.ui.details.Country> =
-        ViewObject.success(com.clakestudio.pc.countries.ui.details.Country(providePoland()), true)
+    fun providePolandWrappedAsSuccess(): ViewObject<Country> =
+        ViewObject.success(Country(providePoland()), true)
 
-    fun provideOutdatedPolandWrappedAsSuccess(): ViewObject<com.clakestudio.pc.countries.ui.details.Country> =
-        ViewObject.success(com.clakestudio.pc.countries.ui.details.Country(providePoland()), false)
+    fun provideOutdatedPolandWrappedAsSuccess(): ViewObject<Country> =
+        ViewObject.success(Country(providePoland()), false)
 
     fun providePolandWrappedAsError() = ViewObject.error("Test error single country", null)
 
     fun provideColombiaWrappedAsSuccess() = ViewObject.success(
-        com.clakestudio.pc.countries.ui.details.Country(
-            provideColombia()
-        ), true
+            Country(
+                    provideColombia()
+            ), true
     )
 
     fun provideCountries() = listOf(provideColombia(), providePoland())
 
     fun provideColombia() =
-        Country(
+        ApiCountry(
             "Colombia",
             listOf(".co"),
             "CO",
@@ -80,14 +69,14 @@ object CountriesDataProvider {
             "Colombia",
             "170",
             listOf(
-                Country.Currency(
+                ApiCountry.Currency(
                     "COP",
                     "Colombian peso",
                     "$"
                 )
             ),
             listOf(
-                Country.Language(
+                ApiCountry.Language(
                     iso639_1 = "es",
                     iso639_2 = "spa",
                     name = "Spanish",
@@ -105,13 +94,13 @@ object CountriesDataProvider {
             ),
             "https://restcountries.eu/data/col.svg",
             listOf(
-                Country.RegionalBlocs(
+                ApiCountry.RegionalBlocs(
                     acronym = "PA",
                     name = "Pacific Alliance",
                     otherAcronyms = listOf(""),
                     otherNames = listOf("Alianza del Pacífico")
                 ),
-                Country.RegionalBlocs(
+                ApiCountry.RegionalBlocs(
                     acronym = "USAN",
                     name = "Union of South American Nations",
                     otherAcronyms = listOf("UNASUR", "UNASUL", "UZAN"),
@@ -127,7 +116,7 @@ object CountriesDataProvider {
         )
 
     fun providePoland() =
-        Country(
+        ApiCountry(
             name = "Poland",
             topLevelDomain = listOf(".pl"),
             alpha2Code = "PL",
@@ -159,14 +148,14 @@ object CountriesDataProvider {
             nativeName = "Polska",
             numericCode = "616",
             currencies = listOf(
-                Country.Currency(
+                ApiCountry.Currency(
                     code = "PLN",
                     name = "Polish złoty",
                     symbol = "zł"
                 )
             ),
             languages = listOf(
-                Country.Language(
+                ApiCountry.Language(
                     iso639_1 = "pl",
                     iso639_2 = "pol",
                     name = "Polish",
@@ -187,7 +176,7 @@ object CountriesDataProvider {
             ),
             flag = "https://restcountries.eu/data/pol.svg",
             regionalBlocs = listOf(
-                Country.RegionalBlocs(
+                ApiCountry.RegionalBlocs(
                     acronym = " EU ",
                     name = " European Union",
                     otherAcronyms = listOf(),
@@ -210,7 +199,7 @@ const val colombia = """
     "region": "Americas",
     "subregion": "South America",
     "population": 48759958,
-    "latlng": [4.0, -72.0],
+    "latLng": [4.0, -72.0],
     "demonym": "Colombian",
     "area": 1141748.0,
     "gini": 55.9,
