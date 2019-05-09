@@ -15,22 +15,19 @@ class CountriesRemoteDataSourceTest {
 
     private val testSubscriberCountry = TestSubscriber<Country>()
     private val testSubscriberViewObjectCountry = TestSubscriber<ViewObject<Country>>()
+    private val errorSubscriber = TestSubscriber<Boolean>()
 
     private val alpha = "POL"
 
-    private val fakeInterface = FakeInterceptor()
-    private val countriesRestAdapter = CountriesRestAdapter(
-        RetrofitWithFakeInterceptroInjection.provideRetrofitWithRxAdapterFactory(
-            FakeInterceptor()
-        )
-    )
+    private val fakeInterceptor = FakeInterceptor(404)
+    private val countriesRestAdapter = CountriesRestAdapter(RetrofitWithFakeInterceptroInjection.provideRetrofitWithRxAdapterFactory(fakeInterceptor))
     private val remoteDataSource = CountriesRemoteDataSource(countriesRestAdapter)
 
     @Test
     fun getAllCountriesWhenResponseCodeIs200AssertValues() {
         val expectedTestData = CountriesDataProvider.provideSampleCountriesWrappedAsSuccess()
             .data
-        fakeInterface.responseCode = 200
+        fakeInterceptor.responseCode = 200
         remoteDataSource.getAllCountries()
             .map { it.data }
             .subscribe(testSubscriberList)
@@ -38,42 +35,27 @@ class CountriesRemoteDataSourceTest {
     }
 
     @Test
-    fun getAllCountriesWhenResponseCodeIs404AssertValues() {
-        val expectedTestData = CountriesDataProvider.provideSampleCountriesWrappedAsError()
-        fakeInterface.responseCode = 404
-        remoteDataSource.getAllCountries()
-            .map { it.data }
-            .subscribe(testSubscriberList)
-        testSubscriberList.assertValues(expectedTestData.data)
-    }
-
-    @Test
     fun getAllCountriesWhenResponseCodeIs404() {
-        // val expectedTestData = ViewObject.error("Test error", listOf(CountriesDataProvider.providePoland()).map {
-        //    Country(it)
-        // })
-        val expectedTestData = CountriesDataProvider.provideSampleCountriesWrappedAsError()
-        fakeInterface.responseCode = 404
-        remoteDataSource.getAllCountries()
-            .subscribe(testSubscriberViewObjectList)
-        testSubscriberViewObjectList.assertValue { expectedTestData.isHasError }
-    }
-
-    @Test
-    fun getAllCountriesWhenResponseCodeIs204() {
-        val expectedTestData = CountriesDataProvider.provideSampleCountriesWrappedAsError()
-        fakeInterface.responseCode = 204
+        fakeInterceptor.responseCode = 404
         remoteDataSource.getAllCountries()
             .subscribe(testSubscriberViewObjectList)
         testSubscriberViewObjectList.assertValue { it.isHasError }
     }
 
     @Test
-    fun getAllCountriesWhenResponseCodeIs200() {
-        fakeInterface.responseCode = 200
+    fun getAllCountriesWhenResponseCodeIs204() {
+        fakeInterceptor.responseCode = 204
         remoteDataSource.getAllCountries()
             .subscribe(testSubscriberViewObjectList)
-        testSubscriberViewObjectList.assertValue{!it.isHasError}
+        testSubscriberViewObjectList.assertValue { it.errorMessage == "Response is empty" }
+    }
+
+    @Test
+    fun getAllCountriesWhenResponseCodeIs200() {
+        fakeInterceptor.responseCode = 200
+        remoteDataSource.getAllCountries()
+            .subscribe(testSubscriberViewObjectList)
+        testSubscriberViewObjectList.assertValue { !it.isHasError }
     }
 
     @Test
@@ -81,7 +63,7 @@ class CountriesRemoteDataSourceTest {
         val expectedTestData = CountriesDataProvider.providePolandWrappedAsSuccess()
             .data
         //val expectedTestData = listOf(Country(CountriesDataProvider.providePoland()))
-        fakeInterface.responseCode = 200
+        fakeInterceptor.responseCode = 200
         remoteDataSource.getCountryByAlpha(alpha)
             .map { it.data }
             .subscribe(testSubscriberCountry)
@@ -89,42 +71,29 @@ class CountriesRemoteDataSourceTest {
     }
 
     @Test
-    fun getCountryWhenResponseCodeIs404AssertValues() {
-        val expectedTestData = CountriesDataProvider.providePolandWrappedAsSuccess()
-        fakeInterface.responseCode = 404
-        remoteDataSource.getCountryByAlpha("POL")
-            .map { it.data }
-            .subscribe(testSubscriberCountry)
-        testSubscriberCountry.assertValues(expectedTestData.data)
-    }
-
-    @Test
     fun getCountryWhenResponseCodeIs404() {
-        // val expectedTestData = ViewObject.error("Test error", listOf(CountriesDataProvider.providePoland()).map {
-        //    Country(it)
-        // })
         val expectedTestData = CountriesDataProvider.providePolandWrappedAsError()
-        fakeInterface.responseCode = 404
+        fakeInterceptor.responseCode = 404
         remoteDataSource.getAllCountries()
-            .subscribe(testSubscriberViewObjectList)
-        testSubscriberViewObjectList.assertValue { expectedTestData.isHasError }
+            .map { it.isHasError }
+            .subscribe(errorSubscriber)
+        errorSubscriber.assertValues(expectedTestData.isHasError)
     }
 
     @Test
     fun getCountryWhenResponseCodeIs204() {
-        val expectedTestData = CountriesDataProvider.providePolandWrappedAsError()
-        fakeInterface.responseCode = 204
+        fakeInterceptor.responseCode = 204
         remoteDataSource.getCountryByAlpha(alpha)
             .subscribe(testSubscriberViewObjectCountry)
-        testSubscriberViewObjectCountry.assertValue { expectedTestData.isHasError }
+        testSubscriberViewObjectCountry.assertValue { it.isHasError }
     }
 
     @Test
     fun getCountryWhenResponseCodeIs200() {
-        fakeInterface.responseCode = 200
+        fakeInterceptor.responseCode = 200
         remoteDataSource.getCountryByAlpha(alpha)
             .subscribe(testSubscriberViewObjectCountry)
-        testSubscriberViewObjectCountry.assertValue{!it.isHasError}
+        testSubscriberViewObjectCountry.assertValue { !it.isHasError }
     }
 
 
