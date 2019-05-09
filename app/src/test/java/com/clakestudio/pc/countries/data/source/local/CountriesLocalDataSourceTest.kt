@@ -34,7 +34,7 @@ class CountriesLocalDataSourceTest {
                     it.alpha3Code,
                     it.countryName,
                     it.countryFlagUrl,
-                    it.latlng.joinToString(","),
+                    it.latLng.joinToString(","),
                     it.countryDetails
                 )
             }
@@ -44,7 +44,7 @@ class CountriesLocalDataSourceTest {
                 it.data!!.alpha3Code,
                 it.data!!.countryName,
                 it.data!!.countryFlagUrl,
-                it.data!!.latlng.joinToString(","),
+                it.data!!.latLng.joinToString(","),
                 it.data!!.countryDetails
             )
         })

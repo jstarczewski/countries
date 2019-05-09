@@ -17,17 +17,13 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
 
     override fun getCountryByAlpha(alpha: String) = getCountryByAlphaFromRemoteDataSource(alpha)
 
-
-    fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
-            getCountriesFromRemoteDataSourceAndMap()
-                    .toFlowable()
-
-    // .startWith(ViewObject.loading(null))
-
     override fun saveCountry(country: Country) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    private fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
+            getCountriesFromRemoteDataSourceAndMap()
+                    .toFlowable()
 
     private fun <T> handleResponse(response: Response<T>): ViewObject<T> {
         if (response.isSuccessful) {

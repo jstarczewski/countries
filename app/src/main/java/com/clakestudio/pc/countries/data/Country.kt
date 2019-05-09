@@ -7,7 +7,7 @@ class Country(
         val countryName: String,
         val alpha3Code: String,
         val countryFlagUrl: String,
-        val latlng: List<String>,
+        val latLng: List<String>,
         var countryDetails: List<Pair<String, String?>>
 ) {
 
@@ -54,7 +54,6 @@ class Country(
                     Pair("Translations", mapToString(country.translations)),
                     Pair("Regional blocs", country.regionalBlocs.joinToString(separator = "\n")),
                     Pair("Cioc", country.cioc)
-
             )
 
     private fun mapToString(map: Map<String, String>): String {
@@ -65,9 +64,29 @@ class Country(
         return result
     }
 
-}
-/*
-fun fromApiCountry(apiCountry: com.clakestudio.pc.countries.data.source.remote.ApiCountry): Country =
-        Country(apiCountry)
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-fun fromDbCountry(dbCountry: DbCountry) : Country = Country()*/
+        other as Country
+
+        if (countryName != other.countryName) return false
+        if (alpha3Code != other.alpha3Code) return false
+        if (countryFlagUrl != other.countryFlagUrl) return false
+        if (latLng != other.latLng) return false
+        if (countryDetails != other.countryDetails) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = countryName.hashCode()
+        result = 31 * result + alpha3Code.hashCode()
+        result = 31 * result + countryFlagUrl.hashCode()
+        result = 31 * result + latLng.hashCode()
+        result = 31 * result + countryDetails.hashCode()
+        return result
+    }
+
+
+}

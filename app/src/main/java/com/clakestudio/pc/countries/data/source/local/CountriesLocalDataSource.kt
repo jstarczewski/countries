@@ -19,7 +19,7 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                     countryName = country.countryName,
                     alpha3Code = country.alpha3Code,
                     details = country.countryDetails,
-                    latlng = country.latlng.joinToString(separator = ",")
+                    latlng = country.latLng.joinToString(separator = ",")
             )
     )
 
@@ -28,13 +28,7 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                     .map { countries ->
                         if (countries.isNotEmpty()) {
                             ViewObject.success(countries.map {
-                                Country(
-                                        it.countryName,
-                                        it.alpha3Code,
-                                        it.countryFlagUrl,
-                                        it.latlng.split(","),
-                                        it.details
-                                )
+                                Country(it)
                             }, false)
                         } else {
                             ViewObject.error(
@@ -45,20 +39,13 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                     }.toFlowable()
 
 
-
     private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<Country>> =
             countriesDao.getCountryByAlpha3Code(alpha)
                     .onErrorResumeNext(Single.just(DbCountry("null", "null", "null", "null", listOf())))
                     .map { country ->
                         if (country.alpha3Code.isNotEmpty() && country.alpha3Code != "null") {
                             ViewObject.success(
-                                    Country(
-                                            country.countryName,
-                                            country.alpha3Code,
-                                            country.countryFlagUrl,
-                                            country.latlng.split(","),
-                                            country.details
-                                    ),
+                                    Country(country),
                                     false
                             )
                         } else {

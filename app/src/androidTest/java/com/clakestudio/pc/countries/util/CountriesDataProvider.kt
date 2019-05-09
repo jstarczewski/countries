@@ -37,7 +37,7 @@ object CountriesDataProvider {
     }
 
     fun provideEmptyDataSetForLocalDataSourceTest(): List<com.clakestudio.pc.countries.data.source.local.DbCountry> =
-        emptyList<com.clakestudio.pc.countries.data.source.local.DbCountry>()
+        emptyList()
 
     fun providePolandWrappedAsSuccess(): ViewObject<Country> =
         ViewObject.success(Country(providePoland()), true)
@@ -215,7 +215,7 @@ object CountriesDataProvider {
     "region": "Americas",
     "subregion": "South America",
     "population": 48759958,
-    "latlng": [4.0, -72.0],
+    "latLng": [4.0, -72.0],
     "demonym": "Colombian",
     "area": 1141748.0,
     "gini": 55.9,
