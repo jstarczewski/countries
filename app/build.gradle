@@ -6,7 +6,6 @@ apply plugin: 'kotlin-allopen'
 apply plugin: "androidx.navigation.safeargs"
 
 allOpen {
-    // allows mocking for classes w/o directly opening them for release builds
     annotation 'com.clakestudio.pc.countries.testing.OpenForTesting'
 }
 
@@ -63,7 +62,6 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0-beta01'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-beta01'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
-    testImplementation 'junit:junit:4.12'
 
     //Dagger
     implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
@@ -73,15 +71,13 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
     kapt "com.google.dagger:dagger-android-support:$rootProject.daggerVersion"
 
-    kapt 'com.android.databinding:compiler:3.0.1'
+    //Databinding
+    kapt 'com.android.databinding:compiler:3.1.4'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     //Navigation
 
     implementation "android.arch.navigation:navigation-fragment-ktx:$rootProject.navigationVersion"
     implementation "android.arch.navigation:navigation-ui-ktx:$rootProject.navigationVersion"
-    implementation "com.google.android.gms:play-services-location:16.0.0"
-    testImplementation 'android.arch.core:core-testing:1.1.1'
-
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
@@ -91,38 +87,39 @@ dependencies {
     // RxJava
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroidVersion"
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxJavaVersion"
+
+    // Room
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
     implementation "androidx.room:room-rxjava2:$rootProject.roomVersion"
-    kapt "android.arch.persistence.room:compiler:1.0.0"
+    kapt "android.arch.persistence.room:compiler:$rootProject.roomCompiler"
 
-
+    // Play servvices
+    implementation "com.google.android.gms:play-services-location:16.0.0"
     implementation 'com.google.android.gms:play-services-base:16.1.0'
 
+    //Tests
+    testImplementation 'android.arch.core:core-testing:1.1.1'
     testImplementation "org.mockito:mockito-inline:$rootProject.mockitoVersion"
+    testImplementation 'junit:junit:4.12'
+    //Android tests
     androidTestImplementation "org.mockito:mockito-android:$rootProject.mockitoVersion"
-
-
     androidTestImplementation "androidx.test:core:$rootProject.androidxTestsVersion"
-
     androidTestImplementation "androidx.test:runner:$rootProject.androidxTestRunnerVersion"
     androidTestImplementation "androidx.test:rules:$rootProject.androidxTestRunnerVersion"
-
     androidTestImplementation "androidx.test.ext:junit:$rootProject.androidxTestsVersion"
     androidTestImplementation "androidx.test.ext:truth:$rootProject.androidxTestsVersion"
     androidTestImplementation "com.google.truth:truth:0.42"
-
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$rootProject.espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$rootProject.espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-accessibility:$rootProject.espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-web:$rootProject.espressoVersion"
     androidTestImplementation "androidx.test.espresso.idling:idling-concurrent:$rootProject.espressoVersion"
-
     androidTestImplementation "androidx.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
 
-    testImplementation 'android.arch.core:core-testing:1.0.0-alpha3'
-
+    //Svg
     implementation 'com.github.ar-android:AndroidSvgLoader:1.0.1'
+    //Gson
     implementation 'com.google.code.gson:gson:2.8.5'
 
 }

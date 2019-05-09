@@ -5,6 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
@@ -22,10 +23,7 @@ class DetailsViewModel @Inject constructor(
     val countryName: ObservableField<String> = ObservableField()
     val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
     val error: ObservableField<String> = countryName
-    //  val details: ObservableList<Pair<String, String?>> = _details
 
-    //private val _error: MutableLiveData<String> = MutableLiveData()
-    // val error: ObservableField<String> = ObservableField()
 
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
@@ -36,7 +34,7 @@ class DetailsViewModel @Inject constructor(
     private val _countryFlagUrl: MutableLiveData<String> = MutableLiveData()
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
-    private val _message: MutableLiveData<String> = MutableLiveData()
+    private val _message: SingleLiveEvent<String> = SingleLiveEvent()
     val message: LiveData<String> = _message
 
     fun load(alpha: String) {

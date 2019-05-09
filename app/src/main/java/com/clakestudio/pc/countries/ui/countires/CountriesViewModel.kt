@@ -33,7 +33,7 @@ class CountriesViewModel @Inject constructor(
     private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
     val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
-    private val _message: MutableLiveData<String> = MutableLiveData()
+    private val _message: SingleLiveEvent<String> = SingleLiveEvent()
     val message: LiveData<String> = _message
 
     fun load() {
