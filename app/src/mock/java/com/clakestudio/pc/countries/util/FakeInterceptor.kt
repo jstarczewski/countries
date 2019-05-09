@@ -1,7 +1,7 @@
 package com.clakestudio.pc.countries.util
 
 import com.clakestudio.pc.countries.BuildConfig
-import com.clakestudio.pc.countries.data.source.remote.Country
+import com.clakestudio.pc.countries.data.source.remote.ApiCountry
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.*
@@ -9,7 +9,7 @@ import okhttp3.*
 class FakeInterceptor(var responseCode : Int = 200) : Interceptor {
 
     lateinit var response: Response
-    private val countryType = object : TypeToken<Collection<Country>>() {}.type
+    private val countryType = object : TypeToken<Collection<ApiCountry>>() {}.type
 
     override fun intercept(chain: Interceptor.Chain): Response {
         //val pol = gson.toJson(CountriesDataProvider.providePoland())

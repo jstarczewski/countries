@@ -1,6 +1,6 @@
-package com.clakestudio.pc.countries.ui.details
+package com.clakestudio.pc.countries.data
 
-import com.clakestudio.pc.countries.data.source.remote.Country as RemoteCountry
+import com.clakestudio.pc.countries.data.source.remote.ApiCountry as RemoteCountry
 
 data class Country(
     val countryName: String,

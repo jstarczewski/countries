@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 
 @Entity
 @TypeConverters(CountriesTypeConverter::class)
-data class Country(
+data class DbCountry(
     @PrimaryKey
     val alpha3Code : String,
     val countryName: String,

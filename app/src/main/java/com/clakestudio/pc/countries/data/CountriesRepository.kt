@@ -1,17 +1,10 @@
 package com.clakestudio.pc.countries.data
 
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
-import com.clakestudio.pc.countries.data.source.local.CountriesLocalDataSource
-import com.clakestudio.pc.countries.data.source.remote.CountriesRemoteDataSource
 import com.clakestudio.pc.countries.data.source.remote.RemoteDataUnavailableException
 import com.clakestudio.pc.countries.testing.OpenForTesting
-import com.clakestudio.pc.countries.ui.details.Country
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
-import io.reactivex.Notification
-import io.reactivex.Single
-import java.lang.RuntimeException
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @OpenForTesting
@@ -48,7 +41,7 @@ class CountriesRepository @Inject constructor(
     }
 
     /*
-    override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
+    override fun getAllCountries(): Flowable<ViewObject<List<DbCountry>>> =
         Flowable.concatArrayEagerDelayError(
             getAllCountriesFromLocalDataSource(),
             getAllCountriesFromRemoteDataSource()
@@ -67,14 +60,14 @@ class CountriesRepository @Inject constructor(
         */
 
 /*
-    fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
+    fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<DbCountry>>> =
         getCountriesFromRemoteDataSourceAndMap()
             .toFlowable()
             .startWith(ViewObject.loading(null))
        .doOnNext { countries ->
              countries.data?.forEach {
                  countriesLocalDataSource.saveCountry(
-                     com.clakestudio.pc.countries.data.source.local.Country(
+                     com.clakestudio.pc.countries.data.source.local.DbCountry(
                          it.alpha3Code,
                          it.countryName,
                          it.countryFlagUrl,
@@ -85,12 +78,12 @@ class CountriesRepository @Inject constructor(
              }
          }*/
 /*
-    private fun getAllCountriesFromLocalDataSource(): Flowable<ViewObject<List<Country>>> =
+    private fun getAllCountriesFromLocalDataSource(): Flowable<ViewObject<List<DbCountry>>> =
         countriesLocalDataSource.getAllCountries()
             .map { countries ->
                 if (countries.isNotEmpty()) {
                     ViewObject.success(countries.map {
-                        Country(it.countryName, it.alpha3Code, it.countryFlagUrl, it.latlng.split(","), it.details)
+                        DbCountry(it.countryName, it.alpha3Code, it.countryFlagUrl, it.latlng.split(","), it.details)
                     }, false)
                 } else {
                     ViewObject.error(
@@ -102,7 +95,7 @@ class CountriesRepository @Inject constructor(
 
 
     /*
-    override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
+    override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<DbCountry>> =
         Flowable.concatArrayEager(
             getCountryByAlphaFromLocalDataSource(alpha),
             getCountryByAlphaFromRemoteDataSource(alpha)
@@ -120,12 +113,12 @@ class CountriesRepository @Inject constructor(
         )
 */
     /*
-    private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<Country>> =
+    private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<DbCountry>> =
         countriesLocalDataSource.getCountryByAlpha(alpha)
             .map { country ->
                 if (country.alpha3Code.isNotEmpty() && country.alpha3Code != "null") {
                     ViewObject.success(
-                        Country(
+                        DbCountry(
                             country.countryName,
                             country.alpha3Code,
                             country.countryFlagUrl,
@@ -142,12 +135,12 @@ class CountriesRepository @Inject constructor(
 
 
     /*
-    private fun getCountryByAlphaFromRemoteDataSource(alpha: String): Flowable<ViewObject<Country>> =
+    private fun getCountryByAlphaFromRemoteDataSource(alpha: String): Flowable<ViewObject<DbCountry>> =
         countriesRemoteDataSource.getCountryByAlpha(alpha)
             .map { viewObject ->
                 if (!viewObject.isHasError) {
                     ViewObject.success(
-                        Country(viewObject.data!!),
+                        DbCountry(viewObject.data!!),
                         true
                     )
                 } else {
@@ -156,12 +149,12 @@ class CountriesRepository @Inject constructor(
             }.toFlowable()
 */
 /*
-    private fun getCountriesFromRemoteDataSourceAndMap(): Single<ViewObject<List<Country>>> =
+    private fun getCountriesFromRemoteDataSourceAndMap(): Single<ViewObject<List<DbCountry>>> =
         countriesRemoteDataSource.getAllCountries()
             .map { viewObject ->
                 if (!viewObject.isHasError) {
                     ViewObject.success(viewObject.data!!.map {
-                        Country(it)
+                        DbCountry(it)
                     }, true)
                 } else {
                     ViewObject.error(viewObject.errorMessage!!, null)

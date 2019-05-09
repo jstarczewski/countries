@@ -33,7 +33,7 @@
                 android:layout_height="0dp"
                 android:countries="@{viewmodel.countries}"
                 android:padding="4dp"
-                tools:listitem="@layout/country" />
+                tools:listitem="@layout/dbCountry" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

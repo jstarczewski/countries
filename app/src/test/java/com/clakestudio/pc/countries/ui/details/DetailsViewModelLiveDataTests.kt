@@ -3,6 +3,7 @@ package com.clakestudio.pc.countries.ui.details
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.clakestudio.pc.countries.data.CountriesRepository
+import com.clakestudio.pc.countries.data.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.util.TestSchedulersProvider
