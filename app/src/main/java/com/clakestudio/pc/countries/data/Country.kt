@@ -7,7 +7,7 @@ class Country(
         val countryName: String,
         val alpha3Code: String,
         val countryFlagUrl: String,
-        val latLng: List<String>,
+        val latlng: List<String>,
         var countryDetails: List<Pair<String, String?>>
 ) {
 
@@ -73,7 +73,7 @@ class Country(
         if (countryName != other.countryName) return false
         if (alpha3Code != other.alpha3Code) return false
         if (countryFlagUrl != other.countryFlagUrl) return false
-        if (latLng != other.latLng) return false
+        if (latlng != other.latlng) return false
         if (countryDetails != other.countryDetails) return false
 
         return true
@@ -83,7 +83,7 @@ class Country(
         var result = countryName.hashCode()
         result = 31 * result + alpha3Code.hashCode()
         result = 31 * result + countryFlagUrl.hashCode()
-        result = 31 * result + latLng.hashCode()
+        result = 31 * result + latlng.hashCode()
         result = 31 * result + countryDetails.hashCode()
         return result
     }

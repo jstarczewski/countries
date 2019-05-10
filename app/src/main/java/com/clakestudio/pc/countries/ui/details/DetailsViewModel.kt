@@ -81,7 +81,7 @@ class DetailsViewModel @Inject constructor(
     fun exposeData(country: Country) {
         countryName.set(country.countryName)
         _countryFlagUrl.value = country.countryFlagUrl
-        _latlng.value = latLngStringToDouble(country.latLng)
+        _latlng.value = latLngStringToDouble(country.latlng)
         details.addAll(country.countryDetails)
     }
 

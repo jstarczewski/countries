@@ -24,7 +24,7 @@ data class ApiCountry(
     val subregion: String,
     @field:SerializedName("population")
     val population: String,
-    @field:SerializedName("latLng")
+    @field:SerializedName("latlng")
     val latlng: List<String>,
     @field:SerializedName("demonym")
     val demonym: String,

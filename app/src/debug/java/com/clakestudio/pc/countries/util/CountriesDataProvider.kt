@@ -199,7 +199,7 @@ const val colombia = """
     "region": "Americas",
     "subregion": "South America",
     "population": 48759958,
-    "latLng": [4.0, -72.0],
+    "latlng": [4.0, -72.0],
     "demonym": "Colombian",
     "area": 1141748.0,
     "gini": 55.9,

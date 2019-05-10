@@ -19,7 +19,7 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                     countryName = country.countryName,
                     alpha3Code = country.alpha3Code,
                     details = country.countryDetails,
-                    latlng = country.latLng.joinToString(separator = ",")
+                    latlng = country.latlng.joinToString(separator = ",")
             )
     )
 
