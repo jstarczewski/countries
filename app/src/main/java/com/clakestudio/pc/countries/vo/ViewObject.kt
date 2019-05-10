@@ -12,4 +12,6 @@ class ViewObject<out T>(
         fun <T> loading(data: T?): ViewObject<T> = ViewObject(true, false, data, null, null)
         fun <T> error(errorMessage: String, data: T?): ViewObject<T> = ViewObject(false, true, data, errorMessage, null)
     }
+
 }
+

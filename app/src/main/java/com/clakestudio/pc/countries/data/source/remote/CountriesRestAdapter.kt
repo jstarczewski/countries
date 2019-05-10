@@ -18,10 +18,10 @@ class CountriesRestAdapter @Inject constructor(retrofit: Retrofit) {
     interface CountriesService {
 
         @GET(URLManager.all)
-        fun getAllCountries(): Single<Response<List<Country>>>
+        fun getAllCountries(): Single<Response<List<ApiCountry>>>
 
         @GET(URLManager.name)
-        fun getCountryByAlpha(@Path("alpha") alpha: String): Single<Response<Country>>
+        fun getCountryByAlpha(@Path("alpha") alpha: String): Single<Response<ApiCountry>>
 
     }
 

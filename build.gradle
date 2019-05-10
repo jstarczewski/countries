@@ -34,17 +34,18 @@ ext {
     //Dependency Injection
     daggerVersion = "2.17"
     // Navigation
-    navigationVersion = '1.0.0-alpha10'
+    navigationVersion = '1.0.0'
     motionLayout = '2.0.0-alpha2'
     mockitoVersion = '2.22.0'
     espressoVersion = '3.1.0'
     androidxTestsVersion = '1.0.0'
     androidxTestRunnerVersion = '1.1.0'
-
-    roomVersion = '2.0.0-beta01'
+    //Room
+    roomCompiler = '1.1.1'
+    roomVersion = '2.1.0-alpha07'
+    //Rx
     rxJavaVersion = '2.2.8'
     rxAndroidVersion = '2.1.1'
-
     retrofitVersion = '2.5.0'
 
 

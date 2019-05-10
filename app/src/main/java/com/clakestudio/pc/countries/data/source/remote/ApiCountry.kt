@@ -2,7 +2,7 @@ package com.clakestudio.pc.countries.data.source.remote
 
 import com.google.gson.annotations.SerializedName
 
-data class Country(
+data class ApiCountry(
 
     @field:SerializedName("name")
     val name: String,

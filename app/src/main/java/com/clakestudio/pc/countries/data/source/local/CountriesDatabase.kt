@@ -4,9 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 
-@Database(entities = [Country::class], version = 1)
+@Database(
+    entities = [DbCountry::class], version = 1,
+    exportSchema = false
+)
 abstract class CountriesDatabase : RoomDatabase() {
 
-    abstract fun countryDao() : CountryDao
+    abstract fun countryDao(): CountryDao
 
 }

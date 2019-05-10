@@ -9,13 +9,13 @@ import io.reactivex.Single
 @Dao
 interface CountryDao {
 
-    @Query("SELECT * FROM Country")
-    fun getAllCountries(): Single<List<Country>>
+    @Query("SELECT * FROM DbCountry")
+    fun getAllCountries(): Single<List<DbCountry>>
 
-    @Query("SELECT * FROM Country WHERE alpha3Code = :alpha3Code")
-    fun getCountryByAlpha3Code(alpha3Code: String) : Single<Country>
+    @Query("SELECT * FROM DbCountry WHERE alpha3Code = :alpha3Code")
+    fun getCountryByAlpha3Code(alpha3Code: String) : Single<DbCountry>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveCountry(country : Country)
+    fun saveCountry(dbCountry : DbCountry)
 
 }
