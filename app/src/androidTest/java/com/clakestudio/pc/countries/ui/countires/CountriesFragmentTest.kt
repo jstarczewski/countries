@@ -18,12 +18,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.*
 import android.widget.EditText
-import androidx.databinding.ObservableArrayList
-import androidx.lifecycle.MutableLiveData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import com.clakestudio.pc.countries.R
-import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.util.AppSchedulersProvider
 
 

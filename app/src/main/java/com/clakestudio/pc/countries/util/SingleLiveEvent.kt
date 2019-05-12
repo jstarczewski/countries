@@ -1,4 +1,4 @@
-package com.clakestudio.pc.countries
+package com.clakestudio.pc.countries.util
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData

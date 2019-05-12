@@ -5,7 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
-import com.clakestudio.pc.countries.SingleLiveEvent
+import com.clakestudio.pc.countries.util.SingleLiveEvent
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.testing.OpenForTesting
 import com.clakestudio.pc.countries.vo.Country
@@ -30,10 +30,12 @@ class CountriesViewModel @Inject constructor(
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
 
-    private val _navigationLiveEvent: SingleLiveEvent<String> = SingleLiveEvent()
+    private val _navigationLiveEvent: SingleLiveEvent<String> =
+        SingleLiveEvent()
     val navigationLiveEvent: LiveData<String> = _navigationLiveEvent
 
-    private val _message: SingleLiveEvent<String> = SingleLiveEvent()
+    private val _message: SingleLiveEvent<String> =
+        SingleLiveEvent()
     val message: LiveData<String> = _message
 
     private var isUpToDate = false
