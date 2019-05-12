@@ -1,7 +1,7 @@
 package com.clakestudio.pc.countries.data.source.local
 
 import androidx.room.EmptyResultSetException
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Single
@@ -52,7 +52,11 @@ class CountriesLocalDataSourceTest {
 
     @Test
     fun getAllCountriesWrappedAsSuccessAssertedAfterMappedToCertainValues() {
-        val expectedTestData = CountriesDataProvider.provideCountries().map { Country(it) }
+        val expectedTestData = CountriesDataProvider.provideCountries().map {
+            Country(
+                it
+            )
+        }
         localDataSource.getAllCountries()
             .map {
                 it.data
@@ -102,7 +106,8 @@ class CountriesLocalDataSourceTest {
 
     @Test
     fun getCountryWrappedAsSuccessAssertedAfterMappedToCertainValues() {
-        val expectedTestData = Country(CountriesDataProvider.providePoland())
+        val expectedTestData =
+            Country(CountriesDataProvider.providePoland())
         localDataSource.getCountryByAlpha(alpha)
             .map {
                 it.data

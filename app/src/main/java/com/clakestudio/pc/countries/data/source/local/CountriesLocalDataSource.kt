@@ -1,17 +1,23 @@
 package com.clakestudio.pc.countries.data.source.local
 
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
+import com.clakestudio.pc.countries.testing.OpenForTesting
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
 import io.reactivex.Single
 import javax.inject.Inject
 
+@OpenForTesting
 class CountriesLocalDataSource @Inject constructor(private val countriesDao: CountryDao) : CountriesDataSource {
 
     override fun getAllCountries() = getAllCountriesFromLocalDataSource()
 
     override fun getCountryByAlpha(alpha: String) = getCountryByAlphaFromLocalDataSource(alpha)
+
+    /**
+     * Data is saved and mapped for dbCountry, loaded when is was impossible to fetch from network
+     * */
 
     override fun saveCountry(country: Country) = countriesDao.saveCountry(
             DbCountry(
@@ -22,6 +28,10 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                     latlng = country.latlng.joinToString(separator = ",")
             )
     )
+
+    /**
+     * Data loaded from local db, with suitable callback when there was none
+     * */
 
     private fun getAllCountriesFromLocalDataSource(): Flowable<ViewObject<List<Country>>> =
             countriesDao.getAllCountries()
@@ -38,6 +48,10 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                         }
                     }.toFlowable()
 
+    /**
+     * The onErrorResumeNext is needed because Single returns an error when there is no country to load
+     * The "null" country is then emitted and transformed into ViewObject with information about occurred error
+     * */
 
     private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<Country>> =
             countriesDao.getCountryByAlpha3Code(alpha)
@@ -45,7 +59,7 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                     .map { country ->
                         if (country.alpha3Code.isNotEmpty() && country.alpha3Code != "null") {
                             ViewObject.success(
-                                    Country(country),
+                                Country(country),
                                     false
                             )
                         } else {

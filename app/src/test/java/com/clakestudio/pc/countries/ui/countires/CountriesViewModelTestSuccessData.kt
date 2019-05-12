@@ -25,7 +25,7 @@ class CountriesViewModelTestSuccessData {
 
     @Before
     fun setUp() {
-        viewModel.load()
+        viewModel.init()
     }
 
     @Test

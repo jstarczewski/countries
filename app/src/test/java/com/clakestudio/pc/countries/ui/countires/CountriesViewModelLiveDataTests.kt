@@ -37,29 +37,29 @@ class CountriesViewModelLiveDataTests {
     @Test
     fun testLoadingStateChangesWhenLoadingValues() {
         viewModel.loading.observeForever(loadingObserver)
-        viewModel.load()
+        viewModel.init()
         Mockito.verify(loadingObserver, Mockito.times(1)).onChanged(true)
     }
 
     @Test
     fun testLoadingStateChangesToFalseWhenDataAlreadyLoaded() {
-        viewModel.load()
+        viewModel.init()
         Mockito.verify(loadingObserver).onChanged(true)
-        viewModel.load()
+        viewModel.init()
         Mockito.verify(loadingObserver, Mockito.times(2)).onChanged(false)
     }
 
     @Test
     fun testMessageStateWhenDataIsUpToDate() {
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideOutdatedSampleCountriesWrappedAsSuccess()))
-        viewModel.load()
+        viewModel.init()
         Mockito.verify(loadingObserver).onChanged(true)
     }
 
     @Test
     fun testMessageStateWhenDataIsOutdated() {
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideOutdatedSampleCountriesWrappedAsSuccess()))
-        viewModel.load()
+        viewModel.init()
         Mockito.verify(loadingObserver).onChanged(false)
     }
 

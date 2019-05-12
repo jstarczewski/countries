@@ -1,16 +1,21 @@
 package com.clakestudio.pc.countries.data.source.remote
 
 import com.clakestudio.pc.countries.util.FakeInterceptor
-import com.clakestudio.pc.countries.util.RetrofitWithFakeInterceptroInjection
+import com.clakestudio.pc.countries.util.RetrofitWithFakeInterceptorInjection
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CountriesRemoteDataSourceHandleResponseFunTest {
 
+    /**
+     * In case of UNRESOLVED REFERENCE, change the build variant to mockDebug
+     * Testing the response with fake interceptor
+     * */
+
     private val interceptor = FakeInterceptor()
     private val countriesRestAdapter =
-        FakeCountriesRestAdapter(RetrofitWithFakeInterceptroInjection.provideRetrofitWithoutRxAdapterFactory(interceptor))
+        FakeCountriesRestAdapter(RetrofitWithFakeInterceptorInjection.provideRetrofitWithoutRxAdapterFactory(interceptor))
     private val remoteDataSource = SyncRemoteDataSource(countriesRestAdapter)
 
     @Test
