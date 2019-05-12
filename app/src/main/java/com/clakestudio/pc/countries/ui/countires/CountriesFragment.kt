@@ -43,10 +43,6 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
         setHasOptionsMenu(true)
     }
 
-    /**
-     * ViewModel provided and set for databinding so observable data can be updated
-     * */
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel =
