@@ -1,5 +1,5 @@
 # Countries
-Simple app that displays countries provided by [REST Countries API](https://restcountries.eu/#api-endpoints-response-example), created as a recruitment task for a position of Android internm in [Indroorway](https://github.com/indoorway).
+Simple app that displays countries provided by [REST Countries API](https://restcountries.eu/#api-endpoints-response-example), created as a recruitment task for a position of Android intern in [Indroorway](https://github.com/indoorway).
 ## Requirements
 - [x] User sees countries list on main screen.
 - [x] User searches for specific country with search bar located on main screen.
