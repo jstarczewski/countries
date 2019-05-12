@@ -52,7 +52,7 @@ class CountriesRepository @Inject constructor(
     /**
      *
      * Not implemented and unused, created only for purpose of having a single interface
-     * for local, remote and repository data sources
+     * for data sources
      * */
 
     override fun saveCountry(country: Country) {
