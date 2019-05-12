@@ -1,4 +1,4 @@
-package com.clakestudio.pc.countries.data
+package com.clakestudio.pc.countries.vo
 
 import com.clakestudio.pc.countries.data.source.local.DbCountry
 import com.clakestudio.pc.countries.data.source.remote.ApiCountry as RemoteCountry

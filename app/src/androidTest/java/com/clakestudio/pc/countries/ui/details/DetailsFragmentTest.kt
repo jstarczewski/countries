@@ -60,13 +60,13 @@ class DetailsFragmentTest {
     @Test
     fun checkIfErrorMessageWasDispalyedInCaseOfErrorData() {
         `when`(countriesRepository.getCountryByAlpha("POL")).thenReturn(Flowable.just(CountriesDataProvider.providePolandWrappedAsError()))
-        onView(withId(R.id.text_view_name)).check(matches(withText("Test error single country \n Swipe to refresh")))
+        onView(withId(R.id.text_view_name)).check(matches(withText("Test error single country\nSwipe to refresh")))
     }
 
     @Test
     fun testIfDataIsReloadedAfterOnSwipeRefresh() {
         `when`(countriesRepository.getCountryByAlpha("POL")).thenReturn(Flowable.just(CountriesDataProvider.providePolandWrappedAsError()))
-        onView(withId(R.id.text_view_name)).check(matches(withText("Test error single country \n Swipe to refresh")))
+        onView(withId(R.id.text_view_name)).check(matches(withText("Test error single country\nSwipe to refresh")))
         `when`(countriesRepository.getCountryByAlpha("POL")).thenReturn(Flowable.just(CountriesDataProvider.providePolandWrappedAsSuccess()))
         Espresso.onView(withId(R.id.neasted_scroll_view)).perform(swipeDown())
         Espresso.onView(withId(R.id.text_view_name)).check(matches(withText("Poland")))

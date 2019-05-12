@@ -2,7 +2,6 @@ package com.clakestudio.pc.countries.ui.countires
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
@@ -48,7 +47,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
             binding.viewmodel = this
-            load()
+            init()
 
             navigationLiveEvent.observe(viewLifecycleOwner, Observer {
                 navigate(it)
@@ -95,7 +94,7 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
     }
 
     override fun onRefresh() {
-        viewModel.load()
+        viewModel.refresh()
     }
 
     private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()

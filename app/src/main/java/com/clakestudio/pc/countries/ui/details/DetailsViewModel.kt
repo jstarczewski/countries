@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.clakestudio.pc.countries.SingleLiveEvent
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
@@ -24,7 +24,6 @@ class DetailsViewModel @Inject constructor(
     val countryName: ObservableField<String> = ObservableField()
     val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
     val error: ObservableField<String> = countryName
-
 
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
@@ -50,7 +49,7 @@ class DetailsViewModel @Inject constructor(
     }
 
     fun refresh() {
-        if (alpha.isNotEmpty()) loadCountryDataByAlphaCode(alpha)
+        if (alpha.isNotEmpty() || !isUpToDate) loadCountryDataByAlphaCode(alpha)
     }
 
     fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
@@ -69,15 +68,8 @@ class DetailsViewModel @Inject constructor(
                         _loading.value = true
                     }
                     else -> {
-                        details.clear()
                         _loading.value = false
-                        if (!it.isUpToDate!!) {
-                            _message.value = "Data is loaded from cache"
-                            isUpToDate = false
-                        } else {
-                            isUpToDate = true
-                        }
-                        exposeData(it.data!!)
+                        handleData(it)
                     }
                 }
             }, {
@@ -91,10 +83,21 @@ class DetailsViewModel @Inject constructor(
             })
     )
 
+    private fun handleData(countryViewObject: ViewObject<Country>) {
+        if (!countryViewObject.isUpToDate!!) {
+            _message.value = "Data is loaded from cache"
+            isUpToDate = false
+        } else {
+            isUpToDate = true
+        }
+        exposeData(countryViewObject.data!!)
+    }
+
     fun exposeData(country: Country) {
         countryName.set(country.countryName)
         _countryFlagUrl.value = country.countryFlagUrl
         _latlng.value = latLngStringToDouble(country.latlng)
+        details.clear()
         details.addAll(country.countryDetails)
     }
 

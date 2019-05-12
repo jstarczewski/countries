@@ -18,7 +18,7 @@ class CountriesViewModelTestErrorData {
 
     @Before
     fun setUp() {
-        viewModel.load()
+        viewModel.init()
     }
 
     @Test

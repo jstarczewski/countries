@@ -1,7 +1,7 @@
 package com.clakestudio.pc.countries.data.source.remote
 
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -60,7 +60,7 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
                     .map { viewObject ->
                         if (!viewObject.isHasError) {
                             ViewObject.success(
-                                    Country(viewObject.data!!),
+                                Country(viewObject.data!!),
                                     true
                             )
                         } else {

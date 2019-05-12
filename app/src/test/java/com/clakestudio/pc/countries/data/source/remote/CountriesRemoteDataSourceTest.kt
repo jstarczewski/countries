@@ -1,6 +1,6 @@
 package com.clakestudio.pc.countries.data.source.remote
 
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.util.FakeInterceptor
 import com.clakestudio.pc.countries.util.RetrofitWithFakeInterceptroInjection

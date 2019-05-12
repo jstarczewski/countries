@@ -1,6 +1,6 @@
 package com.clakestudio.pc.countries.data.source.local
 
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
@@ -45,7 +45,7 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                     .map { country ->
                         if (country.alpha3Code.isNotEmpty() && country.alpha3Code != "null") {
                             ViewObject.success(
-                                    Country(country),
+                                Country(country),
                                     false
                             )
                         } else {

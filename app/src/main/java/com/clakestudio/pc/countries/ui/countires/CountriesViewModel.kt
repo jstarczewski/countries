@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.testing.OpenForTesting
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.disposables.CompositeDisposable
@@ -38,16 +38,22 @@ class CountriesViewModel @Inject constructor(
 
     private var isUpToDate = false
 
-    fun load() {
-        if (_countries.value.isNullOrEmpty() || !isUpToDate) {
-            init()
+    fun init() {
+        if (_countries.value.isNullOrEmpty()) {
+            loadData()
         } else {
             _loading.value = false
         }
     }
 
+    fun refresh() {
+        if (!isUpToDate)
+            loadData()
+        else
+            _loading.value = false
+    }
 
-    private fun init() {
+    private fun loadData() {
         compositeDisposable.add(
             countriesRepository.getAllCountries()
                 .startWith(ViewObject.loading(null))
@@ -63,21 +69,25 @@ class CountriesViewModel @Inject constructor(
                             _loading.value = true
                         }
                         else -> {
-                            if (!it.isUpToDate!!) {
-                                _message.value = "Data is loaded from cache"
-                                isUpToDate = false
-                            } else
-                                isUpToDate = true
-                            _countries.value = it.data?.sortedBy { it.countryName }
-                            _loading.value = false
                             error.set("")
-                            addAll()
+                            _loading.value = false
+                            handleData(it)
                         }
                     }
                 }, {
                     error.set("Fatal error occurred, please try again later")
                 })
         )
+    }
+
+    private fun handleData(countriesViewObject: ViewObject<List<Country>>) {
+        if (!countriesViewObject.isUpToDate!!) {
+            _message.value = "Data is loaded from cache"
+            isUpToDate = false
+        } else
+            isUpToDate = true
+        _countries.value = countriesViewObject.data?.sortedBy { it.countryName }
+        addAll()
     }
 
     override fun onCleared() {
