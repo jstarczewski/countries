@@ -1,5 +1,9 @@
 package com.clakestudio.pc.countries.vo
 
+/**
+ * ViewObject carries data and callback whether data is outdated or error occurred while loading
+ * */
+
 class ViewObject<out T>(
     val isLoading: Boolean,
     val isHasError: Boolean,

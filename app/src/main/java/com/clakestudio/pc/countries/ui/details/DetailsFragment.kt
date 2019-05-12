@@ -53,11 +53,6 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
             latlng.observe(viewLifecycleOwner, Observer {
                 map_view_country.getMapAsync(this@DetailsFragment)
             })
-            /*
-            error.observe(viewLifecycleOwner, Observer {
-                text_view_name.text = it
-                showWidgets(it.isNotEmpty())
-            })*/
             loading.observe(viewLifecycleOwner, Observer {
                 swipe_refresh_layout.isRefreshing = it
             })
@@ -92,12 +87,6 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        /**
-         * Not sure whether this is needed as pointed out in tutorial, because we are using ViewModel
-         * and Map data changes every time we change country, bo I will leave it this way, because
-         * that is just a bundle to save state and even if it is useless it does not harm the code
-         * */
-
         val mapViewBundle: Bundle? = outState.getBundle(MAP_VIEW_BUNDLE_KEY) ?: Bundle()
         outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle)
         map_view_country.onSaveInstanceState(mapViewBundle)
@@ -129,13 +118,6 @@ class DetailsFragment : Fragment(), Injectable, OnMapReadyCallback, SwipeRefresh
             p0?.moveCamera(CameraUpdateFactory.zoomTo(5f))
         }
     }
-
-    /*
-    private fun showWidgets(isError: Boolean) {
-        recycler_view_details.visibility = if (isError) View.GONE else View.VISIBLE
-        map_view_country.visibility = if (isError) View.GONE else View.VISIBLE
-        image_view_flag.visibility = if (isError) View.GONE else View.VISIBLE
-    }*/
 
     override fun onResume() {
         super.onResume()

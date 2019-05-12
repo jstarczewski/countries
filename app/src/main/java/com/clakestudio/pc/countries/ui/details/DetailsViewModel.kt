@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.clakestudio.pc.countries.SingleLiveEvent
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
@@ -25,7 +25,6 @@ class DetailsViewModel @Inject constructor(
     val details: ObservableArrayList<Pair<String, String?>> = ObservableArrayList()
     val error: ObservableField<String> = countryName
 
-
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
 
@@ -36,31 +35,33 @@ class DetailsViewModel @Inject constructor(
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
     private val _message: SingleLiveEvent<String> = SingleLiveEvent()
+    private var isUpToDate = false
     val message: LiveData<String> = _message
 
     fun load(alpha: String) {
-        if (details.isEmpty() || alpha != this.alpha) {
+        if (details.isEmpty() || alpha != this.alpha || !isUpToDate) {
             loadCountryDataByAlphaCode(alpha)
             this.alpha = alpha
         } else {
-            //     _countryFlagUrl.value = _countryFlagUrl.value
             _loading.value = false
         }
     }
 
     fun refresh() {
-        if (alpha.isNotEmpty()) loadCountryDataByAlphaCode(alpha)
+        if (!isUpToDate) loadCountryDataByAlphaCode(alpha)
+        else
+            _loading.value = false
     }
 
-    fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
+    private fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
         countryRepository.getCountryByAlpha(alpha)
             .startWith(ViewObject.loading(null))
             .subscribeOn(appSchedulersProvider.ioScheduler())
             .observeOn(appSchedulersProvider.uiScheduler())
-            .subscribe {
+            .subscribe({
                 when {
                     it.isHasError -> {
-                        error.set("${it.errorMessage} \n Swipe to refresh")
+                        error.set("${it.errorMessage}\nSwipe to refresh")
                         details.clear()
                         _loading.value = false
                     }
@@ -68,25 +69,42 @@ class DetailsViewModel @Inject constructor(
                         _loading.value = true
                     }
                     else -> {
-                        details.clear()
                         _loading.value = false
-                        if (!it.isUpToDate!!)
-                            _message.value = "Data is loaded from cache"
-                        exposeData(it.data!!)
+                        handleData(it)
                     }
                 }
-            }
+            }, {
+                error.set("Fatal error occurred, please try again later")
+            })
     )
+
+    private fun handleData(countryViewObject: ViewObject<Country>) {
+        if (!countryViewObject.isUpToDate!!) {
+            _message.value = "Data is loaded from cache"
+            isUpToDate = false
+        } else {
+            isUpToDate = true
+        }
+        exposeData(countryViewObject.data!!)
+    }
+
+    /**
+     * Data is exposed to user with databinding and liveData
+     * */
 
     fun exposeData(country: Country) {
         countryName.set(country.countryName)
         _countryFlagUrl.value = country.countryFlagUrl
         _latlng.value = latLngStringToDouble(country.latlng)
+        details.clear()
         details.addAll(country.countryDetails)
     }
 
     fun latLngStringToDouble(latLtnString: List<String?>) =
-        if (!latLtnString.isNullOrEmpty()) Pair(latLtnString[0]?.toDouble(), latLtnString[1]?.toDouble()) else null
+        if (!latLtnString.isNullOrEmpty()) Pair(
+            latLtnString[0]?.toDouble(),
+            latLtnString[1]?.toDouble()
+        ) else null
 
 
     override fun onCleared() {

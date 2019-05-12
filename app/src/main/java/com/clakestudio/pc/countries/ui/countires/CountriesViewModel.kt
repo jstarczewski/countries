@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.clakestudio.pc.countries.SingleLiveEvent
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.testing.OpenForTesting
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.util.SchedulersProvider
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.disposables.CompositeDisposable
@@ -36,16 +36,52 @@ class CountriesViewModel @Inject constructor(
     private val _message: SingleLiveEvent<String> = SingleLiveEvent()
     val message: LiveData<String> = _message
 
-    fun load() {
+    private var isUpToDate = false
+
+    /**
+     * Most of functions are public because are tested
+     * */
+
+    /**
+     * Init -> when fragment is created and displayed
+     * We do not want to trigger data update when screen is rotated
+     * init() load data once when there is no data
+     * */
+
+
+    fun init() {
         if (_countries.value.isNullOrEmpty()) {
-            init()
+            loadData()
         } else {
             _loading.value = false
         }
     }
 
+    /**
+     * Triggered by onSwipeRefresh -> user want to refresh data
+     * */
 
-    private fun init() {
+    fun refresh() {
+        if (!isUpToDate)
+            loadData()
+        else
+            _loading.value = false
+    }
+
+    /**
+     * Data loaded from repository and handled in viewModel based on callback that is
+     * provided with data in ViewObject
+     *
+     *
+     *  TO-DO
+     *        Move logic responsible of deciding of fetching data (or not) to repsoitory ->
+     *        isUpToData information is handled there and based on it appropriate data is served
+     *
+     *        Rate limiter -> Event though, the countries API data is not prone to change often rate limiter is still needed
+     *        because right now data when data is upUpToData it is still loaded once per app launch
+     * */
+
+    private fun loadData() {
         compositeDisposable.add(
             countriesRepository.getAllCountries()
                 .startWith(ViewObject.loading(null))
@@ -61,18 +97,29 @@ class CountriesViewModel @Inject constructor(
                             _loading.value = true
                         }
                         else -> {
-                            if (!it.isUpToDate!!)
-                                _message.value = "Data is loaded from cache"
-                            _countries.value = it.data?.sortedBy { it.countryName }
-                            _loading.value = false
                             error.set("")
-                            addAll()
+                            _loading.value = false
+                            handleData(it)
                         }
                     }
                 }, {
                     error.set("Fatal error occurred, please try again later")
                 })
         )
+    }
+
+    /**
+     * User is informed whether loaded data is upToDate or not
+     * */
+
+    private fun handleData(countriesViewObject: ViewObject<List<Country>>) {
+        if (!countriesViewObject.isUpToDate!!) {
+            _message.value = "Data is loaded from cache"
+            isUpToDate = false
+        } else
+            isUpToDate = true
+        _countries.value = countriesViewObject.data?.sortedBy { it.countryName }
+        addAll()
     }
 
     override fun onCleared() {
@@ -101,6 +148,7 @@ class CountriesViewModel @Inject constructor(
     }
 
     fun exposeNavigationDestinationCode(destinationName: String) {
-        _navigationLiveEvent.value = _countries.value?.find { it.countryName == destinationName }?.alpha3Code ?: "POL"
+        _navigationLiveEvent.value =
+            _countries.value?.find { it.countryName == destinationName }?.alpha3Code ?: "POL"
     }
 }

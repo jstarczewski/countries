@@ -8,6 +8,11 @@ import retrofit2.http.Path
 
 class FakeCountriesRestAdapter(retrofit: Retrofit) {
 
+    /**
+     * FakeCountriesRestAdapter used for early stage tests of handleResponse fun that
+     * was crucial to future development of project
+     * */
+
     private val countriesService: CountriesService
 
     init {
@@ -21,7 +26,6 @@ class FakeCountriesRestAdapter(retrofit: Retrofit) {
 
         @GET(URLManager.name)
         fun getCountryByName(@Path("alpha") name: String): Call<Response<ApiCountry>>
-
 
     }
 

@@ -43,12 +43,12 @@
 
                 <TextView
                     android:id="@+id/text_view_name"
-                    style="@style/TextAppearance.MaterialComponents.Headline3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:text="@{viewmodel.countryName}"
                     android:textAlignment="textStart"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
                     app:layout_constraintBottom_toTopOf="@id/image_view_flag"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

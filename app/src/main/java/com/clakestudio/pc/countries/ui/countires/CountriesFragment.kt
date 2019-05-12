@@ -2,7 +2,6 @@ package com.clakestudio.pc.countries.ui.countires
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
@@ -22,7 +21,8 @@ import javax.inject.Inject
 
 
 @OpenForTesting
-class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener {
+class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshListener,
+    SearchView.OnQueryTextListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -35,7 +35,6 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
         savedInstanceState: Bundle?
     ): View? {
         binding = CountriesFragmentBinding.inflate(inflater, container, false)
-        setUpRecyclerView()
         return binding.root
     }
 
@@ -44,22 +43,29 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
         setHasOptionsMenu(true)
     }
 
+    /**
+     * ViewModel provided and set for databinding so observable data can be updated
+     * */
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java).apply {
-            binding.viewmodel = this
-            load()
+        viewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(CountriesViewModel::class.java)
+                .apply {
+                    binding.viewmodel = this
+                    init()
 
-            navigationLiveEvent.observe(viewLifecycleOwner, Observer {
-                navigate(it)
-            })
-            loading.observe(viewLifecycleOwner, Observer {
-                swipe_refresh_layout.isRefreshing = it
-            })
-            message.observe(viewLifecycleOwner, Observer {
-                displaySnackBack(it)
-            })
-        }
+                    navigationLiveEvent.observe(viewLifecycleOwner, Observer {
+                        navigate(it)
+                    })
+                    loading.observe(viewLifecycleOwner, Observer {
+                        swipe_refresh_layout.isRefreshing = it
+                    })
+                    message.observe(viewLifecycleOwner, Observer {
+                        displaySnackBack(it)
+                    })
+                }
+        setUpRecyclerView()
         swipe_refresh_layout.setOnRefreshListener(this)
     }
 
@@ -95,10 +101,11 @@ class CountriesFragment : Fragment(), Injectable, SwipeRefreshLayout.OnRefreshLi
     }
 
     override fun onRefresh() {
-        viewModel.load()
+        viewModel.refresh()
     }
 
-    private fun displaySnackBack(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    private fun displaySnackBack(message: String) =
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
 
     fun navController() = findNavController()
 

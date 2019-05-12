@@ -1,10 +1,16 @@
 package com.clakestudio.pc.countries.util
 
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.data.source.remote.ApiCountry
 import com.clakestudio.pc.countries.vo.ViewObject
 
 object CountriesDataProvider {
+
+    /**
+     * Simple class that provied data for testcases, either packed into ViewObject wit various callback or
+     * pure objects
+     *
+     * */
 
     fun provideSampleCountriesWrappedAsSuccess(): ViewObject<List<Country>> {
         return ViewObject.success(listOf(provideColombia(), providePoland()).map {
@@ -37,9 +43,9 @@ object CountriesDataProvider {
     fun providePolandWrappedAsError() = ViewObject.error("Test error single country", null)
 
     fun provideColombiaWrappedAsSuccess() = ViewObject.success(
-            Country(
-                    provideColombia()
-            ), true
+        Country(
+            provideColombia()
+        ), true
     )
 
     fun provideCountries() = listOf(provideColombia(), providePoland())

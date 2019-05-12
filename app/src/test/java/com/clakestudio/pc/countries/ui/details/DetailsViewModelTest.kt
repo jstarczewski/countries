@@ -1,7 +1,7 @@
 package com.clakestudio.pc.countries.ui.details
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.clakestudio.pc.countries.data.Country
+import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.data.FakeCountriesRepository
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.util.TestSchedulersProvider
