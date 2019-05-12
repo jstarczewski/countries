@@ -39,7 +39,7 @@ class CountriesViewModel @Inject constructor(
     private var isUpToDate = false
 
     /**
-     * Most of functions are public because are tested
+     * Most of functions are public because for testing purposes
      * */
 
     /**
@@ -69,16 +69,9 @@ class CountriesViewModel @Inject constructor(
     }
 
     /**
-     * Data loaded from repository and handled in viewModel based on callback that is
+     * Data is loaded from repository and handled in viewModel based on callback that is
      * provided with data in ViewObject
      *
-     *
-     *  TO-DO
-     *        Move logic responsible of deciding of fetching data (or not) to repsoitory ->
-     *        isUpToData information is handled there and based on it appropriate data is served
-     *
-     *        Rate limiter -> Event though, the countries API data is not prone to change often rate limiter is still needed
-     *        because right now data when data is upUpToData it is still loaded once per app launch
      * */
 
     private fun loadData() {

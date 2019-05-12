@@ -4,7 +4,7 @@ import com.clakestudio.pc.countries.data.source.local.DbCountry
 import com.clakestudio.pc.countries.data.source.remote.ApiCountry as RemoteCountry
 
 /**
- * Country object with some private functions moving some data to list so some of data can be displayed in recycler view
+ * Country object with some private functions transforming some data to list so it can be displayed in recycler view
  * */
 
 

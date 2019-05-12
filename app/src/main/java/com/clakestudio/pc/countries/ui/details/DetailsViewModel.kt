@@ -39,7 +39,7 @@ class DetailsViewModel @Inject constructor(
     val message: LiveData<String> = _message
 
     fun load(alpha: String) {
-        if (details.isEmpty() || alpha != this.alpha || !isUpToDate) {
+        if (details.isEmpty() || alpha != this.alpha) {
             loadCountryDataByAlphaCode(alpha)
             this.alpha = alpha
         } else {

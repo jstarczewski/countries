@@ -52,7 +52,7 @@ class CountriesRepository @Inject constructor(
     /**
      *
      * Not implemented and unused, created only for purpose of having a single interface
-     * for local, remote and repository data sources
+     * for data sources
      * */
 
     override fun saveCountry(country: Country) {
@@ -61,7 +61,7 @@ class CountriesRepository @Inject constructor(
 
     /**
      * Old way of providing data via repository. I decided to populate data from remote data source
-     * always when it is available, not after some specific time.
+     * always when it is available, not when it is fast enough.
      * */
 
     /*
