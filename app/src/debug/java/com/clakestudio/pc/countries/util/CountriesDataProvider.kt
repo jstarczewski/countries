@@ -6,6 +6,12 @@ import com.clakestudio.pc.countries.vo.ViewObject
 
 object CountriesDataProvider {
 
+    /**
+     * Simple class that provied data for testcases, either packed into ViewObject wit various callback or
+     * pure objects
+     *
+     * */
+
     fun provideSampleCountriesWrappedAsSuccess(): ViewObject<List<Country>> {
         return ViewObject.success(listOf(provideColombia(), providePoland()).map {
             Country(it)

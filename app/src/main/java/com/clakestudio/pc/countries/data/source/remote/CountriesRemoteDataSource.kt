@@ -14,8 +14,11 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
 
     override fun getAllCountries() = getAllCountriesFromRemoteDataSource()
 
-
     override fun getCountryByAlpha(alpha: String) = getCountryByAlphaFromRemoteDataSource(alpha)
+
+    /**
+     * Not implemented, not used, added to provide same interface for all data source
+     * */
 
     override fun saveCountry(country: Country) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -24,6 +27,12 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
     private fun getAllCountriesFromRemoteDataSource(): Flowable<ViewObject<List<Country>>> =
             getCountriesFromRemoteDataSourceAndMap()
                     .toFlowable()
+
+    /**
+     * Here we check te response code of data. It is easier now to log the error
+     * and check if it is programmers fault or API, suitable callback is passed within
+     * to inform the user
+     * */
 
     private fun <T> handleResponse(response: Response<T>): ViewObject<T> {
         if (response.isSuccessful) {
@@ -39,6 +48,12 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
         }
     }
 
+
+    /**
+     * Data is provided from network unpacked from response and whether it has error or not
+     * packed into viewObject wit suitable callback
+     * */
+
     private fun getCountriesFromRemoteDataSourceAndMap(): Single<ViewObject<List<Country>>> =
             countriesRestAdapter.getAllCountries()
                     .map { data -> handleResponse(data) }
@@ -52,6 +67,10 @@ class CountriesRemoteDataSource @Inject constructor(private val countriesRestAda
                         }
 
                     }
+
+    /**
+     * Same flow for a single country's data
+     * */
 
     private fun getCountryByAlphaFromRemoteDataSource(alpha: String): Flowable<ViewObject<Country>> =
             countriesRestAdapter.getCountryByAlpha(alpha).map {

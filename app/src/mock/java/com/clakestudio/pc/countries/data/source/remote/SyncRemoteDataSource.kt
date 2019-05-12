@@ -6,6 +6,10 @@ import retrofit2.Response
 
 class SyncRemoteDataSource(private val fakeCountriesRestAdapter: FakeCountriesRestAdapter) {
 
+    /**
+     * Fake remoteDataSource with public handle response fun that was tested in early stage of project
+     * */
+
     fun getAllCountries() = fakeCountriesRestAdapter.getAllCountries()
 
     fun getCountryByAlpha(alpha: String) = fakeCountriesRestAdapter.getCountryByName(alpha)

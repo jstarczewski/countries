@@ -19,15 +19,25 @@ class FakeCountriesRepository(private val asError: Boolean) : CountriesDataSourc
      * */
 
     override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
-        if ("Colombia".toLowerCase().contains(alpha.toLowerCase()))
-            Flowable.just(ViewObject.success(
-                Country(
-                    CountriesDataProvider.provideColombia()
-                ), true))
-        else Flowable.just(ViewObject.success(
-            Country(
-                CountriesDataProvider.providePoland()
-            ), true))
+        if (asError) {
+            Flowable.just(CountriesDataProvider.providePolandWrappedAsError())
+        } else {
+            if ("Colombia".toLowerCase().contains(alpha.toLowerCase()))
+                Flowable.just(
+                    ViewObject.success(
+                        Country(
+                            CountriesDataProvider.provideColombia()
+                        ), true
+                    )
+                )
+            else Flowable.just(
+                ViewObject.success(
+                    Country(
+                        CountriesDataProvider.providePoland()
+                    ), true
+                )
+            )
+        }
 
     override fun getAllCountries(): Flowable<ViewObject<List<Country>>> {
         return if (!asError) Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsSuccess())

@@ -13,6 +13,10 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
 
     override fun getCountryByAlpha(alpha: String) = getCountryByAlphaFromLocalDataSource(alpha)
 
+    /**
+     * Data is saved and mapped for dbCountry, loaded when is was impossible to fetch from network
+     * */
+
     override fun saveCountry(country: Country) = countriesDao.saveCountry(
             DbCountry(
                     countryFlagUrl = country.countryFlagUrl,
@@ -22,6 +26,10 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                     latlng = country.latlng.joinToString(separator = ",")
             )
     )
+
+    /**
+     * Data loaded from local db, with suitable callback when there was none
+     * */
 
     private fun getAllCountriesFromLocalDataSource(): Flowable<ViewObject<List<Country>>> =
             countriesDao.getAllCountries()
@@ -38,6 +46,10 @@ class CountriesLocalDataSource @Inject constructor(private val countriesDao: Cou
                         }
                     }.toFlowable()
 
+    /**
+     * The onErrorResumeNext is needed because Single returns an error when there is no country to load
+     * The "null" country is then emitted and transformed into ViewObject with information about occurred error
+     * */
 
     private fun getCountryByAlphaFromLocalDataSource(alpha: String): Flowable<ViewObject<Country>> =
             countriesDao.getCountryByAlpha3Code(alpha)

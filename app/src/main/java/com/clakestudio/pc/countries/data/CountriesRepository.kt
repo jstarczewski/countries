@@ -1,6 +1,5 @@
 package com.clakestudio.pc.countries.data
 
-import android.util.Log
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
 import com.clakestudio.pc.countries.data.source.remote.RemoteDataUnavailableException
 import com.clakestudio.pc.countries.testing.OpenForTesting
@@ -15,37 +14,32 @@ class CountriesRepository @Inject constructor(
     private val countriesLocalDataSource: CountriesDataSource
 ) : CountriesDataSource {
 
-/*
-    private var isUpToDate = false
-    private var cachedCountries : ViewObject<List<Country>> = ViewObject.error("Data not loaded", null)
-*/
-    override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
-/*
-        if (!cachedCountries.isHasError && isUpToDate) {
-            Log.e("Data from in memory", "Data")
-            Flowable.just(cachedCountries)
-        } else*/
-            countriesRemoteDataSource.getAllCountries()
-                .doOnNext { countries ->
-                    countries.data?.forEach {
-                        countriesLocalDataSource.saveCountry(it)
-                    }
-                }
-                .map {
-                    if (it.isHasError)
-                        throw RemoteDataUnavailableException(
-                            it.errorMessage
-                                ?: "Data fetch error"
-                        )
-                    it
-                }.onErrorResumeNext(countriesLocalDataSource.getAllCountries())
+    /**
+     * Repository is trying to fetch data from network, when it fails then
+     * data from local db is loaded. When there is no data in db, suitable callback
+     * message is passed within ViewObject. Data from db is passed with upToDate = false
+     * information
+     * */
 
-                    /*
-                .map {
-                    if (isUpToDate && !it.isHasError)
-                        cachedCountries = it
-                    it
-                }*/
+    /**
+     * After fetch from network data is saved to local db
+     * */
+
+    override fun getAllCountries(): Flowable<ViewObject<List<Country>>> =
+        countriesRemoteDataSource.getAllCountries()
+            .doOnNext { countries ->
+                countries.data?.forEach {
+                    countriesLocalDataSource.saveCountry(it)
+                }
+            }
+            .map {
+                if (it.isHasError)
+                    throw RemoteDataUnavailableException(
+                        it.errorMessage
+                            ?: "Data fetch error"
+                    )
+                it
+            }.onErrorResumeNext(countriesLocalDataSource.getAllCountries())
 
 
     override fun getCountryByAlpha(alpha: String): Flowable<ViewObject<Country>> =
@@ -55,9 +49,20 @@ class CountriesRepository @Inject constructor(
             it
         }.onErrorResumeNext(countriesLocalDataSource.getCountryByAlpha(alpha))
 
+    /**
+     *
+     * Not implemented and unused, created only for purpose of having a single interface
+     * for local, remote and repository data sources
+     * */
+
     override fun saveCountry(country: Country) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    /**
+     * Old way of providing data via repository. I decided to populate data from remote data source
+     * always when it is available, not after some specific time.
+     * */
 
     /*
     override fun getAllCountries(): Flowable<ViewObject<List<DbCountry>>> =

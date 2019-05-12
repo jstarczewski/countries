@@ -38,6 +38,17 @@ class CountriesViewModel @Inject constructor(
 
     private var isUpToDate = false
 
+    /**
+     * Most of functions are public because are tested
+     * */
+
+    /**
+     * Init -> when fragment is created and displayed
+     * We do not want to trigger data update when screen is rotated
+     * init() load data once when there is no data
+     * */
+
+
     fun init() {
         if (_countries.value.isNullOrEmpty()) {
             loadData()
@@ -46,12 +57,26 @@ class CountriesViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Triggered by onSwipeRefresh -> user want to refresh data
+     * */
+
     fun refresh() {
         if (!isUpToDate)
             loadData()
         else
             _loading.value = false
     }
+
+    /**
+     * Data loaded from repository and handled in viewModel based on callback that is
+     * provided with data in ViewObject
+     *
+     *
+     *  TO-DO
+     *        Rate limiter -> because right now data when data is upUpToData it
+     *        is still loaded once per app launch
+     * */
 
     private fun loadData() {
         compositeDisposable.add(
@@ -79,6 +104,10 @@ class CountriesViewModel @Inject constructor(
                 })
         )
     }
+
+    /**
+     * User is informed whether loaded data is upToDate or not
+     * */
 
     private fun handleData(countriesViewObject: ViewObject<List<Country>>) {
         if (!countriesViewObject.isUpToDate!!) {

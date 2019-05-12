@@ -3,7 +3,7 @@ package com.clakestudio.pc.countries.data.source.remote
 import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.util.CountriesDataProvider
 import com.clakestudio.pc.countries.util.FakeInterceptor
-import com.clakestudio.pc.countries.util.RetrofitWithFakeInterceptroInjection
+import com.clakestudio.pc.countries.util.RetrofitWithFakeInterceptorInjection
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Test
@@ -20,7 +20,7 @@ class CountriesRemoteDataSourceTest {
     private val alpha = "POL"
 
     private val fakeInterceptor = FakeInterceptor(404)
-    private val countriesRestAdapter = CountriesRestAdapter(RetrofitWithFakeInterceptroInjection.provideRetrofitWithRxAdapterFactory(fakeInterceptor))
+    private val countriesRestAdapter = CountriesRestAdapter(RetrofitWithFakeInterceptorInjection.provideRetrofitWithRxAdapterFactory(fakeInterceptor))
     private val remoteDataSource = CountriesRemoteDataSource(countriesRestAdapter)
 
     @Test

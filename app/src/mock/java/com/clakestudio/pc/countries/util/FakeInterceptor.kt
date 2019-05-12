@@ -8,12 +8,13 @@ import okhttp3.*
 
 class FakeInterceptor(var responseCode : Int = 200) : Interceptor {
 
+    /**
+     * FakeInterceptor used for testing responses
+     * */
+
     lateinit var response: Response
-    private val countryType = object : TypeToken<Collection<ApiCountry>>() {}.type
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        //val pol = gson.toJson(CountriesDataProvider.providePoland())
-        //val col = gson.toJson(CountriesDataProvider.provideColombia())
         if (BuildConfig.DEBUG) {
             val uri = chain.request().url().uri().toString()
             val responseString =

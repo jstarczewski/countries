@@ -43,16 +43,17 @@ class DetailsViewModel @Inject constructor(
             loadCountryDataByAlphaCode(alpha)
             this.alpha = alpha
         } else {
-            //     _countryFlagUrl.value = _countryFlagUrl.value
             _loading.value = false
         }
     }
 
     fun refresh() {
-        if (alpha.isNotEmpty() || !isUpToDate) loadCountryDataByAlphaCode(alpha)
+        if (!isUpToDate) loadCountryDataByAlphaCode(alpha)
+        else
+            _loading.value = false
     }
 
-    fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
+    private fun loadCountryDataByAlphaCode(alpha: String) = compositeDisposable.add(
         countryRepository.getCountryByAlpha(alpha)
             .startWith(ViewObject.loading(null))
             .subscribeOn(appSchedulersProvider.ioScheduler())
@@ -73,12 +74,6 @@ class DetailsViewModel @Inject constructor(
                     }
                 }
             }, {
-
-                /**
-                 * RUN TESTS
-                 *
-                 * **/
-
                 error.set("Fatal error occurred, please try again later")
             })
     )
@@ -92,6 +87,10 @@ class DetailsViewModel @Inject constructor(
         }
         exposeData(countryViewObject.data!!)
     }
+
+    /**
+     * Data is exposed to user with databinding and liveData
+     * */
 
     fun exposeData(country: Country) {
         countryName.set(country.countryName)

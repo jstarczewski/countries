@@ -25,6 +25,9 @@ import java.util.concurrent.TimeUnit
 
 class DetailsFragmentTest {
 
+    /**
+     * Fragment is tested whether it behaves correctly with real callback from viewModel with mocked datasource
+     * */
 
     @Rule
     @JvmField
@@ -78,17 +81,6 @@ class DetailsFragmentTest {
      * */
 
 
-    /*
-    @Test
-    fun testIfDataIsReloadedAfterDelayWithOnSwipeRefresh() {
-        `when`(countriesRepository.getCountryByAlpha("POL")).thenReturn(Flowable.just(CountriesDataProvider.providePolandWrappedAsError()))
-        onView(withId(R.id.text_view_name)).check(matches(withText("Test error single country \n Swipe to refresh")))
-        `when`(countriesRepository.getCountryByAlpha("POL")).thenReturn(Flowable.just(CountriesDataProvider.providePolandWrappedAsSuccess()).delay(2, TimeUnit.SECONDS))
-        Espresso.onView(withId(R.id.neasted_scroll_view)).perform(swipeDown())
-        Espresso.onView(withId(R.id.text_view_name)).check(matches(withText("Poland")))
-    }
-*/
-
 
     @Test
     fun testRecyclerViewItemDisplayProperData() {
@@ -102,7 +94,7 @@ class DetailsFragmentTest {
     }
 
     /**
-     * Other view assertions
+     * Other view assertions will be added in spare time
      * */
 
 

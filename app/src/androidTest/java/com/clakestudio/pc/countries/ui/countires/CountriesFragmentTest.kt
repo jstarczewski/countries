@@ -29,6 +29,9 @@ import com.clakestudio.pc.countries.util.AppSchedulersProvider
 
 class CountriesFragmentTest {
 
+    /**
+     * Fragment is tested whether it behaves correctly with real callback from viewModel with mocked datasource
+     * */
 
     @Rule
     @JvmField
@@ -38,25 +41,12 @@ class CountriesFragmentTest {
     private lateinit var countriesViewModel: CountriesViewModel
     private lateinit var countriesRepository: CountriesRepository
 
-    /*
-        val message = MutableLiveData<String>()
-        val loading = MutableLiveData<Boolean>()
-        val navigationEvent = SingleLiveEvent<String>()
-        val countries = ObservableArrayList<String>()
-    */
     @Before
     fun setUp() {
         countriesRepository = mock(CountriesRepository::class.java)
         `when`(countriesRepository.getAllCountries()).thenReturn(Flowable.just(CountriesDataProvider.provideSampleCountriesWrappedAsSuccess()))
         countriesViewModel = CountriesViewModel(countriesRepository, AppSchedulersProvider())
-        /*
-        countriesViewModel = mock(CountriesViewModel::class.java)
-        countries.addAll(CountriesDataProvider.provideCountries().map { it.name })
-        `when`(countriesViewModel.loading).thenReturn(loading)
-        `when`(countriesViewModel.message).thenReturn(message)
-        `when`(countriesViewModel.navigationLiveEvent).thenReturn(navigationEvent)
-        `when`(countriesViewModel.countries).thenReturn(countries)
-*/
+
         countriesFragment.viewModelFactory = ViewModelUtil.createFor(countriesViewModel)
         activityRule.activity.setFragment(countriesFragment)
 
