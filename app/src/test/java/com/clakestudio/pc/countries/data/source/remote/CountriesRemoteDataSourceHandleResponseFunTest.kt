@@ -8,6 +8,11 @@ import org.junit.Test
 
 class CountriesRemoteDataSourceHandleResponseFunTest {
 
+    /**
+     * In case of UNRESOLVED REFERENCE, change the build variant to mockDebug
+     * Testing the response with fake interceptor
+     * */
+
     private val interceptor = FakeInterceptor()
     private val countriesRestAdapter =
         FakeCountriesRestAdapter(RetrofitWithFakeInterceptorInjection.provideRetrofitWithoutRxAdapterFactory(interceptor))

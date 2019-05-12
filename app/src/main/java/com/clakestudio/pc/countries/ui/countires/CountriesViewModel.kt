@@ -74,8 +74,11 @@ class CountriesViewModel @Inject constructor(
      *
      *
      *  TO-DO
-     *        Rate limiter -> because right now data when data is upUpToData it
-     *        is still loaded once per app launch
+     *        Move logic responsible of deciding of fetching data (or not) to repsoitory ->
+     *        isUpToData information is handled there and based on it appropriate data is served
+     *
+     *        Rate limiter -> Event though, the countries API data is not prone to change often rate limiter is still needed
+     *        because right now data when data is upUpToData it is still loaded once per app launch
      * */
 
     private fun loadData() {

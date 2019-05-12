@@ -1,6 +1,7 @@
 package com.clakestudio.pc.countries.data.source.remote
 
 import com.clakestudio.pc.countries.data.source.CountriesDataSource
+import com.clakestudio.pc.countries.testing.OpenForTesting
 import com.clakestudio.pc.countries.vo.Country
 import com.clakestudio.pc.countries.vo.ViewObject
 import io.reactivex.Flowable
@@ -8,6 +9,7 @@ import io.reactivex.Single
 import retrofit2.Response
 import javax.inject.Inject
 
+@OpenForTesting
 class CountriesRemoteDataSource @Inject constructor(private val countriesRestAdapter: CountriesRestAdapter) :
         CountriesDataSource {
 
