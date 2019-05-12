@@ -36,8 +36,10 @@ class CountriesViewModel @Inject constructor(
     private val _message: SingleLiveEvent<String> = SingleLiveEvent()
     val message: LiveData<String> = _message
 
+    private var isUpToDate = false
+
     fun load() {
-        if (_countries.value.isNullOrEmpty()) {
+        if (_countries.value.isNullOrEmpty() || !isUpToDate) {
             init()
         } else {
             _loading.value = false
@@ -61,8 +63,11 @@ class CountriesViewModel @Inject constructor(
                             _loading.value = true
                         }
                         else -> {
-                            if (!it.isUpToDate!!)
+                            if (!it.isUpToDate!!) {
                                 _message.value = "Data is loaded from cache"
+                                isUpToDate = false
+                            } else
+                                isUpToDate = true
                             _countries.value = it.data?.sortedBy { it.countryName }
                             _loading.value = false
                             error.set("")
@@ -101,6 +106,7 @@ class CountriesViewModel @Inject constructor(
     }
 
     fun exposeNavigationDestinationCode(destinationName: String) {
-        _navigationLiveEvent.value = _countries.value?.find { it.countryName == destinationName }?.alpha3Code ?: "POL"
+        _navigationLiveEvent.value =
+            _countries.value?.find { it.countryName == destinationName }?.alpha3Code ?: "POL"
     }
 }

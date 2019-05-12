@@ -36,10 +36,11 @@ class DetailsViewModel @Inject constructor(
     val countryFlagUrl: LiveData<String> = _countryFlagUrl
 
     private val _message: SingleLiveEvent<String> = SingleLiveEvent()
+    private var isUpToDate = false
     val message: LiveData<String> = _message
 
     fun load(alpha: String) {
-        if (details.isEmpty() || alpha != this.alpha) {
+        if (details.isEmpty() || alpha != this.alpha || !isUpToDate) {
             loadCountryDataByAlphaCode(alpha)
             this.alpha = alpha
         } else {
@@ -57,10 +58,10 @@ class DetailsViewModel @Inject constructor(
             .startWith(ViewObject.loading(null))
             .subscribeOn(appSchedulersProvider.ioScheduler())
             .observeOn(appSchedulersProvider.uiScheduler())
-            .subscribe {
+            .subscribe({
                 when {
                     it.isHasError -> {
-                        error.set("${it.errorMessage} \n Swipe to refresh")
+                        error.set("${it.errorMessage}\nSwipe to refresh")
                         details.clear()
                         _loading.value = false
                     }
@@ -70,12 +71,24 @@ class DetailsViewModel @Inject constructor(
                     else -> {
                         details.clear()
                         _loading.value = false
-                        if (!it.isUpToDate!!)
+                        if (!it.isUpToDate!!) {
                             _message.value = "Data is loaded from cache"
+                            isUpToDate = false
+                        } else {
+                            isUpToDate = true
+                        }
                         exposeData(it.data!!)
                     }
                 }
-            }
+            }, {
+
+                /**
+                 * RUN TESTS
+                 *
+                 * **/
+
+                error.set("Fatal error occurred, please try again later")
+            })
     )
 
     fun exposeData(country: Country) {
@@ -86,7 +99,10 @@ class DetailsViewModel @Inject constructor(
     }
 
     fun latLngStringToDouble(latLtnString: List<String?>) =
-        if (!latLtnString.isNullOrEmpty()) Pair(latLtnString[0]?.toDouble(), latLtnString[1]?.toDouble()) else null
+        if (!latLtnString.isNullOrEmpty()) Pair(
+            latLtnString[0]?.toDouble(),
+            latLtnString[1]?.toDouble()
+        ) else null
 
 
     override fun onCleared() {
